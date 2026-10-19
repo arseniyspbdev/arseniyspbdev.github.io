@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Барбершоп «Чуб»</title>
+<meta name="description" content="Демо Telegram Mini App: онлайн-запись в барбершоп — услуга, мастер, время, мои записи и расписание мастера.">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  /* Своя палитра нужна только вне Telegram: внутри цвета берутся из темы пользователя */
+  :root {
+    --f-bg: #eff1f5;
+    --f-section: #ffffff;
+    --f-text: #111318;
+    --f-hint: #6f7482;
+    --f-accent: #2f6f5e;
+    --f-accent-text: #ffffff;
+    --f-sep: #e2e5ec;
+    --f-danger: #c9362a;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --f-bg: #0e1013;
+      --f-section: #1a1d22;
+      --f-text: #f1f2f4;
+      --f-hint: #8e94a1;
+      --f-accent: #5fbfa3;
+      --f-accent-text: #06231b;
+      --f-sep: #2a2e35;
+      --f-danger: #ff6b5e;
+      color-scheme: dark;
+    }
+  }
+  :root {
+    --bg: var(--tg-theme-secondary-bg-color, var(--f-bg));
+    --section: var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, var(--f-section)));
+    --text: var(--tg-theme-text-color, var(--f-text));
+    --hint: var(--tg-theme-hint-color, var(--f-hint));
+    --accent: var(--tg-theme-button-color, var(--f-accent));
+    --accent-text: var(--tg-theme-button-text-color, var(--f-accent-text));
+    --sep: var(--tg-theme-section-separator-color, var(--f-sep));
+    --danger: var(--tg-theme-destructive-text-color, var(--f-danger));
+    --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+    --radius: 14px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font: 400 16px/1.4 var(--font);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  ::selection { background: var(--accent-soft); }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+
+  .app {
+    max-width: 480px; margin: 0 auto;
+    padding: 12px max(12px, env(safe-area-inset-right)) 120px max(12px, env(safe-area-inset-left));
+  }
+  .in-tg .app { padding-bottom: 32px; }
+
+  /* Шапка */
+  .top { display: flex; align-items: center; gap: 12px; padding: 4px 4px 14px; }
+  .icon-btn {
+    width: 40px; height: 40px; display: grid; place-items: center; flex: none;
+    border: 0; border-radius: 50%; background: var(--section); color: var(--accent); cursor: pointer;
+  }
+  .brand-mark {
+    width: 40px; height: 40px; flex: none; border-radius: 12px;
+    display: grid; place-items: center; background: var(--accent); color: var(--accent-text);
+  }
+  .brand b { display: block; font-size: 17px; font-weight: 650; }
+  .brand span { color: var(--hint); font-size: 13px; }
+
+  .demo-note {
+    margin: 0 0 12px; padding: 10px 14px; border-radius: 12px;
+    background: var(--accent-soft); font-size: 13px; line-height: 1.35;
+  }
+  .in-tg .demo-note.browser-only { display: none; }
+
+  /* Вкладки */
+  .seg {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    padding: 3px; margin-bottom: 16px; border-radius: 11px; background: var(--sep);
+  }
+  .seg button {
+    min-height: 36px; border: 0; border-radius: 9px; background: transparent;
+    font-size: 14px; font-weight: 550; cursor: pointer; transition: background-color .2s;
+  }
+  .seg button[aria-selected="true"] { background: var(--section); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+  .badge {
+    display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px;
+    border-radius: 9px; background: var(--accent); color: var(--accent-text); font-size: 11px; font-weight: 700;
+  }
+
+  /* Шаги */
+  .stephead { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 8px; }
+  .stephead h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  .stephead span { color: var(--hint); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .progress { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 0 4px 16px; }
+  .progress i { height: 3px; border-radius: 2px; background: var(--sep); transition: background-color .3s; }
+  .progress i.on { background: var(--accent); }
+
+  .caption { margin: 18px 4px 6px; color: var(--hint); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  .caption:first-child { margin-top: 0; }
+
+  /* Списки как в Telegram */
+  .list { background: var(--section); border-radius: var(--radius); overflow: hidden; }
+  .row {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    min-height: 56px; padding: 10px 14px; border: 0; background: transparent;
+    text-align: left; cursor: pointer; position: relative;
+  }
+  .row + .row::before { content: ""; position: absolute; top: 0; left: 14px; right: 0; border-top: 1px solid var(--sep); }
+  .row.has-ava + .row.has-ava::before { left: 66px; }
+  .row:active { background: var(--accent-soft); }
+  .row-main { flex: 1; min-width: 0; }
+  .row-title { display: block; font-weight: 550; }
+  .row-sub { display: block; color: var(--hint); font-size: 14px; margin-top: 1px; }
+  .row-side { text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+  .row-side b { display: block; font-weight: 600; }
+  .row-side span { color: var(--hint); font-size: 13px; }
+  .row .check { color: var(--accent); opacity: 0; flex: none; }
+  .row[aria-pressed="true"] .check { opacity: 1; }
+  .row[aria-pressed="true"] .row-title { color: var(--accent); }
+
+  .ava {
+    width: 40px; height: 40px; flex: none; border-radius: 50%;
+    display: grid; place-items: center; font-weight: 700; color: #fff;
+  }
+  .ava.any { background: var(--accent-soft); color: var(--accent); }
+  .soon { color: var(--accent); font-size: 13px; font-weight: 550; }
+
+  /* Даты и время */
+  .days { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; margin: 0 -2px; scroll-snap-type: x proximity; }
+  .days::-webkit-scrollbar { display: none; }
+  .day {
+    flex: 0 0 52px; min-height: 60px; border: 0; border-radius: 12px; background: var(--section);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    cursor: pointer; scroll-snap-align: start; font-variant-numeric: tabular-nums;
+  }
+  .day small { color: var(--hint); font-size: 12px; }
+  .day b { font-size: 18px; font-weight: 650; }
+  .day[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .day[aria-pressed="true"] small { color: inherit; opacity: .8; }
+  .day:disabled { opacity: .35; cursor: not-allowed; }
+
+  .slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+  .slot {
+    min-height: 42px; border: 0; border-radius: 10px; background: var(--section);
+    font-size: 15px; font-weight: 550; font-variant-numeric: tabular-nums; cursor: pointer;
+  }
+  .slot[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .empty-slots { padding: 18px 14px; background: var(--section); border-radius: var(--radius); color: var(--hint); }
+
+  /* Подтверждение */
+  .summary .row { cursor: default; }
+  .summary .row:active { background: transparent; }
+  .total .row-title { font-weight: 700; }
+  .total .row-side b { font-size: 18px; }
+  .field { display: block; padding: 10px 14px; position: relative; }
+  .field + .field::before { content: ""; position: absolute; top: 0; left: 14px; right: 0; border-top: 1px solid var(--sep); }
+  .field span { display: block; color: var(--hint); font-size: 13px; }
+  .field input {
+    width: 100%; border: 0; padding: 4px 0 2px; background: transparent;
+    font: inherit; color: var(--text); caret-color: var(--accent); outline: none;
+  }
+  .field input::placeholder { color: var(--hint); opacity: .7; }
+  .field.bad span { color: var(--danger); }
+  .err { margin: 6px 4px 0; color: var(--danger); font-size: 13px; }
+  .err:empty { display: none; }
+  .fine { margin: 10px 4px 0; color: var(--hint); font-size: 13px; }
+
+  /* Готово */
+  .done { text-align: center; padding: 28px 8px 8px; }
+  .done-ico {
+    width: 72px; height: 72px; margin: 0 auto 16px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--accent); color: var(--accent-text);
+    animation: pop .5s cubic-bezier(.16, 1, .3, 1);
+  }
+  @keyframes pop { from { transform: scale(.6); } }
+  .done h1 { margin: 0 0 6px; font-size: 24px; }
+  .done p { margin: 0 auto; max-width: 34ch; color: var(--hint); }
+  .done .list { margin-top: 20px; text-align: left; }
+  .actions { display: grid; gap: 8px; margin-top: 16px; }
+  .btn {
+    min-height: 48px; border: 0; border-radius: 12px; cursor: pointer;
+    font-size: 16px; font-weight: 600;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-text); }
+  .btn-plain { background: var(--section); color: var(--accent); }
+
+  /* Мои записи */
+  .card { background: var(--section); border-radius: var(--radius); padding: 14px; }
+  .card + .card { margin-top: 10px; }
+  .card-when { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .card-what { margin-top: 4px; }
+  .card-who { color: var(--hint); font-size: 14px; margin-top: 2px; }
+  .card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--sep); }
+  .card-foot b { font-variant-numeric: tabular-nums; }
+  .link-danger { border: 0; background: none; color: var(--danger); font-weight: 550; cursor: pointer; padding: 6px 0; }
+  .confirm { display: flex; gap: 8px; align-items: center; }
+  .confirm span { color: var(--hint); font-size: 14px; }
+  .mini { min-height: 34px; padding: 0 12px; border: 0; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 14px; }
+  .mini-danger { background: var(--danger); color: #fff; }
+  .mini-plain { background: var(--sep); }
+  .empty { text-align: center; padding: 40px 16px; }
+  .empty p { color: var(--hint); margin: 8px 0 18px; }
+  .empty svg { margin: 0 auto; color: var(--hint); }
+
+  /* Расписание мастера */
+  .chips { display: flex; gap: 6px; margin-bottom: 10px; }
+  .chip {
+    min-height: 36px; padding: 0 14px; border: 0; border-radius: 18px; background: var(--section);
+    font-weight: 550; font-size: 14px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .daystat { margin: 14px 4px 8px; color: var(--hint); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .timeline { position: relative; background: var(--section); border-radius: var(--radius); padding: 8px 10px 8px 54px; }
+  .hour { height: 56px; position: relative; border-top: 1px solid var(--sep); }
+  .hour:first-child { border-top-color: transparent; }
+  .hour span { position: absolute; left: -46px; top: -9px; color: var(--hint); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .blocks { position: absolute; top: 8px; left: 54px; right: 10px; }
+  .block {
+    position: absolute; left: 0; right: 0; padding: 4px 8px; border-radius: 8px; overflow: hidden;
+    background: var(--sep); font-size: 13px; line-height: 1.25;
+  }
+  .block b { font-weight: 600; }
+  .block span { color: var(--hint); }
+  .block.mine { background: var(--accent); color: var(--accent-text); }
+  .block.mine span { color: inherit; opacity: .85; }
+  .now-line { position: absolute; left: 0; right: 0; border-top: 2px solid var(--danger); }
+  .now-line::before { content: ""; position: absolute; left: -5px; top: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+
+  /* Нижняя кнопка вне Telegram (в Telegram её заменяет MainButton) */
+  .bottom {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 10px max(12px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--sep);
+  }
+  .bottom .btn { display: block; width: 100%; max-width: 456px; margin: 0 auto; }
+  .bottom .btn:disabled { opacity: .5; cursor: not-allowed; }
+  [hidden] { display: none !important; }
+
+  .view { animation: fade .25s ease-out; }
+  @keyframes fade { from { opacity: .4; transform: translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <button class="icon-btn" id="fb-back" type="button" aria-label="Назад" hidden>
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="brand-mark" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="6.5" cy="17.5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="17.5" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.6 15.4 18 3M15.4 15.4 6 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="brand"><b>Барбершоп «Чуб»</b><span>ежедневно 10:00–21:00</span></div>
+  </header>
+
+  <p class="demo-note browser-only">Демо Telegram Mini App, сейчас открыто в браузере. В Telegram цвета подстроятся под тему, а кнопка внизу станет родной кнопкой Telegram.</p>
+
+  <nav class="seg" role="tablist" aria-label="Разделы">
+    <button type="button" role="tab" id="tab-book" data-tab="book">Запись</button>
+    <button type="button" role="tab" id="tab-mine" data-tab="mine">Мои записи</button>
+    <button type="button" role="tab" id="tab-master" data-tab="master">Мастеру</button>
+  </nav>
+
+  <main id="view" class="view" aria-live="polite"></main>
+</div>
+
+<div class="bottom" id="fb-bar" hidden>
+  <button class="btn btn-primary" id="fb-main" type="button"></button>
+</div>
+
+<script>
+(() => {
+  const tg = window.Telegram && window.Telegram.WebApp;
+  const inTG = Boolean(tg && tg.initData);
+  if (inTG) {
+    tg.ready();
+    tg.expand();
+    try { tg.setHeaderColor('secondary_bg_color'); tg.setBackgroundColor('secondary_bg_color'); } catch (_) {}
+    document.documentElement.classList.add('in-tg');
+  }
+  const haptic = (kind) => {
+    if (!inTG || !tg.HapticFeedback) return;
+    try {
+      if (kind === 'select') tg.HapticFeedback.selectionChanged();
+      else tg.HapticFeedback.notificationOccurred(kind);
+    } catch (_) {}
+  };
+
+  // ---------- Данные (вымышленные) ----------
+  const SERVICES = [
+    { id: 'cut', name: 'Мужская стрижка', dur: 45, price: 1500, desc: 'Ножницы и машинка, мытьё, укладка' },
+    { id: 'clipper', name: 'Стрижка машинкой', dur: 30, price: 900, desc: 'Одна-две насадки и окантовка' },
+    { id: 'beard', name: 'Оформление бороды', dur: 30, price: 900, desc: 'Форма, контур бритвой, масло' },
+    { id: 'combo', name: 'Стрижка и борода', dur: 75, price: 2200, desc: 'Комплекс, выгоднее на 200 ₽' },
+    { id: 'shave', name: 'Бритьё опасной бритвой', dur: 40, price: 1300, desc: 'Горячее полотенце и уход' },
+    { id: 'kid', name: 'Детская стрижка', dur: 40, price: 1100, desc: 'Для детей до 12 лет' },
+  ];
+  const MASTERS = [
+    { id: 'ilya', name: 'Илья', role: 'Старший барбер', exp: 'стаж 8 лет', color: '#8a5a2b' },
+    { id: 'timur', name: 'Тимур', role: 'Барбер', exp: 'стаж 4 года', color: '#2f5f8a' },
+    { id: 'dasha', name: 'Даша', role: 'Барбер', exp: 'стаж 3 года', color: '#8a2f5b' },
+  ];
+  const CLIENTS = ['Андрей', 'Максим', 'Денис', 'Олег', 'Артём', 'Кирилл', 'Саша', 'Никита', 'Роман', 'Глеб', 'Миша', 'Влад'];
+  const OPEN = 10 * 60, CLOSE = 21 * 60, STEP = 30;
+
+  const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const WD_FULL = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+  const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const dateOf = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  const hm = (min) => `${Math.floor(min / 60)}:${pad(min % 60)}`;
+  const rub = (n) => `${n.toLocaleString('ru-RU')} ₽`;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const plural = (n, a, b, c) => { const t = n % 10, h = n % 100; return t === 1 && h !== 11 ? a : t >= 2 && t <= 4 && (h < 12 || h > 14) ? b : c; };
+
+  const DAYS = Array.from({ length: 14 }, (_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return keyOf(d); });
+  const TODAY = DAYS[0];
+  const dayLabel = (k) => {
+    const d = dateOf(k), i = DAYS.indexOf(k);
+    const head = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : WD_FULL[d.getDay()][0].toUpperCase() + WD_FULL[d.getDay()].slice(1);
+    return `${head}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  };
+  const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+  const svc = (id) => SERVICES.find((s) => s.id === id);
+  const mst = (id) => MASTERS.find((m) => m.id === id);
+
+  // ---------- Занятость: стабильная демо-загрузка + записи пользователя ----------
+  const seedOf = (s) => { let h = 2166136261; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const rng = (seed) => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const demoCache = {};
+  function demoBusy(master, day) {
+    const k = master + day;
+    if (demoCache[k]) return demoCache[k];
+    const r = rng(seedOf(k));
+    const out = [];
+    let t = OPEN;
+    while (t < CLOSE) {
+      if (r() < 0.42) { t += STEP * (r() < 0.5 ? 1 : 2); continue; }
+      const s = SERVICES[Math.floor(r() * SERVICES.length)];
+      if (t + s.dur > CLOSE) break;
+      out.push({ start: t, dur: s.dur, service: s.id, client: CLIENTS[Math.floor(r() * CLIENTS.length)] });
+      t = Math.ceil((t + s.dur) / STEP) * STEP;
+    }
+    return (demoCache[k] = out);
+  }
+
+  const STORE = 'chub-bookings-v1';
+  let bookings = [];
+  try { bookings = JSON.parse(localStorage.getItem(STORE)) || []; } catch (_) { bookings = []; }
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(bookings)); } catch (_) {} };
+  // прошедшие записи не показываем
+  bookings = bookings.filter((b) => b.date > TODAY || (b.date === TODAY && b.start + svc(b.service).dur > nowMin()));
+
+  const busyFor = (master, day) => [
+    ...demoBusy(master, day),
+    ...bookings.filter((b) => b.master === master && b.date === day).map((b) => ({ ...b, dur: svc(b.service).dur, mine: true })),
+  ];
+  const isFree = (master, day, start, dur) => {
+    if (start + dur > CLOSE) return false;
+    if (day === TODAY && start < nowMin() + 30) return false;
+    return !busyFor(master, day).some((b) => start < b.start + b.dur && b.start < start + dur);
+  };
+  const freeMasterAt = (masterId, day, start, dur) =>
+    (masterId === 'any' ? MASTERS : [mst(masterId)]).find((m) => isFree(m.id, day, start, dur));
+  const slotsFor = (masterId, day, dur) => {
+    const out = [];
+    for (let t = OPEN; t + dur <= CLOSE; t += STEP) if (freeMasterAt(masterId, day, t, dur)) out.push(t);
+    return out;
+  };
+  const nearest = (masterId, dur) => {
+    for (const d of DAYS) { const s = slotsFor(masterId, d, dur); if (s.length) return { day: d, start: s[0] }; }
+    return null;
+  };
+  const nearestText = (n) => {
+    if (!n) return 'нет окон на 2 недели';
+    const i = DAYS.indexOf(n.day);
+    const d = i === 0 ? 'сегодня' : i === 1 ? 'завтра' : `${dateOf(n.day).getDate()} ${MONTHS[dateOf(n.day).getMonth()]}`;
+    return `ближайшее: ${d} в ${hm(n.start)}`;
+  };
+
+  // ---------- Состояние ----------
+  const S = {
+    tab: 'book', step: 1,
+    service: null, master: null, day: null, start: null,
+    form: { name: (inTG && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || '', phone: '', comment: '' },
+    errors: {}, last: null, cancelId: null,
+    mView: { master: MASTERS[0].id, day: TODAY },
+  };
+
+  // ---------- Кнопки Telegram или их замена в браузере ----------
+  const fbBar = document.getElementById('fb-bar'), fbMain = document.getElementById('fb-main'), fbBack = document.getElementById('fb-back');
+  let mainAction = null, backAction = null;
+  function setMain(text, action, active = true) {
+    mainAction = text ? action : null;
+    if (inTG) {
+      if (!text) { tg.MainButton.hide(); return; }
+      tg.MainButton.setParams({ text, is_active: active, is_visible: true });
+    } else {
+      fbBar.hidden = !text;
+      fbMain.textContent = text || '';
+      fbMain.disabled = !active;
+    }
+  }
+  function setBack(action) {
+    backAction = action;
+    if (inTG) { action ? tg.BackButton.show() : tg.BackButton.hide(); }
+    else fbBack.hidden = !action;
+  }
+  if (inTG) {
+    tg.MainButton.onClick(() => mainAction && mainAction());
+    tg.BackButton.onClick(() => backAction && backAction());
+  }
+  fbMain.addEventListener('click', () => mainAction && mainAction());
+  fbBack.addEventListener('click', () => backAction && backAction());
+
+  // ---------- Отрисовка ----------
+  const view = document.getElementById('view');
+  const CHECK = '<svg class="check" width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="m5 11.5 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const STEP_TITLES = ['Услуга', 'Мастер', 'Дата и время', 'Подтверждение'];
+
+  function render() {
+    document.querySelectorAll('.seg button').forEach((b) => {
+      b.setAttribute('aria-selected', String(b.dataset.tab === S.tab));
+      if (b.dataset.tab === 'mine') b.innerHTML = 'Мои записи' + (bookings.length ? `<span class="badge">${bookings.length}</span>` : '');
+    });
+    view.classList.remove('view'); void view.offsetWidth; view.classList.add('view');
+    if (S.tab === 'book') renderBook();
+    else if (S.tab === 'mine') renderMine();
+    else renderMaster();
+  }
+
+  function stepHead() {
+    return `<div class="stephead"><h1>${STEP_TITLES[S.step - 1]}</h1><span>Шаг ${S.step} из 4</span></div>
+      <div class="progress" aria-hidden="true">${[1, 2, 3, 4].map((i) => `<i class="${i <= S.step ? 'on' : ''}"></i>`).join('')}</div>`;
+  }
+
+  function renderBook() {
+    if (S.step === 5) return renderDone();
+    setBack(S.step > 1 ? () => { S.step--; render(); } : null);
+
+    if (S.step === 1) {
+      view.innerHTML = stepHead() + `<div class="list">${SERVICES.map((s) => `
+        <button type="button" class="row" data-svc="${s.id}" aria-pressed="${S.service === s.id}">
+          <span class="row-main"><span class="row-title">${s.name}</span><span class="row-sub">${s.desc}</span></span>
+          <span class="row-side"><b>${rub(s.price)}</b><span>${s.dur} мин</span></span>${CHECK}
+        </button>`).join('')}</div>
+        <p class="fine">Цены и мастера вымышлены: это демо-проект.</p>`;
+      view.querySelectorAll('[data-svc]').forEach((b) => b.addEventListener('click', () => {
+        haptic('select');
+        S.service = b.dataset.svc; S.start = null; S.step = 2; render();
+      }));
+      setMain(null);
+    }
+
+    if (S.step === 2) {
+      const dur = svc(S.service).dur;
+      const rowsData = [{ id: 'any', name: 'Любой мастер', sub: 'Подберём того, кто свободен' }, ...MASTERS.map((m) => ({ id: m.id, name: m.name, sub: `${m.role} · ${m.exp}`, color: m.color }))];
+      view.innerHTML = stepHead() + `<div class="list">${rowsData.map((m) => `
+        <button type="button" class="row has-ava" data-m="${m.id}" aria-pressed="${S.master === m.id}">
+          <span class="ava ${m.id === 'any' ? 'any' : ''}" style="${m.color ? `background:${m.color}` : ''}" aria-hidden="true">${m.id === 'any'
+            ? '<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="7" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="14" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M2 17c.6-3 2.6-4.6 5-4.6s4.4 1.6 5 4.6M12.5 12.6c2.4-.4 4.6.9 5.3 3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+            : m.name[0]}</span>
+          <span class="row-main"><span class="row-title">${m.name}</span><span class="row-sub">${m.sub}</span><span class="soon">${nearestText(nearest(m.id, dur))}</span></span>${CHECK}
+        </button>`).join('')}</div>`;
+      view.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => {
+        haptic('select');
+        S.master = b.dataset.m; S.start = null;
+        const n = nearest(S.master, dur);
+        S.day = n ? n.day : TODAY;
+        S.step = 3; render();
+      }));
+      setMain(null);
+    }
+
+    if (S.step === 3) {
+      const dur = svc(S.service).dur;
+      const slots = slotsFor(S.master, S.day, dur);
+      const groups = [['Утро', (t) => t < 12 * 60], ['День', (t) => t >= 12 * 60 && t < 17 * 60], ['Вечер', (t) => t >= 17 * 60]];
+      view.innerHTML = stepHead() + `
+        <div class="days" role="group" aria-label="День">${DAYS.map((k) => {
+          const d = dateOf(k), has = slotsFor(S.master, k, dur).length > 0;
+          return `<button type="button" class="day" data-day="${k}" aria-pressed="${k === S.day}" ${has ? '' : 'disabled'} aria-label="${dayLabel(k)}"><small>${k === TODAY ? 'Сег' : WD[d.getDay()]}</small><b>${d.getDate()}</b></button>`;
+        }).join('')}</div>
+        ${slots.length ? groups.map(([name, f]) => {
+          const g = slots.filter(f);
+          return g.length ? `<p class="caption">${name}</p><div class="slots">${g.map((t) => `<button type="button" class="slot" data-t="${t}" aria-pressed="${t === S.start}">${hm(t)}</button>`).join('')}</div>` : '';
+        }).join('') : '<p class="caption">Время</p><div class="empty-slots">На этот день свободного времени нет — выберите другой.</div>'}
+        <p class="fine">${svc(S.service).name}, ${dur} мин${S.master !== 'any' ? ` · мастер ${mst(S.master).name}` : ''}</p>`;
+      view.querySelectorAll('[data-day]').forEach((b) => b.addEventListener('click', () => { haptic('select'); S.day = b.dataset.day; S.start = null; render(); }));
+      view.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => { haptic('select'); S.start = Number(b.dataset.t); render(); }));
+      const sel = view.querySelector('.day[aria-pressed="true"]');
+      if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'center' });
+      setMain(S.start == null ? 'Выберите время' : `Дальше · ${hm(S.start)}`, () => { S.step = 4; render(); }, S.start != null);
+    }
+
+    if (S.step === 4) {
+      const s = svc(S.service);
+      const m = freeMasterAt(S.master, S.day, S.start, s.dur);
+      if (!m) { S.step = 3; S.start = null; return render(); }
+      const f = S.form, e = S.errors;
+      view.innerHTML = stepHead() + `
+        <div class="list summary">
+          <div class="row"><span class="row-main"><span class="row-sub">Услуга</span><span class="row-title">${s.name}</span></span><span class="row-side"><span>${s.dur} мин</span></span></div>
+          <div class="row has-ava"><span class="ava" style="background:${m.color}" aria-hidden="true">${m.name[0]}</span><span class="row-main"><span class="row-sub">Мастер${S.master === 'any' ? ' (подобрали свободного)' : ''}</span><span class="row-title">${m.name}</span></span></div>
+          <div class="row"><span class="row-main"><span class="row-sub">Когда</span><span class="row-title">${dayLabel(S.day)}, ${hm(S.start)}–${hm(S.start + s.dur)}</span></span></div>
+          <div class="row total"><span class="row-main"><span class="row-title">К оплате в барбершопе</span></span><span class="row-side"><b>${rub(s.price)}</b></span></div>
+        </div>
+        <p class="caption">Контакты</p>
+        <div class="list">
+          <label class="field ${e.name ? 'bad' : ''}"><span>Имя</span><input id="f-name" autocomplete="given-name" placeholder="Как к вам обращаться" value="${esc(f.name)}"></label>
+          <label class="field ${e.phone ? 'bad' : ''}"><span>Телефон</span><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67" value="${esc(f.phone)}"></label>
+          <label class="field"><span>Пожелания мастеру</span><input id="f-comment" placeholder="Необязательно" value="${esc(f.comment)}"></label>
+        </div>
+        <p class="err" id="f-err">${e.name || e.phone || ''}</p>
+        <p class="fine">Отменить или перенести запись можно в разделе «Мои записи».</p>`;
+      ['name', 'phone', 'comment'].forEach((k) => document.getElementById('f-' + k).addEventListener('input', (ev) => { S.form[k] = ev.target.value; }));
+      setMain(`Записаться · ${rub(s.price)}`, () => submit(m));
+    }
+  }
+
+  function submit(m) {
+    const name = S.form.name.trim(), digits = S.form.phone.replace(/\D/g, '');
+    S.errors = {
+      name: name.length < 2 ? 'Напишите имя, чтобы мастер знал, кого ждать.' : '',
+      phone: digits.length < 10 || digits.length > 11 ? 'Нужен телефон из 10–11 цифр, например +7 900 123-45-67.' : '',
+    };
+    if (S.errors.name || S.errors.phone) {
+      haptic('error');
+      render();
+      document.getElementById(S.errors.name ? 'f-name' : 'f-phone').focus();
+      return;
+    }
+    const b = { id: Date.now().toString(36), service: S.service, master: m.id, date: S.day, start: S.start, name, phone: S.form.phone.trim(), comment: S.form.comment.trim() };
+    if (inTG) tg.MainButton.showProgress();
+    setTimeout(() => {
+      if (inTG) tg.MainButton.hideProgress();
+      bookings.push(b);
+      bookings.sort((x, y) => (x.date + pad(x.start)).localeCompare(y.date + pad(y.start)));
+      save();
+      haptic('success');
+      S.last = b; S.step = 5; S.errors = {};
+      render();
+    }, 600);
+  }
+
+  function bookingRows(b) {
+    const s = svc(b.service), m = mst(b.master);
+    return `<div class="list">
+      <div class="row"><span class="row-main"><span class="row-sub">Когда</span><span class="row-title">${dayLabel(b.date)}, ${hm(b.start)}</span></span></div>
+      <div class="row has-ava"><span class="ava" style="background:${m.color}" aria-hidden="true">${m.name[0]}</span><span class="row-main"><span class="row-title">${m.name}</span><span class="row-sub">${s.name}, ${s.dur} мин</span></span><span class="row-side"><b>${rub(s.price)}</b></span></div>
+    </div>`;
+  }
+
+  function renderDone() {
+    setBack(null);
+    view.innerHTML = `<div class="done">
+      <div class="done-ico" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 22 22"><path d="m5 11.5 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h1>Вы записаны</h1>
+      <p>Ждём вас, ${esc(S.last.name)}! Если планы поменяются, отмените запись заранее.</p>
+      ${bookingRows(S.last)}
+      <p class="fine" style="text-align:left">Это демо. В настоящем проекте бот прислал бы напоминание за 2 часа до визита, а мастер получил бы уведомление о новой записи.</p>
+      <div class="actions"><button type="button" class="btn btn-plain" id="to-mine">Мои записи</button></div>
+    </div>`;
+    document.getElementById('to-mine').addEventListener('click', () => { S.tab = 'mine'; reset(); render(); });
+    setMain('Записаться ещё', () => { reset(); render(); });
+  }
+
+  function reset() { S.step = 1; S.service = null; S.master = null; S.day = null; S.start = null; S.errors = {}; }
+
+  function renderMine() {
+    setBack(null);
+    if (!bookings.length) {
+      view.innerHTML = `<div class="empty">
+        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="10" width="34" height="31" rx="6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M7 19h34M16 6v8M32 6v8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <p>Записей пока нет. Выберите услугу и удобное время — это займёт минуту.</p>
+        <button type="button" class="btn btn-primary" id="go-book" style="padding:0 24px">Записаться</button>
+      </div>`;
+      document.getElementById('go-book').addEventListener('click', () => { S.tab = 'book'; render(); });
+      setMain(null);
+      return;
+    }
+    view.innerHTML = bookings.map((b) => {
+      const s = svc(b.service), m = mst(b.master);
+      const foot = S.cancelId === b.id
+        ? `<div class="confirm"><span>Отменить?</span><button type="button" class="mini mini-danger" data-yes="${b.id}">Да, отменить</button><button type="button" class="mini mini-plain" data-no>Нет</button></div>`
+        : `<button type="button" class="link-danger" data-cancel="${b.id}">Отменить запись</button>`;
+      return `<article class="card">
+        <div class="card-when">${dayLabel(b.date)}, ${hm(b.start)}</div>
+        <div class="card-what">${s.name}</div>
+        <div class="card-who">Мастер ${m.name} · ${s.dur} мин</div>
+        <div class="card-foot">${foot}<b>${rub(s.price)}</b></div>
+      </article>`;
+    }).join('');
+    view.querySelectorAll('[data-cancel]').forEach((b) => b.addEventListener('click', () => { haptic('warning'); S.cancelId = b.dataset.cancel; render(); }));
+    view.querySelectorAll('[data-yes]').forEach((b) => b.addEventListener('click', () => {
+      bookings = bookings.filter((x) => x.id !== b.dataset.yes); save(); S.cancelId = null; haptic('success'); render();
+    }));
+    view.querySelectorAll('[data-no]').forEach((b) => b.addEventListener('click', () => { S.cancelId = null; render(); }));
+    setMain('Новая запись', () => { S.tab = 'book'; reset(); render(); });
+  }
+
+  function renderMaster() {
+    setBack(null);
+    setMain(null);
+    const { master, day } = S.mView;
+    const items = busyFor(master, day).sort((a, b) => a.start - b.start);
+    const load = Math.round(items.reduce((sum, x) => sum + x.dur, 0) / (CLOSE - OPEN) * 100);
+    const H = 56, px = (min) => (min - OPEN) / 60 * H;
+    const hours = []; for (let h = OPEN / 60; h < CLOSE / 60; h++) hours.push(h);
+    const n = nowMin();
+    view.innerHTML = `
+      <div class="chips" role="group" aria-label="Мастер">${MASTERS.map((m) => `<button type="button" class="chip" data-mm="${m.id}" aria-pressed="${m.id === master}">${m.name}</button>`).join('')}</div>
+      <div class="days" role="group" aria-label="День">${DAYS.slice(0, 7).map((k) => { const d = dateOf(k); return `<button type="button" class="day" data-md="${k}" aria-pressed="${k === day}" aria-label="${dayLabel(k)}"><small>${k === TODAY ? 'Сег' : WD[d.getDay()]}</small><b>${d.getDate()}</b></button>`; }).join('')}</div>
+      <p class="daystat">${items.length} ${plural(items.length, 'запись', 'записи', 'записей')} · загрузка ${load}% · так мастер видит свой день</p>
+      <div class="timeline">
+        ${hours.map((h) => `<div class="hour"><span>${h}:00</span></div>`).join('')}
+        <div class="blocks">
+          ${items.map((x) => `<div class="block ${x.mine ? 'mine' : ''}" style="top:${px(x.start) + 1}px;height:${x.dur / 60 * H - 3}px">
+            <b>${hm(x.start)}–${hm(x.start + x.dur)}</b> ${x.mine ? esc(x.name) + ' (ваша запись)' : x.client}<br><span>${svc(x.service).name}</span></div>`).join('')}
+          ${day === TODAY && n > OPEN && n < CLOSE ? `<div class="now-line" style="top:${px(n)}px" aria-hidden="true"></div>` : ''}
+        </div>
+      </div>
+      <p class="fine">Клиенты в расписании вымышлены. Ваши записи выделены цветом.</p>`;
+    view.querySelectorAll('[data-mm]').forEach((b) => b.addEventListener('click', () => { haptic('select'); S.mView.master = b.dataset.mm; render(); }));
+    view.querySelectorAll('[data-md]').forEach((b) => b.addEventListener('click', () => { haptic('select'); S.mView.day = b.dataset.md; render(); }));
+  }
+
+  document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+    if (S.tab === b.dataset.tab) return;
+    haptic('select');
+    S.tab = b.dataset.tab; S.cancelId = null;
+    if (S.tab === 'book' && S.step === 5) reset();
+    render();
+  }));
+
+  render();
+})();
+</script>
+</body>
+</html>
