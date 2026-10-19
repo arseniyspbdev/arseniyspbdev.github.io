@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кофейня «Кафель»</title>
+<meta name="description" content="Демо-лендинг кофейни «Кафель»: бронь столика прямо на плане зала.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cobalt: #1a3aa8;
+    --cobalt-deep: #0f2470;
+    --ink: #0c1a4f;
+    --ink-soft: #3c4a80;
+    --on-cobalt: #d5ddff;
+    --tile: #f5f7fc;
+    --grout: #cfd7ee;
+    --yolk: #ffc93c;
+    --yolk-soft: #ffe9a8;
+    --mint: #86d4bd;
+    --mint-ground: #e3f4ee;
+    --taken: #9aa6d6;
+    --error: #b3261e;
+    --shadow: 0 24px 48px -24px rgba(5, 12, 45, .6);
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scrollbar-color: var(--cobalt) var(--tile); }
+  body {
+    margin: 0;
+    background: var(--tile);
+    color: var(--ink);
+    font: 400 1.0625rem/1.55 'Golos Text', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--yolk); color: var(--ink); }
+  :focus-visible { outline: 3px solid var(--yolk); outline-offset: 3px; border-radius: 4px; }
+  img, svg { display: block; }
+
+  h1, h2, h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .wrap {
+    max-width: 1280px; margin: 0 auto;
+    padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px));
+    padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px));
+  }
+
+  /* ---------- Кобальтовая плитка ---------- */
+  .glaze {
+    background-color: var(--cobalt);
+    background-image:
+      linear-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, .07) 1px, transparent 1px);
+    background-size: 48px 48px;
+    color: #fff;
+  }
+
+  .demo-bar {
+    background: var(--yolk);
+    color: var(--ink);
+    font-size: .8125rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 6px 16px;
+  }
+
+  /* ---------- Шапка ---------- */
+  .site-header { display: flex; align-items: center; gap: 32px; padding-block: 18px; }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    color: #fff; text-decoration: none;
+    font: 700 1.25rem 'Unbounded', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .site-header nav { display: flex; gap: 28px; margin-left: auto; }
+  .site-header nav a {
+    color: var(--on-cobalt); text-decoration: none; font-weight: 500;
+    text-underline-offset: 6px; transition: color .2s;
+  }
+  .site-header nav a:hover { color: #fff; text-decoration: underline; text-decoration-thickness: 2px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 22px;
+    border: 0; border-radius: 6px;
+    font: 600 1rem 'Golos Text', sans-serif;
+    text-decoration: none; cursor: pointer;
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease), background-color .2s;
+  }
+  .btn-yolk { background: var(--yolk); color: var(--ink); }
+  .btn-yolk:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -10px rgba(5, 12, 45, .55); }
+  .btn-cobalt { background: var(--cobalt); color: #fff; }
+  .btn-cobalt:hover { background: var(--cobalt-deep); }
+  .btn:disabled { opacity: .7; cursor: progress; transform: none; box-shadow: none; }
+  .link-btn {
+    background: none; border: 0; padding: 6px 0; cursor: pointer;
+    font: 500 .9375rem 'Golos Text', sans-serif; color: var(--cobalt);
+    text-decoration: underline; text-underline-offset: 4px;
+  }
+  .link-btn:hover { color: var(--cobalt-deep); }
+
+  /* ---------- Первый экран ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "text plan" "panel plan";
+    grid-template-rows: auto 1fr;
+    column-gap: clamp(24px, 4vw, 64px);
+    row-gap: 28px;
+    padding-block: clamp(20px, 3vw, 40px) clamp(56px, 7vw, 96px);
+    align-items: start;
+  }
+  .hero-text { grid-area: text; }
+  .hero h1 { font-size: clamp(2.1rem, 1rem + 3vw, 3.5rem); }
+  .lead { margin: 18px 0 0; max-width: 40ch; font-size: 1.125rem; color: var(--on-cobalt); }
+
+  /* Панель брони */
+  .panel {
+    grid-area: panel;
+    background: #fff; color: var(--ink);
+    border-radius: 10px;
+    padding: clamp(18px, 2.2vw, 26px);
+    box-shadow: var(--shadow);
+    scroll-margin-top: 16px;
+  }
+  .step { animation: step-in .4s var(--ease); }
+  .step[hidden] { display: none; }
+  @keyframes step-in { from { opacity: .35; transform: translateY(6px); } }
+
+  fieldset { border: 0; margin: 0 0 18px; padding: 0; min-width: 0; }
+  legend, .label { display: block; padding: 0; margin-bottom: 8px; font-weight: 600; font-size: .875rem; color: var(--ink-soft); }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chips-date { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 2px; margin: -2px; }
+  .chips-date::-webkit-scrollbar { display: none; }
+  .chips-time { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); }
+  .chip {
+    min-height: 44px; min-width: 56px; padding: 6px 8px;
+    border: 1.5px solid var(--grout); border-radius: 6px;
+    background: var(--tile); color: var(--ink);
+    font: 500 .9375rem 'Golos Text', sans-serif;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .chip:hover:not(:disabled) { border-color: var(--cobalt); }
+  .chip[aria-pressed="true"] { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+  .chip:disabled { background: transparent; border-style: dashed; color: #9aa3c2; cursor: not-allowed; }
+  .chip-date { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1 1 0; min-width: 52px; padding-inline: 4px; line-height: 1.1; }
+  .chip-sm { font-size: .75rem; }
+  .chip-lg { margin-top: 3px; font: 500 1.05rem 'Unbounded', sans-serif; }
+
+  .guests { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .guests .label { margin: 0; }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button {
+    width: 44px; height: 44px; display: grid; place-items: center;
+    border: 1.5px solid var(--grout); border-radius: 6px; background: var(--tile);
+    color: var(--ink); cursor: pointer; transition: border-color .15s;
+  }
+  .stepper button:hover:not(:disabled) { border-color: var(--cobalt); }
+  .stepper button:disabled { opacity: .4; cursor: not-allowed; }
+  .stepper output { min-width: 2.4ch; text-align: center; font: 500 1.25rem 'Unbounded', sans-serif; font-variant-numeric: tabular-nums; }
+
+  .hint {
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--grout);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .hint p { margin: 0; }
+
+  .summary { background: var(--yolk-soft); border-radius: 6px; padding: 14px 16px; margin-bottom: 18px; }
+  .summary-title { margin: 0; font: 700 1.05rem/1.25 'Unbounded', sans-serif; letter-spacing: -0.01em; }
+  .summary p { margin: 4px 0 0; }
+  .summary .link-btn { margin-top: 4px; }
+
+  .field { display: block; margin-bottom: 14px; }
+  .field input {
+    display: block; width: 100%; min-height: 48px; margin-top: 6px; padding: 0 14px;
+    border: 1.5px solid var(--grout); border-radius: 6px; background: #fff;
+    font: inherit; color: var(--ink); caret-color: var(--cobalt);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input::placeholder { color: #6b77a8; }
+  .field input:focus { outline: none; border-color: var(--cobalt); box-shadow: 0 0 0 3px rgba(26, 58, 168, .18); }
+  .field input[aria-invalid="true"] { border-color: var(--error); }
+  .err { margin: 6px 0 0; color: var(--error); font-size: .875rem; }
+  .err:empty { display: none; }
+  .form-actions .btn { width: 100%; }
+  .form-actions .link-btn { margin-top: 8px; }
+
+  .done-title { font-size: 1.5rem; outline: none; }
+  .done p { margin: 10px 0 0; }
+  .demo-note { padding: 12px 14px; border-radius: 6px; background: var(--tile); color: var(--ink-soft); font-size: .9375rem; }
+  .done .btn { margin-top: 18px; }
+
+  /* План зала */
+  .plan-wrap {
+    grid-area: plan;
+    background: var(--tile); color: var(--ink);
+    border-radius: 10px;
+    padding: clamp(10px, 1.4vw, 16px);
+    box-shadow: var(--shadow);
+  }
+  .plan-wrap svg { width: 100%; height: auto; touch-action: manipulation; }
+  .plan-foot { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px 20px; flex-wrap: wrap; padding: 12px 4px 2px; font-size: .9375rem; }
+  .plan-foot p { margin: 0; }
+  .availability { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .plan-notice { color: var(--error); font-weight: 500; flex-basis: 100%; }
+  .plan-notice:empty { display: none; }
+  .legend { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px 16px; flex-wrap: wrap; color: var(--ink-soft); font-size: .875rem; }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .legend svg { width: 14px; height: 14px; }
+
+  .tile { fill: var(--tile); stroke: var(--grout); stroke-width: .35; }
+  .tile.ripple { animation: ripple 1.1s var(--ease) both; animation-delay: var(--d); }
+  @keyframes ripple { 0% { fill: var(--tile); } 22% { fill: var(--yolk-soft); } 100% { fill: var(--tile); } }
+  .wall { fill: none; stroke: var(--cobalt-deep); stroke-width: 2; stroke-linecap: square; }
+  .window { fill: #bfe0ff; stroke: var(--cobalt-deep); stroke-width: .4; }
+  .bar { fill: var(--cobalt); }
+  .machine { fill: var(--yolk); }
+  .bar-label { fill: #fff; font: 700 3.6px 'Unbounded', sans-serif; letter-spacing: .3px; }
+  .plan-label { fill: var(--ink-soft); font: 500 3px 'Golos Text', sans-serif; }
+  .entry { fill: none; stroke: var(--ink-soft); stroke-width: .6; stroke-linecap: round; stroke-linejoin: round; }
+
+  .table { cursor: pointer; outline: none; }
+  .table .top { fill: #fff; stroke: var(--cobalt-deep); stroke-width: .7; transition: fill .2s; }
+  .table .chair { fill: var(--cobalt); transition: fill .2s; }
+  .table .num { fill: var(--ink); font: 700 4px 'Unbounded', sans-serif; text-anchor: middle; pointer-events: none; }
+  .table .ring { fill: transparent; stroke: var(--ink); stroke-width: .7; stroke-dasharray: 2 1.2; opacity: 0; }
+  .table:hover .top { fill: var(--yolk-soft); }
+  .table:focus-visible .ring { opacity: 1; }
+  .table.is-selected .top { fill: var(--yolk); }
+  .table.is-selected .chair { fill: var(--cobalt-deep); }
+  .table.is-taken, .table.is-small { cursor: not-allowed; }
+  .table.is-taken .top, .table.is-taken:hover .top { fill: url(#hatch); stroke: var(--taken); }
+  .table.is-taken .chair { fill: var(--taken); }
+  .table.is-taken .num { fill: #4f5c96; }
+  .table.is-small { opacity: .4; }
+  .table.is-small:hover .top { fill: #fff; }
+
+  /* ---------- Меню ---------- */
+  .section { padding-block: clamp(64px, 9vw, 120px); }
+  .section h2 { font-size: clamp(2rem, 1.2rem + 2.6vw, 3.25rem); }
+  .section-head {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .section-head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+
+  .menu-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 40px clamp(32px, 5vw, 80px); }
+  .menu-group h3 { font-size: 1.125rem; font-weight: 500; padding-bottom: 12px; border-bottom: 2px solid var(--cobalt); }
+  .menu-group ul { list-style: none; margin: 0; padding: 0; }
+  .item { padding: 14px 0; border-bottom: 1px solid var(--grout); }
+  .item-row { display: flex; align-items: baseline; gap: 10px; font-weight: 600; font-size: 1.0625rem; }
+  .dots { flex: 1; min-width: 24px; border-bottom: 1.5px dotted var(--taken); transform: translateY(-4px); }
+  .price { font: 500 .95rem 'Unbounded', sans-serif; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .item p { margin: 4px 0 0; max-width: 44ch; color: var(--ink-soft); font-size: .9375rem; }
+  .menu-note { margin: 28px 0 0; color: var(--ink-soft); font-size: .875rem; }
+
+  /* ---------- О зале ---------- */
+  .hall { background: var(--mint-ground); }
+  .hall-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px clamp(32px, 6vw, 96px); align-items: center; }
+  .mosaic {
+    display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px;
+    max-width: 460px; padding: 3px; border-radius: 8px;
+    background: #b6dacb; box-shadow: 0 24px 48px -28px rgba(5, 40, 30, .5);
+  }
+  .mosaic span { aspect-ratio: 1; border-radius: 2px; background: var(--tile); }
+  .mosaic .c { background: var(--cobalt); }
+  .mosaic .m { background: var(--mint); }
+  .mosaic .y { background: var(--yolk); }
+  .hall-text h2 { margin-bottom: 24px; }
+  .hall-text p { margin: 0 0 16px; max-width: 56ch; }
+  .hall-text p:last-child { margin-bottom: 0; }
+
+  /* ---------- Контакты ---------- */
+  .contacts-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px clamp(24px, 4vw, 64px); align-items: start; }
+  .contacts h2 { margin-bottom: 20px; }
+  .contacts .lead { margin: 0 0 28px; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin: 0; }
+  .facts div { padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .25); }
+  .facts dt { color: var(--on-cobalt); font-size: .875rem; font-weight: 500; margin-bottom: 6px; }
+  .facts dd { margin: 0; font-size: 1.125rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .facts small { display: block; color: var(--on-cobalt); font-size: .8125rem; font-weight: 400; margin-top: 2px; }
+
+  .site-footer { background: var(--ink); color: #c4cdf2; font-size: .875rem; padding-block: 28px; }
+  .site-footer p { margin: 0; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "panel" "plan"; grid-template-rows: auto; }
+    .section-head, .hall-grid, .contacts-grid { grid-template-columns: minmax(0, 1fr); }
+    .menu-groups { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .site-header nav { display: none; }
+    .site-header { justify-content: space-between; }
+    .site-header .btn { min-height: 44px; padding: 0 16px; }
+    .facts { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-bar" id="top">Демо-проект для портфолио: кофейня, адрес и цены вымышлены, бронь никуда не отправляется.</div>
+
+<div class="glaze">
+  <header class="site-header wrap">
+    <a class="logo" href="#top" aria-label="Кафель — наверх">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="0" y="0" width="12" height="12" rx="2" fill="#fff"/>
+        <rect x="14" y="0" width="12" height="12" rx="2" fill="#fff"/>
+        <rect x="0" y="14" width="12" height="12" rx="2" fill="#fff"/>
+        <rect x="14" y="14" width="12" height="12" rx="2" fill="#ffc93c"/>
+      </svg>
+      <span>Кафель</span>
+    </a>
+    <nav aria-label="Разделы">
+      <a href="#menu">Меню</a>
+      <a href="#hall">О зале</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="btn btn-yolk" href="#booking">Забронировать</a>
+  </header>
+
+  <main>
+    <section class="hero wrap" id="booking" aria-labelledby="hero-title">
+      <div class="hero-text">
+        <h1 id="hero-title">Кофе на&nbsp;старом кафеле</h1>
+        <p class="lead">Кофейня в бывшей молочной 1964 года. Выберите стол прямо на плане зала, и мы придержим его к вашему приходу.</p>
+      </div>
+
+      <div class="panel" id="panel">
+        <div class="step" id="step-pick">
+          <fieldset>
+            <legend>Когда</legend>
+            <div class="chips chips-date" id="dates"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Во сколько</legend>
+            <div class="chips chips-time" id="times"></div>
+          </fieldset>
+          <div class="guests">
+            <span class="label" id="guests-label">Сколько вас</span>
+            <div class="stepper" role="group" aria-labelledby="guests-label">
+              <button type="button" id="minus" aria-label="Меньше гостей">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+              <output id="guests" aria-live="polite">2</output>
+              <button type="button" id="plus" aria-label="Больше гостей">
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="hint" id="hint" aria-live="polite"></div>
+        </div>
+
+        <form class="step" id="step-form" hidden novalidate>
+          <div class="summary" id="summary"></div>
+          <label class="field">
+            <span class="label">Как вас зовут</span>
+            <input id="name" name="name" autocomplete="given-name" placeholder="Например, Аня" aria-describedby="name-err">
+            <p class="err" id="name-err" aria-live="polite"></p>
+          </label>
+          <label class="field">
+            <span class="label">Телефон</span>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67" aria-describedby="phone-err">
+            <p class="err" id="phone-err" aria-live="polite"></p>
+          </label>
+          <div class="form-actions">
+            <button class="btn btn-yolk" type="submit" id="submit">Забронировать стол</button>
+          </div>
+        </form>
+
+        <div class="step done" id="step-done" hidden></div>
+      </div>
+
+      <div class="plan-wrap">
+        <svg id="plan" viewBox="0 0 120 80" role="group" aria-label="План зала: семь столов, выберите свободный">
+          <defs>
+            <pattern id="hatch" width="2" height="2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="2" height="2" fill="#e6eaf6"/>
+              <rect width=".8" height="2" fill="#9aa6d6"/>
+            </pattern>
+          </defs>
+          <g id="tiles"></g>
+          <rect class="window" x="6" y=".6" width="20" height="2.2"/>
+          <rect class="window" x="30" y=".6" width="20" height="2.2"/>
+          <rect class="window" x="54" y=".6" width="20" height="2.2"/>
+          <rect class="bar" x="97" y="4" width="21" height="52" rx="1"/>
+          <rect class="machine" x="101" y="8" width="13" height="7" rx="1"/>
+          <text class="bar-label" x="107.5" y="35" text-anchor="middle">БАР</text>
+          <path class="wall" d="M44 79H1V1h118v78H62"/>
+          <path class="entry" d="M53 73.2v-4.4m-1.8 1.8l1.8-1.8 1.8 1.8"/>
+          <text class="plan-label" x="53" y="77.2" text-anchor="middle">вход</text>
+          <g id="tables"></g>
+        </svg>
+        <div class="plan-foot">
+          <p class="availability" id="availability" aria-live="polite"></p>
+          <ul class="legend" aria-label="Обозначения">
+            <li><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" fill="#fff" stroke="#0f2470" stroke-width="1.4"/></svg>свободен</li>
+            <li><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" fill="url(#hatch-legend)" stroke="#9aa6d6" stroke-width="1.4"/><defs><pattern id="hatch-legend" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#e6eaf6"/><rect width="1.6" height="4" fill="#9aa6d6"/></pattern></defs></svg>занят</li>
+            <li><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="1" width="12" height="12" rx="2" fill="#ffc93c" stroke="#0f2470" stroke-width="1.4"/></svg>ваш стол</li>
+          </ul>
+          <p class="plan-notice" id="plan-notice" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<section class="section" id="menu" aria-labelledby="menu-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="menu-title">Меню</h2>
+      <p>Короткое меню, которое помещается на одной плитке у кассы. Зерно меняем раз в сезон, сырники жарим с утра и до последнего.</p>
+    </div>
+    <div class="menu-groups">
+      <div class="menu-group">
+        <h3>Кофе</h3>
+        <ul>
+          <li class="item"><div class="item-row"><span>Эспрессо</span><span class="dots"></span><span class="price">150 ₽</span></div><p>30 мл, плотный, с шоколадной горчинкой.</p></li>
+          <li class="item"><div class="item-row"><span>Американо</span><span class="dots"></span><span class="price">180 ₽</span></div><p>Эспрессо и горячая вода, 250 мл.</p></li>
+          <li class="item"><div class="item-row"><span>Капучино</span><span class="dots"></span><span class="price">220 ₽</span></div><p>На цельном молоке или овсяном — без доплаты.</p></li>
+          <li class="item"><div class="item-row"><span>Флэт уайт</span><span class="dots"></span><span class="price">250 ₽</span></div><p>Двойной эспрессо и тонкий слой молока.</p></li>
+          <li class="item"><div class="item-row"><span>Раф «Молочная»</span><span class="dots"></span><span class="price">290 ₽</span></div><p>Сливки, ваниль и щепоть соли — в честь тех, кто был здесь до нас.</p></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <h3>Не только кофе</h3>
+        <ul>
+          <li class="item"><div class="item-row"><span>Какао на молоке</span><span class="dots"></span><span class="price">230 ₽</span></div><p>Густое, как в школьной столовой, только вкуснее.</p></li>
+          <li class="item"><div class="item-row"><span>Чай в чайнике</span><span class="dots"></span><span class="price">200 ₽</span></div><p>Чёрный, зелёный или с чабрецом, 500 мл.</p></li>
+          <li class="item"><div class="item-row"><span>Сырники со сметаной</span><span class="dots"></span><span class="price">320 ₽</span></div><p>Три штуки, жарим на заказ.</p></li>
+          <li class="item"><div class="item-row"><span>Булочка с корицей</span><span class="dots"></span><span class="price">160 ₽</span></div><p>Печём сами, к обеду обычно заканчиваются.</p></li>
+          <li class="item"><div class="item-row"><span>Тост с сыром</span><span class="dots"></span><span class="price">290 ₽</span></div><p>Хлеб на закваске, сыр и томаты.</p></li>
+        </ul>
+      </div>
+    </div>
+    <p class="menu-note">Цены условные: это демо-проект.</p>
+  </div>
+</section>
+
+<section class="section hall" id="hall" aria-labelledby="hall-title">
+  <div class="wrap hall-grid">
+    <div class="mosaic" id="mosaic" aria-hidden="true"></div>
+    <div class="hall-text">
+      <h2 id="hall-title">Почему «Кафель»</h2>
+      <p>До нас здесь была молочная. Под тремя слоями линолеума нашлась плитка 1964 года — мы её отмыли и оставили.</p>
+      <p>Теперь по ней удобно считать: зал — двенадцать плиток в ширину и восемь в глубину, и каждый стол стоит на своих клетках. Поэтому на плане вы бронируете ровно то место, которое увидите, когда придёте.</p>
+      <p>Три стола у окна, большой общий стол для ноутбуков, диван в углу для долгих разговоров и два места у барной стойки — смотреть, как варят кофе.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section glaze contacts" id="contacts" aria-labelledby="contacts-title">
+  <div class="wrap contacts-grid">
+    <div>
+      <h2 id="contacts-title">Как нас найти</h2>
+      <p class="lead">Заходите без брони, если есть свободные столы. С бронью — точно будет где сесть.</p>
+      <a class="btn btn-yolk" href="#booking">Забронировать стол</a>
+    </div>
+    <dl class="facts">
+      <div><dt>Адрес</dt><dd>Кафельный переулок, 7<small>адрес вымышлен</small></dd></div>
+      <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+      <div><dt>Будни</dt><dd>8:00–22:00</dd></div>
+      <div><dt>Выходные</dt><dd>9:00–23:00</dd></div>
+    </dl>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>«Кафель» — демо-проект для портфолио. Кофейня, адрес и цены вымышлены.</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const $ = (s) => document.querySelector(s);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isNarrow = () => matchMedia('(max-width: 900px)').matches;
+
+  const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const WD_FULL = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+  const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+
+  const plural = (n, one, few, many) => {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  };
+  const guestsText = (n) => `${n} ${plural(n, 'гость', 'гостя', 'гостей')}`;
+  const seatsText = (n) => `${n} ${plural(n, 'место', 'места', 'мест')}`;
+
+  // Столы стоят на сетке плитки 12×8, одна плитка = 10 единиц
+  const TABLES = [
+    { id: 1, name: 'у окна', seats: 2, cx: 16, cy: 17, top: { t: 'circle', r: 5 }, chairs: [[7.5, 17, 'v'], [24.5, 17, 'v']] },
+    { id: 2, name: 'у окна', seats: 2, cx: 40, cy: 17, top: { t: 'circle', r: 5 }, chairs: [[31.5, 17, 'v'], [48.5, 17, 'v']] },
+    { id: 3, name: 'у окна', seats: 2, cx: 64, cy: 17, top: { t: 'circle', r: 5 }, chairs: [[55.5, 17, 'v'], [72.5, 17, 'v']] },
+    { id: 4, name: 'большой общий стол', seats: 8, cx: 45, cy: 40, top: { t: 'rect', x: 22, y: 34, w: 46, h: 12 },
+      chairs: [[28, 30.5, 'h'], [39, 30.5, 'h'], [51, 30.5, 'h'], [62, 30.5, 'h'], [28, 49.5, 'h'], [39, 49.5, 'h'], [51, 49.5, 'h'], [62, 49.5, 'h']] },
+    { id: 5, name: 'диван в углу', seats: 4, cx: 20, cy: 62, top: { t: 'rect', x: 13, y: 57, w: 14, h: 10 }, sofa: true, chairs: [[30.5, 62, 'v']] },
+    { id: 6, name: 'круглый у бара', seats: 4, cx: 82, cy: 62, top: { t: 'circle', r: 6 }, chairs: [[82, 52.5, 'h'], [82, 71.5, 'h'], [72.5, 62, 'v'], [91.5, 62, 'v']] },
+    { id: 7, name: 'у барной стойки', seats: 2, cx: 94, cy: 26, top: { t: 'rect', x: 91, y: 14, w: 6, h: 24 }, stools: [[86.5, 20], [86.5, 32]] },
+  ];
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return d;
+  });
+  const hoursFor = (d) => (d.getDay() === 0 || d.getDay() === 6) ? [9, 23] : [8, 22];
+  const slotsFor = (i) => {
+    const [open, close] = hoursFor(days[i]);
+    const nowH = new Date().getHours();
+    const out = [];
+    for (let h = open; h < close; h++) out.push({ h, past: i === 0 && h <= nowH });
+    return out;
+  };
+  const dayShort = (i) => i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : WD[days[i].getDay()];
+  const dayLong = (i) => {
+    const d = days[i];
+    const head = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : WD_FULL[d.getDay()];
+    return `${head}, ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  };
+
+  const state = { dateIdx: 0, hour: null, guests: 2, table: null, step: 'pick', notice: '', done: null, tried: false };
+  const booked = new Set();
+
+  // Демо-занятость: стабильная для одной даты и часа
+  const hash = (s) => { let h = 2166136261; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const slotKey = (id) => `${days[state.dateIdx].toDateString()}|${state.hour}|${id}`;
+  const isTaken = (id) => booked.has(slotKey(id)) || hash(slotKey(id)) % 100 < 34;
+
+  const firstOpen = (i) => slotsFor(i).find((s) => !s.past);
+  const ensureHour = () => {
+    const ok = slotsFor(state.dateIdx).some((s) => !s.past && s.h === state.hour);
+    if (!ok) { const s = firstOpen(state.dateIdx); state.hour = s ? s.h : null; }
+  };
+  if (!firstOpen(0)) state.dateIdx = 1;
+  ensureHour();
+
+  const el = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.append(n);
+    return n;
+  };
+
+  // ---------- План зала ----------
+  const tilesG = $('#tiles'), tablesG = $('#tables');
+  const tiles = [];
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 12; c++) {
+    const t = el('rect', { class: 'tile', x: c * 10, y: r * 10, width: 10, height: 10 }, tilesG);
+    tiles.push({ node: t, cx: c * 10 + 5, cy: r * 10 + 5 });
+  }
+
+  TABLES.forEach((t) => {
+    const g = el('g', { class: 'table', tabindex: '0', role: 'button' }, tablesG);
+    if (t.sofa) el('path', { class: 'chair', d: 'M3 51h6v19.5h22v5.5H3z' }, g);
+    (t.chairs || []).forEach(([x, y, o]) => {
+      const w = o === 'h' ? 5 : 3.5, h = o === 'h' ? 3.5 : 5;
+      el('rect', { class: 'chair', x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 1 }, g);
+    });
+    (t.stools || []).forEach(([x, y]) => el('circle', { class: 'chair', cx: x, cy: y, r: 2.6 }, g));
+    if (t.top.t === 'circle') {
+      el('circle', { class: 'top', cx: t.cx, cy: t.cy, r: t.top.r }, g);
+      el('circle', { class: 'ring', cx: t.cx, cy: t.cy, r: t.top.r + 5.5 }, g);
+    } else {
+      const { x, y, w, h } = t.top;
+      el('rect', { class: 'top', x, y, width: w, height: h, rx: 1.2 }, g);
+      el('rect', { class: 'ring', x: x - 5, y: y - 5, width: w + 10, height: h + 10, rx: 3 }, g);
+    }
+    el('text', { class: 'num', x: t.cx, y: t.cy + 1.45 }, g).textContent = t.id;
+    g.addEventListener('click', () => pick(t));
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(t); }
+    });
+    t.g = g;
+  });
+
+  const ripple = (t) => {
+    if (reduced) return;
+    tiles.forEach(({ node, cx, cy }) => {
+      node.classList.remove('ripple');
+      node.style.setProperty('--d', `${Math.round(Math.hypot(cx - t.cx, cy - t.cy) * 7)}ms`);
+    });
+    void tilesG.getBBox();
+    tiles.forEach(({ node }) => node.classList.add('ripple'));
+  };
+
+  function pick(t) {
+    if (state.step === 'done') { state.step = 'pick'; state.done = null; }
+    if (isTaken(t.id)) {
+      state.notice = `Стол ${t.id} на ${state.hour}:00 уже занят — выберите другой.`;
+      return render();
+    }
+    if (t.seats < state.guests) {
+      state.notice = `За столом ${t.id} только ${seatsText(t.seats)}, а вас ${state.guests}. Выберите стол побольше.`;
+      return render();
+    }
+    state.notice = '';
+    state.table = t.id;
+    state.step = 'form';
+    ripple(t);
+    render();
+    if (isNarrow()) $('#panel').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    else $('#name').focus({ preventScroll: true });
+  }
+
+  // ---------- Отрисовка ----------
+  const datesEl = $('#dates'), timesEl = $('#times');
+
+  function renderDates() {
+    datesEl.replaceChildren(...days.map((d, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip chip-date';
+      b.disabled = !firstOpen(i);
+      b.setAttribute('aria-pressed', String(i === state.dateIdx));
+      b.setAttribute('aria-label', dayLong(i));
+      b.innerHTML = `<span class="chip-sm">${dayShort(i)}</span><span class="chip-lg">${d.getDate()}</span>`;
+      b.addEventListener('click', () => { state.dateIdx = i; ensureHour(); state.notice = ''; render(); });
+      return b;
+    }));
+  }
+
+  function renderTimes() {
+    timesEl.replaceChildren(...slotsFor(state.dateIdx).map(({ h, past }) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = `${h}:00`;
+      b.disabled = past;
+      b.setAttribute('aria-pressed', String(h === state.hour));
+      b.addEventListener('click', () => { state.hour = h; state.notice = ''; render(); });
+      return b;
+    }));
+  }
+
+  function renderPlan() {
+    let free = 0;
+    TABLES.forEach((t) => {
+      const taken = isTaken(t.id), small = t.seats < state.guests;
+      if (state.table === t.id && (taken || small)) {
+        state.notice = taken
+          ? `Стол ${t.id} на это время уже занят — выберите другой.`
+          : `За столом ${t.id} не поместятся ${guestsText(state.guests)} — выберите стол побольше.`;
+        state.table = null;
+        if (state.step === 'form') state.step = 'pick';
+      }
+      if (!taken && !small) free++;
+      const sel = state.table === t.id;
+      t.g.classList.toggle('is-taken', taken);
+      t.g.classList.toggle('is-small', !taken && small);
+      t.g.classList.toggle('is-selected', sel);
+      t.g.setAttribute('aria-pressed', String(sel));
+      t.g.setAttribute('aria-disabled', String(taken || small));
+      const status = sel ? 'выбран' : taken ? 'занят' : small ? 'мало мест' : 'свободен';
+      t.g.setAttribute('aria-label', `Стол ${t.id}, ${t.name}, ${seatsText(t.seats)}, ${status}`);
+    });
+    $('#availability').textContent =
+      `Свободно ${free} из ${TABLES.length} · ${dayShort(state.dateIdx).toLowerCase()}, ${state.hour}:00 · ${guestsText(state.guests)}`;
+    $('#plan-notice').textContent = state.notice;
+  }
+
+  function renderGuests() {
+    $('#guests').textContent = state.guests;
+    $('#minus').disabled = state.guests <= 1;
+    $('#plus').disabled = state.guests >= 8;
+  }
+
+  function renderStep() {
+    $('#step-pick').hidden = state.step !== 'pick';
+    $('#step-form').hidden = state.step !== 'form';
+    $('#step-done').hidden = state.step !== 'done';
+
+    const hint = $('#hint');
+    const t = TABLES.find((x) => x.id === state.table);
+    if (state.step === 'pick') {
+      if (t) {
+        hint.innerHTML = `<p>Выбран стол ${t.id} — ${t.name}.</p><button type="button" class="btn btn-cobalt" id="go">Продолжить</button>`;
+        $('#go').addEventListener('click', () => { state.step = 'form'; render(); $('#name').focus(); });
+      } else {
+        hint.innerHTML = '<p>Теперь выберите свободный стол на плане.</p>';
+      }
+    }
+    if (state.step === 'form' && t) {
+      $('#summary').innerHTML =
+        `<p class="summary-title">Стол ${t.id} — ${t.name}</p>` +
+        `<p>${dayLong(state.dateIdx)}, ${state.hour}:00 · ${guestsText(state.guests)}</p>` +
+        `<button type="button" class="link-btn" id="change">Изменить дату, время или гостей</button>`;
+      $('#change').addEventListener('click', () => { state.step = 'pick'; render(); });
+    }
+  }
+
+  function render() {
+    renderDates();
+    renderTimes();
+    renderGuests();
+    renderPlan();
+    renderStep();
+  }
+
+  $('#minus').addEventListener('click', () => { state.guests = Math.max(1, state.guests - 1); state.notice = ''; render(); });
+  $('#plus').addEventListener('click', () => { state.guests = Math.min(8, state.guests + 1); state.notice = ''; render(); });
+
+  // ---------- Форма ----------
+  const nameI = $('#name'), phoneI = $('#phone');
+  const setErr = (input, errEl, msg) => {
+    input.setAttribute('aria-invalid', String(Boolean(msg)));
+    errEl.textContent = msg;
+  };
+  function validate() {
+    const name = nameI.value.trim();
+    const digits = phoneI.value.replace(/\D/g, '');
+    const nameMsg = name.length < 2 ? 'Напишите имя, чтобы мы знали, кого ждать.' : '';
+    const phoneMsg = digits.length < 10 || digits.length > 11
+      ? 'Нужен номер из 10–11 цифр, например +7 900 123-45-67.' : '';
+    setErr(nameI, $('#name-err'), nameMsg);
+    setErr(phoneI, $('#phone-err'), phoneMsg);
+    if (nameMsg) nameI.focus(); else if (phoneMsg) phoneI.focus();
+    return !nameMsg && !phoneMsg;
+  }
+  [nameI, phoneI].forEach((i) => i.addEventListener('input', () => {
+    if (!state.tried) return;
+    const name = nameI.value.trim(), digits = phoneI.value.replace(/\D/g, '');
+    if (i === nameI && name.length >= 2) setErr(nameI, $('#name-err'), '');
+    if (i === phoneI && digits.length >= 10 && digits.length <= 11) setErr(phoneI, $('#phone-err'), '');
+  }));
+
+  $('#step-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    state.tried = true;
+    if (!validate()) return;
+    const btn = $('#submit');
+    btn.disabled = true;
+    btn.textContent = 'Бронируем…';
+    setTimeout(() => {
+      const t = TABLES.find((x) => x.id === state.table);
+      booked.add(slotKey(t.id));
+      state.done = { t, when: `${dayLong(state.dateIdx)}, ${state.hour}:00`, guests: state.guests, name: nameI.value.trim() };
+      state.table = null;
+      state.step = 'done';
+      state.tried = false;
+      btn.disabled = false;
+      btn.textContent = 'Забронировать стол';
+      $('#step-form').reset();
+      renderDone();
+      render();
+      $('#done-title').focus();
+    }, 700);
+  });
+
+  const escape = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function renderDone() {
+    const d = state.done;
+    $('#step-done').innerHTML =
+      `<h2 class="done-title" id="done-title" tabindex="-1">Стол ${d.t.id} ваш</h2>` +
+      `<p>${d.when} · ${guestsText(d.guests)}. Ждём вас, ${escape(d.name)}! Стол держим 15 минут от начала брони.</p>` +
+      `<p class="demo-note">Это демо: бронь никуда не ушла. В настоящем проекте она пришла бы администратору в Telegram.</p>` +
+      `<button type="button" class="btn btn-cobalt" id="again">Новая бронь</button>`;
+    $('#again').addEventListener('click', () => { state.step = 'pick'; state.done = null; render(); });
+  }
+
+  // ---------- Переходы по разделам ----------
+  // Прокручиваем сами: якоря не везде срабатывают (например, в превью и встроенных окнах)
+  document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+    const target = document.getElementById(a.getAttribute('href').slice(1));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    try { history.replaceState(null, '', a.getAttribute('href')); } catch (_) {}
+  }));
+
+  // ---------- Мозаика-чашка ----------
+  const MOSAIC = [
+    '..............',
+    '.....m...m....',
+    '....m...m.....',
+    '.....m...m....',
+    '..............',
+    '..cccccccccc..',
+    '..cccccccccccc',
+    '..cccccccccc.c',
+    '..cccccccccc.c',
+    '..cccccccccccc',
+    '...cccccccc...',
+    '.yyyyyyyyyyyy.',
+    '..............',
+  ];
+  $('#mosaic').replaceChildren(...MOSAIC.join('').split('').map((ch) => {
+    const s = document.createElement('span');
+    if (ch !== '.') s.className = ch;
+    return s;
+  }));
+
+  render();
+})();
+</script>
+</body>
+</html>
