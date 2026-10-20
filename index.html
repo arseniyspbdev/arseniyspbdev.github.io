@@ -71,11 +71,24 @@
   .hero { border-bottom: 1px solid var(--line); }
   .intro h1 em { font-style: normal; color: var(--ochre); }
   .site-header { position: sticky; top: 0; z-index: 50; padding-block: 12px; }
-  .site-header .bar { display: flex; align-items: center; gap: 28px; padding: 6px 6px 6px 22px; border-radius: 999px; }
-  .name { font: 800 1.25rem var(--display); letter-spacing: -0.03em; text-decoration: none; }
-  .site-header nav { display: flex; gap: 26px; margin-left: auto; }
-  .site-header nav a { text-decoration: none; font-weight: 500; }
-  .site-header nav a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  .site-header .bar { position: relative; display: flex; align-items: center; gap: 20px; padding: 6px; border-radius: 999px; }
+  .name { padding: 8px 16px; border-radius: 999px; font: 800 1.25rem var(--display); letter-spacing: -0.03em; text-decoration: none; }
+  .site-header nav { display: flex; gap: 4px; margin-left: auto; }
+  .site-header nav a { padding: 10px 16px; border-radius: 999px; color: var(--text-soft); text-decoration: none; font-weight: 500; transition: color .3s; }
+  .site-header nav a:hover, .site-header nav a.is-current { color: var(--text); }
+
+  /* Линза из жидкого стекла: лежит поверх текущего пункта меню и перетекает к следующему разделу при прокрутке */
+  .lens {
+    position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 2; pointer-events: none; opacity: 0;
+    border-radius: 999px; border: 1px solid rgba(255, 255, 255, .24);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 60%, rgba(255, 255, 255, .08));
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), inset 0 -1px 2px rgba(255, 255, 255, .12), inset 0 0 12px rgba(255, 255, 255, .06), 0 6px 16px -6px rgba(0, 0, 0, .7);
+    -webkit-backdrop-filter: blur(.5px) saturate(180%) brightness(1.12);
+    backdrop-filter: blur(.5px) saturate(180%) brightness(1.12);
+    transition: transform .6s cubic-bezier(.3, 1.35, .5, 1), width .6s cubic-bezier(.3, 1.35, .5, 1), height .6s, opacity .3s;
+  }
+  .lens.is-on { opacity: 1; }
+  .refract .lens { backdrop-filter: url(#lens-warp) saturate(180%) brightness(1.12); }
   .site-header .btn { min-height: 44px; padding: 0 18px; }
 
   .intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(20px, 3.5vw, 48px) clamp(28px, 3.5vw, 44px); }
@@ -216,17 +229,23 @@
     <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
     <feDisplacementMap in="SourceGraphic" in2="soft" scale="36" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
+  <filter id="lens-warp" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="1" seed="3" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="3" result="soft"/>
+    <feDisplacementMap in="SourceGraphic" in2="soft" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
 </svg>
 
 <header class="site-header wrap">
   <div class="bar glass">
-    <a class="name" href="#top">Арсений</a>
+    <a class="name" href="#top" data-spy="top">Арсений</a>
     <nav aria-label="Разделы">
-      <a href="#works">Работы</a>
-      <a href="#services">Чем помогу</a>
-      <a href="#process">Как работаю</a>
+      <a href="#works" data-spy="works">Работы</a>
+      <a href="#services" data-spy="services">Чем помогу</a>
+      <a href="#process" data-spy="process">Как работаю</a>
     </nav>
-    <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">Написать</a>
+    <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener" data-spy="contact">Написать</a>
+    <span class="lens" aria-hidden="true"></span>
   </div>
 </header>
 
@@ -442,6 +461,32 @@
 
   // Преломление в стекле умеет только Chromium (Chrome, Edge, Opera); остальным — обычное размытие
   if (navigator.userAgentData) document.documentElement.classList.add('refract');
+
+  // Линза в шапке: находим раздел, который сейчас на экране, и переносим линзу на его пункт меню.
+  // Если пункт скрыт (на телефоне меню спрятано), линза встаёт на ближайший видимый пункт выше
+  const lens = document.querySelector('.lens');
+  const spies = [...document.querySelectorAll('[data-spy]')];
+  const sections = spies.map((a) => document.getElementById(a.dataset.spy));
+  let lensQueued = false;
+  const placeLens = () => {
+    lensQueued = false;
+    const line = innerHeight * 0.4;
+    let i = 0;
+    sections.forEach((s, k) => { if (s && s.getBoundingClientRect().top <= line) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) i = sections.length - 1;
+    while (i > 0 && !spies[i].offsetWidth) i--;
+    const a = spies[i];
+    spies.forEach((s) => s.classList.toggle('is-current', s === a));
+    lens.style.width = `${a.offsetWidth}px`;
+    lens.style.height = `${a.offsetHeight}px`;
+    lens.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
+    lens.classList.add('is-on');
+  };
+  const queueLens = () => { if (!lensQueued) { lensQueued = true; requestAnimationFrame(placeLens); } };
+  addEventListener('scroll', queueLens, { passive: true });
+  addEventListener('resize', queueLens);
+  if (document.fonts) document.fonts.ready.then(queueLens);
+  placeLens();
 
   // Пятно за курсором по всему сайту, только где есть мышь
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
