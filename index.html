@@ -79,7 +79,7 @@
 
   /* Линза из жидкого стекла: лежит поверх текущего пункта меню и перетекает к следующему разделу при прокрутке */
   .lens {
-    position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 2; pointer-events: none; opacity: 0;
+    position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 2; opacity: 0; cursor: grab; touch-action: none; user-select: none;
     border-radius: 999px; border: 1px solid rgba(255, 255, 255, .24);
     background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 60%, rgba(255, 255, 255, .08));
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), inset 0 -1px 2px rgba(255, 255, 255, .12), inset 0 0 12px rgba(255, 255, 255, .06), 0 6px 16px -6px rgba(0, 0, 0, .7);
@@ -89,6 +89,8 @@
     transition: transform .6s cubic-bezier(.3, 1.35, .5, 1), width .6s cubic-bezier(.3, 1.35, .5, 1), height .6s, opacity .3s;
   }
   .lens.is-on { opacity: 1; }
+  /* Линзу можно схватить и перетащить: пока тянем, она чуть сплющивается, как капля */
+  .lens.is-dragging { cursor: grabbing; transition: width .3s, height .3s, opacity .3s; background-color: rgba(255, 255, 255, .06); }
   .site-header .btn { min-height: 44px; padding: 0 18px; }
 
   .intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(20px, 3.5vw, 48px) clamp(28px, 3.5vw, 44px); }
@@ -461,26 +463,95 @@
   const lens = document.querySelector('.lens');
   const spies = [...document.querySelectorAll('[data-spy]')];
   const sections = spies.map((a) => document.getElementById(a.dataset.spy));
-  let lensQueued = false;
-  const placeLens = () => {
-    lensQueued = false;
-    const line = innerHeight * 0.4;
-    let i = 0;
-    sections.forEach((s, k) => { if (s && s.getBoundingClientRect().top <= line) i = k; });
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) i = sections.length - 1;
-    while (i > 0 && !spies[i].offsetWidth) i--;
+  let lensQueued = false, lensX = 0, lensI = 0;
+  let lock = -1, lockTimer = 0, drag = null;
+  const visible = (i) => { while (i > 0 && !spies[i].offsetWidth) i--; return i; };
+  const highlight = (i) => spies.forEach((s, k) => s.classList.toggle('is-current', k === i));
+  const moveLensTo = (i) => {
     const a = spies[i];
-    spies.forEach((s) => s.classList.toggle('is-current', s === a));
+    lensI = i;
+    lensX = a.offsetLeft;
+    highlight(i);
     lens.style.width = `${a.offsetWidth}px`;
     lens.style.height = `${a.offsetHeight}px`;
-    lens.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
+    lens.style.transform = `translate(${lensX}px, ${a.offsetTop}px)`;
     lens.classList.add('is-on');
+  };
+  const placeLens = () => {
+    lensQueued = false;
+    if (drag) return;
+    let i = 0;
+    if (lock >= 0) i = lock;
+    else {
+      const line = innerHeight * 0.4;
+      sections.forEach((s, k) => { if (s && s.getBoundingClientRect().top <= line) i = k; });
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) i = sections.length - 1;
+    }
+    moveLensTo(visible(i));
   };
   const queueLens = () => { if (!lensQueued) { lensQueued = true; requestAnimationFrame(placeLens); } };
   addEventListener('scroll', queueLens, { passive: true });
   addEventListener('resize', queueLens);
   if (document.fonts) document.fonts.ready.then(queueLens);
   placeLens();
+
+  // Пока страница едет к выбранному разделу, линза стоит на нём и не прыгает по промежуточным пунктам
+  const unlock = () => { lock = -1; queueLens(); };
+  const lockOn = (i) => { lock = i; clearTimeout(lockTimer); lockTimer = setTimeout(unlock, 1500); };
+  addEventListener('scrollend', () => { if (lock >= 0) { clearTimeout(lockTimer); lockTimer = setTimeout(unlock, 100); } });
+  spies.forEach((a, i) => { if (a.getAttribute('href').startsWith('#')) a.addEventListener('click', () => { lockOn(i); queueLens(); }); });
+  const goTo = (i) => {
+    lockOn(i);
+    moveLensTo(i);
+    sections[i].scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  };
+
+  // Перетаскивание линзы мышью или пальцем. Отпустили — линза прилипает к ближайшему пункту
+  // и страница едет к его разделу. Просто нажали, не двигая, — срабатывает пункт под линзой
+  const nearest = (center) => {
+    let best = lensI, dist = Infinity;
+    spies.forEach((a, k) => {
+      if (!a.offsetWidth) return;
+      const d = Math.abs(a.offsetLeft + a.offsetWidth / 2 - center);
+      if (d < dist) { dist = d; best = k; }
+    });
+    return best;
+  };
+  lens.addEventListener('pointerdown', (e) => {
+    if (e.button) return;
+    e.preventDefault();
+    drag = { x0: e.clientX, left: lensX, y: spies[lensI].offsetTop, moved: false, i: lensI };
+    lens.classList.add('is-dragging');
+    try { lens.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  // Сдвигаем линзу за пальцем и запоминаем пункт, к которому она ближе всего
+  const follow = (clientX) => {
+    const dx = clientX - drag.x0;
+    if (Math.abs(dx) > 4) drag.moved = true;
+    if (!drag.moved) return;
+    const bar = lens.parentElement;
+    const x = Math.min(Math.max(drag.left + dx, 0), bar.clientWidth - lens.offsetWidth);
+    lens.style.transform = `translate(${x}px, ${drag.y}px) scale(1.08, .92)`;
+    drag.i = nearest(x + lens.offsetWidth / 2);
+    highlight(drag.i);
+  };
+  function drop(e) {
+    if (!drag) return;
+    if (e && e.type === 'pointerup') follow(e.clientX);
+    const { moved, i } = drag;
+    drag = null;
+    lens.classList.remove('is-dragging');
+    if (moved) goTo(i);
+    else { moveLensTo(lensI); spies[lensI].click(); }
+  }
+  lens.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    if (!e.buttons) { drop(); return; }
+    follow(e.clientX);
+  });
+  lens.addEventListener('pointerup', drop);
+  lens.addEventListener('pointercancel', drop);
+  lens.addEventListener('lostpointercapture', () => drop());
 
   // Пятно за курсором по всему сайту, только где есть мышь
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
