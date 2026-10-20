@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Студия маникюра «Палитра»</title>
+<meta name="description" content="Демо-лендинг студии маникюра: подбор цвета покрытия и онлайн-запись.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prata&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Лаковая вишня и розовая пудра; на первом экране — пальцы, которые можно «покрасить» */
+  :root {
+    --cherry: #6d0f2a;
+    --cherry-deep: #4a0a1c;
+    --blush: #f7dfe6;
+    --petal: #fbeff3;
+    --ink: #2a0a14;
+    --ink-soft: #6b4652;
+    --line: #ecc9d4;
+    --skin: #f2c9b0;
+    --skin-shade: #e0ad90;
+    --white: #ffffff;
+    --error: #b3261e;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scrollbar-color: var(--cherry) var(--petal); }
+  body { margin: 0; background: var(--petal); color: var(--ink); font: 400 1.0625rem/1.6 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--cherry); color: var(--white); }
+  :focus-visible { outline: 3px solid var(--cherry); outline-offset: 3px; border-radius: 6px; }
+  h1, h2, h3 { font-family: 'Prata', Georgia, serif; font-weight: 400; margin: 0; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  .demo-bar { background: var(--ink); color: var(--blush); text-align: center; font-size: .8125rem; padding: 6px 16px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 26px; border: 0; border-radius: 999px; font: 700 1rem 'Manrope', sans-serif; text-decoration: none; cursor: pointer; transition: transform .25s var(--ease), background-color .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-light { background: var(--white); color: var(--cherry); }
+  .btn-cherry { background: var(--cherry); color: var(--white); }
+  .btn-cherry:hover { background: var(--cherry-deep); }
+  .btn:disabled { opacity: .7; cursor: progress; transform: none; }
+
+  /* Шапка и первый экран */
+  .hero { background: var(--cherry); color: var(--white); overflow: hidden; }
+  .site-header { display: flex; align-items: center; gap: 28px; padding-block: 18px; }
+  .logo { font: 400 1.6rem 'Prata', serif; color: var(--white); text-decoration: none; }
+  .site-header nav { display: flex; gap: 24px; margin-left: auto; }
+  .site-header nav a { color: var(--blush); text-decoration: none; font-weight: 600; }
+  .site-header nav a:hover { color: var(--white); }
+  .site-header .btn { min-height: 44px; padding: 0 20px; }
+
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 32px clamp(24px, 4vw, 64px); align-items: center; padding-block: clamp(24px, 4vw, 56px) clamp(48px, 6vw, 80px); }
+  .hero h1 { font-size: clamp(2.4rem, 1.2rem + 4vw, 4.4rem); }
+  .lead { margin: 18px 0 26px; max-width: 42ch; font-size: 1.125rem; color: var(--blush); }
+
+  .studio { background: var(--cherry-deep); border-radius: 28px; padding: clamp(18px, 2.4vw, 28px); }
+  .fingers { display: block; width: 100%; height: auto; }
+  .fingers .nail { transition: fill .5s var(--ease); }
+  .fingers .gloss { transition: opacity .4s; }
+  .studio.matte .gloss { opacity: 0; }
+  .studio-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+  .shade-name { font: 400 1.5rem 'Prata', serif; }
+  .shade-name small { display: block; font: 500 .8125rem 'Manrope', sans-serif; color: var(--blush); }
+  .finish { display: flex; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
+  .finish button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--white); font: 600 .875rem 'Manrope', sans-serif; cursor: pointer; }
+  .finish button[aria-pressed="true"] { background: var(--white); color: var(--cherry); }
+  .swatches { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 16px; }
+  .swatch { aspect-ratio: 1; border-radius: 50%; border: 3px solid transparent; cursor: pointer; padding: 0; box-shadow: inset 0 -6px 10px rgba(0, 0, 0, .18), 0 0 0 1px rgba(255, 255, 255, .22); transition: transform .2s var(--ease), border-color .2s; }
+  .swatch:hover { transform: scale(1.08); }
+  .swatch[aria-pressed="true"] { border-color: var(--white); transform: scale(1.08); }
+  .studio .btn { width: 100%; margin-top: 18px; }
+
+  /* Разделы */
+  .section { padding-block: clamp(64px, 9vw, 112px); }
+  .section h2 { font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem); margin-bottom: 14px; }
+  .section-lead { margin: 0 0 clamp(32px, 4vw, 48px); max-width: 56ch; color: var(--ink-soft); }
+
+  .prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(32px, 5vw, 72px); }
+  .price { display: flex; align-items: baseline; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .price div { flex: 1; min-width: 0; }
+  .price b { display: block; font-weight: 700; }
+  .price span { color: var(--ink-soft); font-size: .9375rem; }
+  .price strong { font: 400 1.25rem 'Prata', serif; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .masters-bg { background: var(--blush); }
+  .masters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 32px); }
+  .master { text-align: center; }
+  .avatar { width: 112px; height: 112px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font: 400 2.6rem 'Prata', serif; color: var(--white); }
+  .master h3 { font-size: 1.5rem; }
+  .master p { margin: 6px auto 0; max-width: 30ch; color: var(--ink-soft); }
+
+  /* Запись */
+  .booking-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 5vw, 72px); align-items: start; }
+  .form { background: var(--white); border-radius: 24px; padding: clamp(20px, 3vw, 36px); box-shadow: 0 24px 48px -32px rgba(74, 10, 28, .45); }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .field { display: block; }
+  .field.full { grid-column: 1 / -1; }
+  .field span { display: block; margin-bottom: 6px; font-weight: 600; font-size: .875rem; color: var(--ink-soft); }
+  .field input, .field select { width: 100%; min-height: 50px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--white); font: inherit; color: var(--ink); caret-color: var(--cherry); }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--cherry); box-shadow: 0 0 0 3px rgba(109, 15, 42, .15); }
+  .field input[aria-invalid="true"] { border-color: var(--error); }
+  .color-pill { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 14px; border-radius: 12px; background: var(--petal); font-weight: 600; }
+  .color-pill i { width: 22px; height: 22px; border-radius: 50%; flex: none; }
+  .err { margin: 12px 0 0; color: var(--error); font-size: .9375rem; }
+  .err:empty { display: none; }
+  .form .btn { width: 100%; margin-top: 20px; }
+  .done { text-align: center; padding: 24px 0; }
+  .done h3 { font-size: 2rem; margin-bottom: 10px; }
+  .done p { color: var(--ink-soft); max-width: 40ch; margin: 0 auto 10px; }
+  .note { font-size: .875rem; }
+
+  .contacts { background: var(--ink); color: var(--blush); }
+  .contacts h2 { color: var(--white); }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .facts div { border-top: 1px solid rgba(247, 223, 230, .25); padding-top: 14px; }
+  .facts dt { font-size: .875rem; opacity: .8; }
+  .facts dd { margin: 4px 0 0; color: var(--white); font-weight: 600; font-size: 1.125rem; }
+  .facts small { display: block; font-weight: 400; font-size: .8125rem; opacity: .7; }
+  footer { background: var(--ink); color: var(--blush); font-size: .875rem; padding-block: 0 28px; opacity: .85; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .booking-grid { grid-template-columns: minmax(0, 1fr); }
+    .prices { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 680px) {
+    .site-header nav { display: none; }
+    .site-header { justify-content: space-between; }
+    .masters, .facts { grid-template-columns: minmax(0, 1fr); }
+    .form-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="demo-bar" id="top">Демо-проект для портфолио: студия, мастера и цены вымышлены, запись никуда не отправляется.</div>
+
+<div class="hero">
+  <header class="wrap site-header">
+    <a class="logo" href="#top">Палитра</a>
+    <nav aria-label="Разделы"><a href="#prices">Цены</a><a href="#masters">Мастера</a><a href="#contacts">Контакты</a></nav>
+    <a class="btn btn-light" href="#booking">Записаться</a>
+  </header>
+
+  <section class="wrap hero-grid" aria-labelledby="hero-title">
+    <div>
+      <h1 id="hero-title">Маникюр в цвете вашего настроения</h1>
+      <p class="lead">Студия маникюра и педикюра. Выберите оттенок прямо здесь — мастер подготовит его к вашему визиту.</p>
+      <a class="btn btn-light" href="#booking">Записаться онлайн</a>
+    </div>
+
+    <div class="studio" id="studio">
+      <svg class="fingers" viewBox="0 0 400 260" role="img" aria-label="Пальцы с покрытием выбранного цвета">
+        <g id="fingers"></g>
+      </svg>
+      <div class="studio-row">
+        <p class="shade-name" id="shade-name" aria-live="polite"></p>
+        <div class="finish" role="group" aria-label="Покрытие">
+          <button type="button" data-finish="gloss" aria-pressed="true">Глянец</button>
+          <button type="button" data-finish="matte" aria-pressed="false">Матовый</button>
+        </div>
+      </div>
+      <div class="swatches" id="swatches" role="group" aria-label="Оттенки"></div>
+      <button type="button" class="btn btn-light" id="book-color">Записаться с этим цветом</button>
+    </div>
+  </section>
+</div>
+
+<main>
+  <section class="section" id="prices" aria-labelledby="prices-title">
+    <div class="wrap">
+      <h2 id="prices-title">Услуги и цены</h2>
+      <p class="section-lead">Цена включает снятие старого покрытия и уход за кутикулой. Цены условные: это демо-проект.</p>
+      <div class="prices" id="price-list"></div>
+    </div>
+  </section>
+
+  <section class="section masters-bg" id="masters" aria-labelledby="masters-title">
+    <div class="wrap">
+      <h2 id="masters-title">Мастера</h2>
+      <p class="section-lead">Можно выбрать мастера при записи или доверить выбор нам.</p>
+      <div class="masters">
+        <div class="master"><div class="avatar" style="background:#6d0f2a">А</div><h3>Алина</h3><p>Сложный дизайн, френч и градиент</p></div>
+        <div class="master"><div class="avatar" style="background:#a2465e">В</div><h3>Вика</h3><p>Аккуратный нюд и укрепление гелем</p></div>
+        <div class="master"><div class="avatar" style="background:#4a0a1c">М</div><h3>Марина</h3><p>Педикюр и медицинский уход</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="booking" aria-labelledby="booking-title">
+    <div class="wrap booking-grid">
+      <div>
+        <h2 id="booking-title">Запись</h2>
+        <p class="section-lead">Выберите услугу и удобное время. Мы перезвоним, чтобы подтвердить запись.</p>
+      </div>
+      <form class="form" id="form" novalidate>
+        <div id="form-body">
+          <div class="form-grid">
+            <label class="field full"><span>Услуга</span><select id="f-service"></select></label>
+            <label class="field"><span>Мастер</span><select id="f-master"><option>Любой мастер</option><option>Алина</option><option>Вика</option><option>Марина</option></select></label>
+            <label class="field"><span>Дата</span><input id="f-date" type="date"></label>
+            <label class="field"><span>Время</span><select id="f-time"></select></label>
+            <div class="field"><span>Цвет</span><div class="color-pill"><i id="f-color-dot"></i><span id="f-color"></span></div></div>
+            <label class="field"><span>Имя</span><input id="f-name" autocomplete="given-name" placeholder="Как к вам обращаться"></label>
+            <label class="field"><span>Телефон</span><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67"></label>
+          </div>
+          <p class="err" id="f-err" aria-live="polite"></p>
+          <button class="btn btn-cherry" type="submit" id="f-submit">Записаться</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section contacts" id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <h2 id="contacts-title">Контакты</h2>
+      <dl class="facts">
+        <div><dt>Адрес</dt><dd>Лаковая улица, 12<small>адрес вымышлен</small></dd></div>
+        <div><dt>Часы работы</dt><dd>Ежедневно 10:00–21:00</dd></div>
+        <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">«Палитра» — демо-проект для портфолио. Студия и цены вымышлены.</div></footer>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const SHADES = [
+    ['Вишня', '#8e1330'], ['Пион', '#e46b8f'], ['Капучино', '#b08a74'], ['Молоко', '#f1e6dc'],
+    ['Лаванда', '#b7a3d9'], ['Мята', '#9fd8c3'], ['Коралл', '#f2775b'], ['Небо', '#8cb8e8'],
+    ['Шампань', '#e8cf9a'], ['Олива', '#7d8a4e'], ['Графит', '#3b3a40'], ['Бордо', '#5a0d22'],
+  ];
+  const SERVICES = [
+    ['Маникюр с покрытием гель-лак', 'около 1,5 часа', 2200],
+    ['Маникюр без покрытия', 'около 50 минут', 1200],
+    ['Укрепление гелем + покрытие', 'около 2 часов', 2800],
+    ['Френч или градиент', 'к любому маникюру', 500],
+    ['Педикюр с покрытием', 'около 1,5 часа', 2700],
+    ['Снятие покрытия', 'около 20 минут', 400],
+  ];
+  let shade = 1;
+
+  // пальцы: [x, ширина, высота]
+  const FINGERS = [[30, 58, 150], [98, 64, 200], [172, 66, 220], [248, 64, 196], [322, 54, 140]];
+  const NS = 'http://www.w3.org/2000/svg';
+  const g = $('#fingers');
+  FINGERS.forEach(([x, w, h]) => {
+    const top = 250 - h;
+    const finger = document.createElementNS(NS, 'path');
+    finger.setAttribute('d', `M${x} 260 V${top + w / 2} a${w / 2} ${w / 2} 0 0 1 ${w} 0 V260 Z`);
+    finger.setAttribute('fill', 'var(--skin)');
+    g.append(finger);
+    const nw = w * 0.62, nx = x + (w - nw) / 2, ny = top + w * 0.16, nh = w * 0.82;
+    const nail = document.createElementNS(NS, 'path');
+    nail.setAttribute('class', 'nail');
+    nail.setAttribute('d', `M${nx} ${ny + nh} V${ny + nw / 2} a${nw / 2} ${nw / 2} 0 0 1 ${nw} 0 V${ny + nh} Q${nx + nw / 2} ${ny + nh + 8} ${nx} ${ny + nh} Z`);
+    g.append(nail);
+    const gloss = document.createElementNS(NS, 'path');
+    gloss.setAttribute('class', 'gloss');
+    gloss.setAttribute('d', `M${nx + nw * 0.22} ${ny + nh * 0.75} V${ny + nw * 0.5}`);
+    gloss.setAttribute('stroke', 'rgba(255,255,255,.55)');
+    gloss.setAttribute('stroke-width', '4');
+    gloss.setAttribute('stroke-linecap', 'round');
+    g.append(gloss);
+    const crease = document.createElementNS(NS, 'path');
+    crease.setAttribute('d', `M${x + w * 0.3} ${top + h * 0.62} h${w * 0.4}`);
+    crease.setAttribute('stroke', 'var(--skin-shade)');
+    crease.setAttribute('stroke-width', '3');
+    crease.setAttribute('stroke-linecap', 'round');
+    g.append(crease);
+  });
+
+  const sw = $('#swatches');
+  SHADES.forEach(([name, color], i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'swatch'; b.style.background = color;
+    b.setAttribute('aria-label', name);
+    b.addEventListener('click', () => { shade = i; paint(); });
+    sw.append(b);
+  });
+  let finish = 'gloss';
+  document.querySelectorAll('[data-finish]').forEach((b) => b.addEventListener('click', () => {
+    finish = b.dataset.finish;
+    document.querySelectorAll('[data-finish]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    $('#studio').classList.toggle('matte', finish === 'matte');
+    paint();
+  }));
+
+  function paint() {
+    const [name, color] = SHADES[shade];
+    document.querySelectorAll('.nail').forEach((n) => n.setAttribute('fill', color));
+    sw.querySelectorAll('.swatch').forEach((b, i) => b.setAttribute('aria-pressed', String(i === shade)));
+    const fin = finish === 'gloss' ? 'глянец' : 'матовый';
+    $('#shade-name').innerHTML = `«${name}»<small>${fin}</small>`;
+    $('#f-color').textContent = `«${name}», ${fin}`;
+    $('#f-color-dot').style.background = color;
+  }
+
+  // Цены и форма
+  $('#price-list').innerHTML = SERVICES.map(([n, d, p]) =>
+    `<div class="price"><div><b>${n}</b><span>${d}</span></div><strong>${p.toLocaleString('ru-RU')} ₽</strong></div>`).join('');
+  $('#f-service').innerHTML = SERVICES.filter((s) => !s[0].startsWith('Френч')).map(([n, , p]) => `<option>${n} — ${p.toLocaleString('ru-RU')} ₽</option>`).join('');
+  const pad = (n) => String(n).padStart(2, '0');
+  const today = new Date(), tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  $('#f-date').min = iso(today); $('#f-date').value = iso(tomorrow);
+  $('#f-time').innerHTML = Array.from({ length: 10 }, (_, i) => `<option>${10 + i}:00</option>`).join('');
+
+  $('#book-color').addEventListener('click', () => $('#booking').scrollIntoView({ behavior: 'smooth' }));
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('#f-name').value.trim(), digits = $('#f-phone').value.replace(/\D/g, '');
+    const badName = name.length < 2, badPhone = digits.length < 10 || digits.length > 11;
+    $('#f-name').setAttribute('aria-invalid', String(badName));
+    $('#f-phone').setAttribute('aria-invalid', String(badPhone));
+    if (badName || badPhone) {
+      $('#f-err').textContent = badName ? 'Напишите имя, чтобы мастер знал, кого ждать.' : 'Нужен телефон из 10–11 цифр, например +7 900 123-45-67.';
+      (badName ? $('#f-name') : $('#f-phone')).focus();
+      return;
+    }
+    $('#f-err').textContent = '';
+    const btn = $('#f-submit'); btn.disabled = true; btn.textContent = 'Отправляем…';
+    const d = new Date($('#f-date').value);
+    const when = `${d.getDate()}.${pad(d.getMonth() + 1)} в ${$('#f-time').value}`;
+    setTimeout(() => {
+      $('#form-body').innerHTML = `<div class="done"><h3>Вы записаны</h3><p>${esc(name)}, ждём вас ${when}. Цвет: ${esc($('#f-color').textContent)}.</p><p class="note">Это демо: запись никуда не ушла. В рабочей версии она пришла бы администратору в Telegram.</p></div>`;
+    }, 600);
+  });
+
+  // Якоря прокручиваем сами
+  document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+    const t = document.getElementById(a.getAttribute('href').slice(1));
+    if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' });
+  }));
+  paint();
+})();
+</script>
+</body>
+</html>

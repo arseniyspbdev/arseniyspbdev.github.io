@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Автосервис «Гайка»</title>
+<meta name="description" content="Демо-лендинг автосервиса: калькулятор стоимости работ и заявка на ремонт.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Графит мастерской и сигнальный оранжевый; первый экран — калькулятор, который сразу называет цену */
+  :root {
+    --graphite: #1d232a;
+    --steel: #2a323b;
+    --steel-line: #3a444f;
+    --signal: #ff6a13;
+    --signal-deep: #e05400;
+    --paper: #f2f3f5;
+    --white: #ffffff;
+    --ink: #1d232a;
+    --ink-soft: #5a6470;
+    --muted: #a7b0ba;
+    --line: #d9dde2;
+    --error: #d93025;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scrollbar-color: var(--signal) var(--graphite); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.55 'PT Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--signal); color: var(--graphite); }
+  :focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 { font-family: 'Oswald', 'Arial Narrow', sans-serif; font-weight: 700; margin: 0; line-height: 1.05; text-transform: uppercase; letter-spacing: .01em; text-wrap: balance; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  .demo-bar { background: var(--signal); color: var(--graphite); text-align: center; font-size: .8125rem; font-weight: 700; padding: 6px 16px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 24px; border: 0; border-radius: 6px; font: 500 1.0625rem 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; cursor: pointer; transition: transform .25s var(--ease), background-color .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-signal { background: var(--signal); color: var(--graphite); }
+  .btn-signal:hover { background: var(--signal-deep); }
+  .btn:disabled { opacity: .7; cursor: progress; transform: none; }
+
+  .top { background: var(--graphite); color: var(--white); }
+  .site-header { display: flex; align-items: center; gap: 28px; padding-block: 16px; border-bottom: 1px solid var(--steel-line); }
+  .logo { display: flex; align-items: center; gap: 10px; font: 700 1.6rem 'Oswald', sans-serif; text-transform: uppercase; color: var(--white); text-decoration: none; }
+  .site-header nav { display: flex; gap: 24px; margin-left: auto; }
+  .site-header nav a { color: var(--muted); text-decoration: none; font-weight: 700; }
+  .site-header nav a:hover { color: var(--white); }
+  .phone-top { color: var(--white); font-weight: 700; white-space: nowrap; }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 4vw, 64px); align-items: start; padding-block: clamp(28px, 4vw, 56px) clamp(48px, 6vw, 80px); }
+  .hero h1 { font-size: clamp(2.4rem, 1.2rem + 4vw, 4.6rem); }
+  .hero h1 span { color: var(--signal); }
+  .hero p { margin: 18px 0 0; max-width: 40ch; color: var(--muted); font-size: 1.125rem; }
+  .perks { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 10px; }
+  .perks li { display: flex; gap: 10px; align-items: baseline; }
+  .perks li::before { content: ""; flex: none; width: 12px; height: 12px; background: var(--signal); transform: translateY(1px); }
+
+  /* Калькулятор */
+  .calc { background: var(--steel); border-radius: 12px; padding: clamp(18px, 2.4vw, 28px); }
+  .calc h2 { font-size: 1.5rem; margin-bottom: 16px; }
+  .label { display: block; margin: 0 0 8px; color: var(--muted); font-size: .875rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .classes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 18px; }
+  .cls { min-height: 64px; padding: 6px; border: 2px solid var(--steel-line); border-radius: 8px; background: transparent; color: var(--white); font: 700 .9375rem 'PT Sans', sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+  .cls svg { color: var(--muted); }
+  .cls[aria-pressed="true"] { border-color: var(--signal); background: rgba(255, 106, 19, .12); }
+  .cls[aria-pressed="true"] svg { color: var(--signal); }
+  .works { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .work { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; background: var(--graphite); cursor: pointer; user-select: none; }
+  .work input { width: 20px; height: 20px; accent-color: var(--signal); flex: none; margin: 0; }
+  .work span { flex: 1; min-width: 0; line-height: 1.25; }
+  .work small { display: block; color: var(--muted); font-size: .8125rem; }
+  .total { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--steel-line); }
+  .total .sum { font: 700 2.4rem 'Oswald', sans-serif; line-height: 1; font-variant-numeric: tabular-nums; }
+  .total .sum small { display: block; font: 400 .875rem 'PT Sans', sans-serif; color: var(--muted); margin-top: 6px; }
+  .total .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .calc-note { margin: 12px 0 0; color: var(--muted); font-size: .8125rem; }
+
+  /* Разделы */
+  .section { padding-block: clamp(64px, 9vw, 112px); }
+  .section h2.big { font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem); margin-bottom: 14px; }
+  .section-lead { margin: 0 0 clamp(28px, 4vw, 44px); max-width: 56ch; color: var(--ink-soft); }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: s; border-top: 3px solid var(--ink); }
+  .steps li { counter-increment: s; padding: 20px 20px 0 0; }
+  .steps li::before { content: counter(s); display: block; font: 700 2.6rem 'Oswald', sans-serif; color: var(--signal); line-height: 1; margin-bottom: 10px; }
+  .steps h3 { font-size: 1.25rem; margin-bottom: 6px; }
+  .steps p { margin: 0; color: var(--ink-soft); }
+
+  .request-bg { background: var(--white); }
+  .request-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 5vw, 72px); align-items: start; }
+  .summary { padding: 16px; border-radius: 8px; background: var(--paper); border-left: 0; margin-bottom: 18px; }
+  .summary b { display: block; }
+  .summary span { color: var(--ink-soft); font-size: .9375rem; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .field.full { grid-column: 1 / -1; }
+  .field span { display: block; margin-bottom: 6px; font-weight: 700; font-size: .875rem; color: var(--ink-soft); }
+  .field input { width: 100%; min-height: 50px; padding: 0 14px; border: 2px solid var(--line); border-radius: 6px; font: inherit; color: var(--ink); background: var(--white); caret-color: var(--signal); }
+  .field input:focus { outline: none; border-color: var(--signal); }
+  .field input[aria-invalid="true"] { border-color: var(--error); }
+  .err { margin: 12px 0 0; color: var(--error); font-size: .9375rem; }
+  .err:empty { display: none; }
+  .form .btn { width: 100%; margin-top: 18px; }
+  .done h3 { font-size: 2rem; margin-bottom: 8px; }
+  .done p { margin: 0 0 8px; color: var(--ink-soft); }
+
+  .contacts { background: var(--graphite); color: var(--white); }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .facts div { border-top: 3px solid var(--signal); padding-top: 14px; }
+  .facts dt { color: var(--muted); font-size: .875rem; }
+  .facts dd { margin: 4px 0 0; font-weight: 700; font-size: 1.125rem; }
+  .facts small { display: block; font-weight: 400; font-size: .8125rem; color: var(--muted); }
+  footer { background: var(--graphite); color: var(--muted); font-size: .875rem; padding-block: 0 28px; }
+
+  @media (max-width: 960px) {
+    .hero, .request-grid { grid-template-columns: minmax(0, 1fr); }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 680px) {
+    .site-header nav, .phone-top { display: none; }
+    .site-header { justify-content: space-between; }
+    .classes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .works, .form-grid, .facts, .steps { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="demo-bar" id="top">Демо-проект для портфолио: автосервис и цены вымышлены, заявка никуда не отправляется.</div>
+
+<div class="top">
+  <header class="wrap site-header">
+    <a class="logo" href="#top">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 2 26 8.5v13L15 28 4 21.5v-13Z" fill="#ff6a13"/><circle cx="15" cy="15" r="5" fill="#1d232a"/></svg>
+      Гайка
+    </a>
+    <nav aria-label="Разделы"><a href="#calc">Цены</a><a href="#how">Как работаем</a><a href="#contacts">Контакты</a></nav>
+    <span class="phone-top">+7 (000) 000-00-00</span>
+    <a class="btn btn-signal" href="#request">Заявка</a>
+  </header>
+
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div>
+      <h1 id="hero-title">Ремонт без сюрпризов в <span>чеке</span></h1>
+      <p>Посчитайте стоимость сами прямо на сайте. Если при осмотре найдём что-то ещё — сначала позвоним и согласуем.</p>
+      <ul class="perks">
+        <li>Гарантия на работы 6 месяцев</li>
+        <li>Можно ждать в зоне отдыха с кофе</li>
+        <li>Запчасти ваши или наши</li>
+      </ul>
+    </div>
+
+    <div class="calc" id="calc">
+      <h2>Калькулятор стоимости</h2>
+      <span class="label" id="class-label">Класс автомобиля</span>
+      <div class="classes" role="group" aria-labelledby="class-label" id="classes"></div>
+      <span class="label">Что нужно сделать</span>
+      <div class="works" id="works"></div>
+      <div class="total">
+        <div class="sum" id="sum" aria-live="polite"></div>
+        <a class="btn btn-signal" href="#request" id="to-request">Записаться</a>
+      </div>
+      <p class="calc-note">Цена работ без запчастей. Цены условные: это демо-проект.</p>
+    </div>
+  </section>
+</div>
+
+<main>
+  <section class="section" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <h2 class="big" id="how-title">Как работаем</h2>
+      <p class="section-lead">Без навязанных работ: делаем только то, что согласовали с вами.</p>
+      <ol class="steps">
+        <li><h3>Заявка</h3><p>Оставляете заявку с расчётом, мы перезваниваем и подтверждаем время.</p></li>
+        <li><h3>Осмотр</h3><p>Принимаем машину, при вас проверяем то, на что жалуетесь.</p></li>
+        <li><h3>Согласование</h3><p>Если нужно что-то ещё — сначала звоним и называем цену.</p></li>
+        <li><h3>Выдача</h3><p>Показываем заменённые детали и отдаём заказ-наряд с гарантией.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section request-bg" id="request" aria-labelledby="request-title">
+    <div class="wrap request-grid">
+      <div>
+        <h2 class="big" id="request-title">Заявка на ремонт</h2>
+        <p class="section-lead">Расчёт из калькулятора подставится сам. Мастер перезвонит в течение 15 минут в рабочее время.</p>
+      </div>
+      <form class="form" id="form" novalidate>
+        <div id="form-body">
+          <div class="summary" id="summary"></div>
+          <div class="form-grid">
+            <label class="field full"><span>Марка и модель</span><input id="f-car" placeholder="Например, Kia Rio 2017"></label>
+            <label class="field"><span>Имя</span><input id="f-name" autocomplete="given-name" placeholder="Как к вам обращаться"></label>
+            <label class="field"><span>Телефон</span><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67"></label>
+          </div>
+          <p class="err" id="f-err" aria-live="polite"></p>
+          <button class="btn btn-signal" type="submit" id="f-submit">Отправить заявку</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section contacts" id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <h2 class="big" id="contacts-title" style="margin-bottom:28px">Контакты</h2>
+      <dl class="facts">
+        <div><dt>Адрес</dt><dd>Промышленный проезд, 3<small>адрес вымышлен</small></dd></div>
+        <div><dt>Часы работы</dt><dd>Ежедневно 9:00–21:00</dd></div>
+        <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">«Гайка» — демо-проект для портфолио. Автосервис и цены вымышлены.</div></footer>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const CAR = '<svg width="34" height="18" viewBox="0 0 34 18" aria-hidden="true"><path d="M3 13V9l4-5h14l6 5h4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="14" r="2.6" fill="currentColor"/><circle cx="25" cy="14" r="2.6" fill="currentColor"/></svg>';
+  const CLASSES = [['Малый', 0.85], ['Седан', 1], ['Кроссовер', 1.2], ['Внедорожник', 1.45]];
+  // название, подпись, цена для седана, часы
+  const WORKS = [
+    ['Замена масла и фильтра', 'ТО двигателя', 900, 0.5],
+    ['Компьютерная диагностика', 'ошибки, датчики', 1200, 0.5],
+    ['Замена тормозных колодок', 'передняя ось', 1500, 1],
+    ['Диагностика подвески', 'стуки и скрипы', 800, 0.5],
+    ['Развал-схождение', 'на стенде', 1800, 1],
+    ['Шиномонтаж', '4 колеса с балансировкой', 2400, 1],
+    ['Заправка кондиционера', 'с проверкой утечек', 2500, 1],
+    ['Замена ремня ГРМ', 'с роликами', 6500, 3],
+  ];
+  let cls = 1;
+  const chosen = new Set([0]);
+  const rub = (n) => `${(Math.round(n / 50) * 50).toLocaleString('ru-RU')} ₽`;
+  const plural = (n, a, b, c) => { const t = n % 10, x = n % 100; return t === 1 && x !== 11 ? a : t >= 2 && t <= 4 && (x < 12 || x > 14) ? b : c; };
+
+  $('#classes').innerHTML = CLASSES.map(([n], i) => `<button type="button" class="cls" data-c="${i}" aria-pressed="${i === cls}">${CAR}${n}</button>`).join('');
+  document.querySelectorAll('[data-c]').forEach((b) => b.addEventListener('click', () => { cls = Number(b.dataset.c); update(); }));
+  $('#works').innerHTML = WORKS.map(([n, s], i) => `<label class="work"><input type="checkbox" data-w="${i}" ${chosen.has(i) ? 'checked' : ''}><span>${n}<small>${s}</small></span></label>`).join('');
+  document.querySelectorAll('[data-w]').forEach((c) => c.addEventListener('change', () => {
+    c.checked ? chosen.add(Number(c.dataset.w)) : chosen.delete(Number(c.dataset.w)); update();
+  }));
+
+  function calc() {
+    const k = CLASSES[cls][1];
+    let sum = 0, h = 0;
+    chosen.forEach((i) => { sum += WORKS[i][2] * k; h += WORKS[i][3]; });
+    return { sum, h };
+  }
+  function timeText(h) {
+    if (h === 0) return '';
+    if (h < 1) return 'около 30 минут';
+    const r = Math.ceil(h);
+    return `около ${r} ${plural(r, 'часа', 'часов', 'часов')}`;
+  }
+  function update() {
+    document.querySelectorAll('[data-c]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.c) === cls)));
+    const { sum, h } = calc();
+    $('#sum').innerHTML = chosen.size ? `${rub(sum)}<small>${chosen.size} ${plural(chosen.size, 'работа', 'работы', 'работ')} · ${timeText(h)}</small>` : `0 ₽<small>Отметьте нужные работы</small>`;
+    const btn = $('#to-request');
+    btn.setAttribute('aria-disabled', String(!chosen.size));
+    btn.style.pointerEvents = chosen.size ? '' : 'none';
+    btn.style.opacity = chosen.size ? '' : '.4';
+    const list = [...chosen].map((i) => WORKS[i][0]).join(', ');
+    $('#summary').innerHTML = chosen.size
+      ? `<b>Расчёт: ${rub(sum)}, ${timeText(h)}</b><span>${CLASSES[cls][0]} · ${list}</span>`
+      : '<b>Работы не выбраны</b><span>Опишите проблему мастеру по телефону — он подскажет</span>';
+  }
+
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('#f-name').value.trim(), digits = $('#f-phone').value.replace(/\D/g, '');
+    const badName = name.length < 2, badPhone = digits.length < 10 || digits.length > 11;
+    $('#f-name').setAttribute('aria-invalid', String(badName));
+    $('#f-phone').setAttribute('aria-invalid', String(badPhone));
+    if (badName || badPhone) {
+      $('#f-err').textContent = badName ? 'Напишите имя, чтобы мастер знал, как к вам обращаться.' : 'Нужен телефон из 10–11 цифр, например +7 900 123-45-67.';
+      (badName ? $('#f-name') : $('#f-phone')).focus();
+      return;
+    }
+    const car = $('#f-car').value.trim();
+    const btn = $('#f-submit'); btn.disabled = true; btn.textContent = 'Отправляем…';
+    setTimeout(() => {
+      $('#form-body').innerHTML = `<div class="done"><h3>Заявка принята</h3><p>${esc(name)}, мастер перезвонит, чтобы согласовать время${car ? ` для ${esc(car)}` : ''}.</p><p style="font-size:.875rem">Это демо: заявка никуда не ушла. В рабочей версии она пришла бы мастеру в Telegram вместе с расчётом.</p></div>`;
+    }, 600);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+    const t = document.getElementById(a.getAttribute('href').slice(1));
+    if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' });
+  }));
+  update();
+})();
+</script>
+</body>
+</html>
