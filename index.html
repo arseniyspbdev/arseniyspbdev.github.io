@@ -161,6 +161,14 @@
   .site-footer .wrap { padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .14); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .site-footer p { margin: 0; }
 
+  /* Световое пятно за курсором на тёмных блоках: координаты задаёт скрипт внизу */
+  .glow { position: relative; isolation: isolate; }
+  .glow::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .4s;
+    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(232, 173, 60, .15), transparent 70%);
+  }
+  .glow.is-lit::before { opacity: 1; }
+
   /* ---------- Адаптив ---------- */
   @media (max-width: 960px) {
     .intro, .section-head, .case, .ai, .contact-grid { grid-template-columns: minmax(0, 1fr); }
@@ -357,7 +365,7 @@
     </div>
   </section>
 
-  <section class="section contact" id="contact" aria-labelledby="contact-title">
+  <section class="section contact glow" id="contact" aria-labelledby="contact-title">
     <div class="wrap contact-grid">
       <div>
         <h2 id="contact-title">Расскажите о своей задаче</h2>
@@ -375,7 +383,7 @@
   </section>
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer glow">
   <div class="wrap">
     <p>© 2026 Арсений</p>
     <p>Сайт сделан вместе с ИИ, как и всё остальное здесь.</p>
@@ -403,6 +411,28 @@
     t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
     try { history.replaceState(null, '', a.getAttribute('href')); } catch (_) {}
   }));
+
+  // Пятно за курсором: только где есть мышь. Координаты считаем для каждого тёмного блока,
+  // чтобы пятно без шва переходило из контактов в подвал
+  const glows = document.querySelectorAll('.glow');
+  if (glows.length && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let x = -1e4, y = -1e4, queued = false;
+    const paint = () => {
+      queued = false;
+      let inside = false;
+      const rects = [...glows].map((g) => g.getBoundingClientRect());
+      rects.forEach((r) => { if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) inside = true; });
+      glows.forEach((g, i) => {
+        g.style.setProperty('--mx', `${x - rects[i].left}px`);
+        g.style.setProperty('--my', `${y - rects[i].top}px`);
+        g.classList.toggle('is-lit', inside);
+      });
+    };
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
+    addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; queue(); }, { passive: true });
+    addEventListener('scroll', queue, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => { x = y = -1e4; queue(); });
+  }
 </script>
 </body>
 </html>
