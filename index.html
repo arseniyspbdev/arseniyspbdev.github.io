@@ -48,8 +48,21 @@
   }
   .btn:hover { transform: translateY(-2px); }
   .btn-ink { background: var(--text); border-color: var(--text); color: var(--ink); }
-  .btn-ghost { background: transparent; color: var(--text); }
-  .btn-ghost:hover { background: var(--text); border-color: var(--text); color: var(--ink); }
+  .btn-ghost { color: var(--text); }
+  .btn-ghost:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .32); }
+
+  /* Жидкое стекло: размытие и блик; в Chromium фон под стеклом ещё и слегка преломляется (фильтр #liquid) */
+  .glass, .btn-ghost {
+    background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03));
+    border: 1px solid rgba(255, 255, 255, .16);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    backdrop-filter: blur(14px) saturate(170%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 0 rgba(255, 255, 255, .06), 0 12px 32px -14px rgba(0, 0, 0, .7);
+  }
+  /* Шапка темнее кнопок: текст меню должен читаться и над светлыми демо */
+  .glass { background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .02)), rgba(21, 23, 26, .55); }
+  .refract .glass { backdrop-filter: url(#liquid) blur(10px) saturate(170%); }
+  section[id], .hero { scroll-margin-top: 84px; }
   .btn-ochre { background: var(--ochre); border-color: var(--ochre); color: var(--ink); }
   .btn-ochre:hover { background: #f0bd58; border-color: #f0bd58; }
   .btn svg { flex: none; }
@@ -57,7 +70,8 @@
   /* ---------- Первый экран ---------- */
   .hero { border-bottom: 1px solid var(--line); }
   .intro h1 em { font-style: normal; color: var(--ochre); }
-  .site-header { display: flex; align-items: center; gap: 28px; padding-block: 20px; }
+  .site-header { position: sticky; top: 0; z-index: 50; padding-block: 12px; }
+  .site-header .bar { display: flex; align-items: center; gap: 28px; padding: 6px 6px 6px 22px; border-radius: 999px; }
   .name { font: 800 1.25rem var(--display); letter-spacing: -0.03em; text-decoration: none; }
   .site-header nav { display: flex; gap: 26px; margin-left: auto; }
   .site-header nav a { text-decoration: none; font-weight: 500; }
@@ -182,7 +196,7 @@
   }
   @media (max-width: 720px) {
     .site-header nav { display: none; }
-    .site-header { justify-content: space-between; }
+    .site-header .bar { justify-content: space-between; }
     .desk { grid-template-columns: minmax(0, 1fr); justify-items: center; }
     .desk .exhibit:first-child { width: 100%; }
     .phone { width: min(300px, 78vw); }
@@ -196,8 +210,16 @@
 </head>
 <body>
 
-<div class="hero" id="top">
-  <header class="site-header wrap">
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <filter id="liquid" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="2" seed="7" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
+    <feDisplacementMap in="SourceGraphic" in2="soft" scale="36" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<header class="site-header wrap">
+  <div class="bar glass">
     <a class="name" href="#top">Арсений</a>
     <nav aria-label="Разделы">
       <a href="#works">Работы</a>
@@ -205,7 +227,10 @@
       <a href="#process">Как работаю</a>
     </nav>
     <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">Написать</a>
-  </header>
+  </div>
+</header>
+
+<div class="hero" id="top">
 
   <section class="wrap intro" aria-labelledby="hero-title">
     <h1 id="hero-title">Сайты и Telegram-приложения <em>для малого бизнеса</em></h1>
@@ -414,6 +439,9 @@
     t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
     try { history.replaceState(null, '', a.getAttribute('href')); } catch (_) {}
   }));
+
+  // Преломление в стекле умеет только Chromium (Chrome, Edge, Opera); остальным — обычное размытие
+  if (navigator.userAgentData) document.documentElement.classList.add('refract');
 
   // Пятно за курсором по всему сайту, только где есть мышь
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
