@@ -111,6 +111,17 @@
   .links .btn { min-height: 44px; padding: 0 18px; font-size: .9375rem; }
   .note { margin-top: 14px; color: var(--ink-soft); font-size: .875rem; }
 
+  /* Ещё лендинги */
+  .more-title { margin: clamp(48px, 6vw, 72px) 0 24px; font-size: clamp(1.5rem, 1rem + 1.6vw, 2.2rem); font-weight: 700; }
+  .more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 32px); }
+  .mini-case { min-width: 0; display: flex; flex-direction: column; }
+  .shot { display: block; border-radius: 12px; overflow: hidden; background: var(--stone); box-shadow: 0 20px 40px -28px rgba(22, 24, 27, .55); }
+  .shot img { display: block; width: 100%; height: auto; transition: transform .5s var(--ease); }
+  .shot:hover img { transform: scale(1.03); }
+  .mini-case h4 { margin: 18px 0 6px; font: 700 1.25rem var(--display); letter-spacing: -0.02em; }
+  .mini-case p { margin: 0 0 16px; color: var(--ink-soft); flex: 1; }
+  .mini-case .links .btn { min-height: 42px; padding: 0 16px; font-size: .9375rem; }
+
   /* Услуги */
   .services { background: var(--stone); }
   .svc-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
@@ -154,7 +165,7 @@
   @media (max-width: 960px) {
     .intro, .section-head, .case, .ai, .contact-grid { grid-template-columns: minmax(0, 1fr); }
     .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .svc-list { grid-template-columns: minmax(0, 1fr); }
+    .svc-list, .more { grid-template-columns: minmax(0, 1fr); }
     .svc, .svc + .svc { padding: 24px 0 8px; border-left: 0; }
     .svc + .svc { border-top: 1px solid var(--line); }
   }
@@ -188,7 +199,7 @@
   <section class="wrap intro" aria-labelledby="hero-title">
     <h1 id="hero-title">Сайты и Telegram-приложения для малого бизнеса</h1>
     <div>
-      <p>Делаю лендинги и мини-приложения, через которые клиенты записываются и бронируют сами. Работаю вместе с ИИ, поэтому первую версию показываю быстро. Ниже две работы, их можно попробовать прямо здесь.</p>
+      <p>Делаю лендинги и мини-приложения, через которые клиенты записываются и бронируют сами. Работаю вместе с ИИ, поэтому первую версию показываю быстро. Две работы ниже можно попробовать прямо здесь, ещё три — в разделе «Работы».</p>
       <div class="actions">
         <a class="btn btn-ink" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">
           <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.3M21 4l-3.5 16-8.5-6.7M21 4 9 13.3m0 0V19l3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
@@ -271,6 +282,28 @@
           <p class="note">В демо записи сохраняются на устройстве. В рабочей версии они уходили бы мастеру, а бот напоминал бы клиенту о визите.</p>
         </div>
       </article>
+
+      <h3 class="more-title">Ещё лендинги</h3>
+      <div class="more">
+        <article class="mini-case">
+          <a class="shot" href="demo-nails/" target="_blank" rel="noopener"><img src="img/nails.jpg" alt="Лендинг студии маникюра «Палитра»" width="960" height="600" loading="lazy"></a>
+          <h4>Студия маникюра «Палитра»</h4>
+          <p>Клиентка выбирает оттенок лака на экране — глянец или мат — и записывается сразу с этим цветом.</p>
+          <div class="links"><a class="btn btn-ink" href="demo-nails/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-nails" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="mini-case">
+          <a class="shot" href="demo-fitness/" target="_blank" rel="noopener"><img src="img/fitness.jpg" alt="Лендинг студии йоги и пилатеса «Поток»" width="960" height="600" loading="lazy"></a>
+          <h4>Студия йоги «Поток»</h4>
+          <p>Расписание на неделю с фильтрами и свободными местами. Нажал на занятие — и оно уже в записи на пробное.</p>
+          <div class="links"><a class="btn btn-ink" href="demo-fitness/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-fitness" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="mini-case">
+          <a class="shot" href="demo-autoservice/" target="_blank" rel="noopener"><img src="img/autoservice.jpg" alt="Лендинг автосервиса «Гайка»" width="960" height="600" loading="lazy"></a>
+          <h4>Автосервис «Гайка»</h4>
+          <p>Калькулятор сразу называет цену по классу машины и нужным работам, а расчёт попадает в заявку.</p>
+          <div class="links"><a class="btn btn-ink" href="demo-autoservice/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-autoservice" target="_blank" rel="noopener">Код</a></div>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -318,7 +351,7 @@
         <h3>Почему с ИИ</h3>
         <div>
           <p>Я работаю вместе с ИИ: он быстро пишет код и берёт на себя рутину. Мне остаётся главное: понять вашу задачу, проверить, что всё работает на телефоне и компьютере, и довести результат до того вида, который нужен вашим клиентам.</p>
-          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и обе работы выше сделаны так же.</p>
+          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и все работы выше сделаны так же.</p>
         </div>
       </div>
     </div>
