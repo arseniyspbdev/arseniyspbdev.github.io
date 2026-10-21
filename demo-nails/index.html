@@ -62,18 +62,26 @@
   .c-small { position: absolute; left: 0; bottom: 0; width: 42%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 24px; border: 6px solid var(--cherry); box-shadow: 0 24px 48px -24px rgba(0, 0, 0, .6); }
   .badge { position: absolute; right: -8px; top: 28px; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: var(--white); color: var(--ink); font-weight: 700; font-size: .9375rem; box-shadow: 0 16px 32px -16px rgba(0, 0, 0, .5); }
 
-  /* Галерея работ */
-  .gallery-sec { background: var(--petal); }
-  .sec-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 12px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(28px, 4vw, 48px); }
-  .sec-head h2 { margin: 0; }
-  .sec-head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
-  .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px); }
-  .gallery figure { position: relative; margin: 0; border-radius: 22px; overflow: hidden; background: var(--blush); }
-  .gallery figure:nth-child(3n + 2) { transform: translateY(32px); }
-  .gallery img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .6s var(--ease); }
-  .gallery figure:hover img { transform: scale(1.05); }
-  .gallery figcaption { position: absolute; left: 12px; bottom: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--ink); font-weight: 700; font-size: .875rem; }
-  .credit { margin: 52px 0 0; color: var(--ink-soft); font-size: .8125rem; }
+  /* Лента работ: страница листается вниз, руки едут вбок */
+  .reel { position: relative; background: var(--petal); height: 300vh; }
+  .reel-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: clamp(18px, 3vh, 32px); }
+  .reel-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 8px clamp(24px, 4vw, 64px); align-items: end; width: 100%; }
+  .reel-head h2 { margin: 0; font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem); }
+  .reel-head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+  .reel-track { display: flex; gap: clamp(14px, 2vw, 28px); padding-inline: max(clamp(16px, 4vw, 48px), calc((100vw - 1200px) / 2 + 48px)); will-change: transform; }
+  .reel-track figure { position: relative; flex: none; margin: 0; width: clamp(220px, 24vw, 340px); border-radius: 26px; overflow: hidden; background: var(--blush); box-shadow: 0 30px 50px -30px rgba(74, 10, 28, .55); transform: translateY(var(--y, 0)) rotate(var(--rot, 0deg)); }
+  .reel-track figure:nth-child(odd) { --y: -18px; --rot: -1.5deg; }
+  .reel-track figure:nth-child(even) { --y: 18px; --rot: 1.5deg; }
+  .reel-track img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 52vh; object-fit: cover; }
+  .reel-track figcaption { position: absolute; left: 12px; bottom: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--ink); font-weight: 700; font-size: .875rem; }
+  .reel-foot { display: flex; align-items: center; gap: 16px; width: 100%; color: var(--ink-soft); font-size: .8125rem; }
+  .reel-progress { flex: 1; height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .reel-progress i { display: block; height: 100%; width: 100%; background: var(--cherry); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+  /* без анимации — обычная лента, которую листают пальцем */
+  .reel.static { height: auto; padding-block: clamp(64px, 9vw, 112px); }
+  .reel.static .reel-sticky { position: static; height: auto; }
+  .reel.static .reel-track { overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 24px; }
+  .reel.static .reel-track figure { scroll-snap-align: start; }
 
   /* Подбор цвета */
   .studio-sec { background: var(--cherry); color: var(--white); }
@@ -145,10 +153,8 @@
   footer { background: var(--ink); color: var(--blush); font-size: .875rem; padding-block: 0 28px; opacity: .85; }
 
   @media (max-width: 900px) {
-    .hero-grid, .booking-grid, .studio-grid, .sec-head { grid-template-columns: minmax(0, 1fr); }
-    .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .gallery figure:nth-child(3n + 2) { transform: none; }
-    .credit { margin-top: 20px; }
+    .hero-grid, .booking-grid, .studio-grid, .reel-head { grid-template-columns: minmax(0, 1fr); }
+    .reel-track figure { width: 62vw; }
     .badge { right: 0; }
     .prices { grid-template-columns: minmax(0, 1fr); }
   }
@@ -179,8 +185,8 @@
     </div>
 
     <div class="collage">
-      <img class="c-main" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=1000&h=1250&q=75" alt="Мастер делает маникюр клиентке" width="1000" height="1250">
-      <img class="c-small" src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?auto=format&fit=crop&w=600&h=600&q=75" alt="Маникюр с лавандовым покрытием и блёстками" width="600" height="600">
+      <img class="c-main" src="https://images.unsplash.com/photo-1610992015762-45dca7fa3a85?auto=format&fit=crop&w=1000&h=1250&q=75" alt="Рука с аккуратным нюдовым маникюром" width="1000" height="1250">
+      <img class="c-small" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=600&h=600&q=75" alt="Мастер делает маникюр клиентке" width="600" height="600">
       <div class="badge">
         <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#6d0f2a"/><path d="m6.5 11.3 3 3 6-6.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Онлайн-запись за 1 минуту
@@ -189,21 +195,26 @@
   </section>
 </div>
 
-<section class="section gallery-sec" id="works" aria-labelledby="works-title">
-  <div class="wrap">
-    <div class="sec-head">
+<section class="reel" id="works" aria-labelledby="works-title">
+  <div class="reel-sticky">
+    <div class="wrap reel-head">
       <h2 id="works-title">Наши работы</h2>
-      <p>От аккуратного нюда до авторской росписи. Покажите мастеру понравившийся дизайн — повторим или придумаем ваш.</p>
+      <p>Листайте вниз — работы проедут мимо. Покажите мастеру понравившийся дизайн, и мы повторим его или придумаем ваш.</p>
     </div>
-    <div class="gallery">
-      <figure><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&h=875&q=75" alt="Черепаховый дизайн ногтей" loading="lazy" width="700" height="875"><figcaption>Черепаховый дизайн</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1610992015762-45dca7fa3a85?auto=format&fit=crop&w=700&h=875&q=75" alt="Натуральный нюдовый маникюр" loading="lazy" width="700" height="875"><figcaption>Натуральный нюд</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1571290274554-6a2eaa771e5f?auto=format&fit=crop&w=700&h=875&q=75" alt="Яркая авторская роспись ногтей" loading="lazy" width="700" height="875"><figcaption>Авторская роспись</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1612887390768-fb02affea7a6?auto=format&fit=crop&w=700&h=875&q=75" alt="Розовый маникюр миндальной формы" loading="lazy" width="700" height="875"><figcaption>Розовый миндаль</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1630843599725-32ead7671867?auto=format&fit=crop&w=700&h=875&q=75" alt="Молочный маникюр и тонкое кольцо" loading="lazy" width="700" height="875"><figcaption>Молочный минимализм</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1736434518489-0eb84070017f?auto=format&fit=crop&w=700&h=875&q=75" alt="Маникюр цвета капучино" loading="lazy" width="700" height="875"><figcaption>Тёплый капучино</figcaption></figure>
+    <div class="reel-track" id="reel-track">
+      <figure><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&h=875&q=75" alt="Черепаховый дизайн ногтей" width="700" height="875"><figcaption>Черепаховый дизайн</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?auto=format&fit=crop&w=700&h=875&q=75" alt="Лавандовый маникюр с блёстками" width="700" height="875"><figcaption>Лаванда и блёстки</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1571290274554-6a2eaa771e5f?auto=format&fit=crop&w=700&h=875&q=75" alt="Яркая авторская роспись ногтей" width="700" height="875"><figcaption>Авторская роспись</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1612887390768-fb02affea7a6?auto=format&fit=crop&w=700&h=875&q=75" alt="Розовый маникюр миндальной формы" width="700" height="875"><figcaption>Розовый миндаль</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1630843599725-32ead7671867?auto=format&fit=crop&w=700&h=875&q=75" alt="Молочный маникюр и тонкое кольцо" width="700" height="875"><figcaption>Молочный минимализм</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1604902396830-aca29e19b067?auto=format&fit=crop&w=700&h=875&q=75" alt="Пудрово-розовый маникюр на розовом фоне" width="700" height="875"><figcaption>Пудровый розовый</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1736434518489-0eb84070017f?auto=format&fit=crop&w=700&h=875&q=75" alt="Маникюр цвета капучино" width="700" height="875"><figcaption>Тёплый капучино</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1604654894611-6973b376cbde?auto=format&fit=crop&w=700&h=875&q=75" alt="Тёмный маникюр с золотыми акцентами" width="700" height="875"><figcaption>Графит с золотом</figcaption></figure>
     </div>
-    <p class="credit">Фото: Unsplash</p>
+    <div class="wrap reel-foot">
+      <div class="reel-progress" aria-hidden="true"><i id="reel-bar"></i></div>
+      <span>Фото: Unsplash</span>
+    </div>
   </div>
 </section>
 
@@ -399,6 +410,30 @@
     const t = document.getElementById(a.getAttribute('href').slice(1));
     if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' });
   }));
+
+  // Лента работ: вертикальная прокрутка двигает руки вбок
+  const reel = $('#works'), track = $('#reel-track'), bar = $('#reel-bar');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    reel.classList.add('static');
+  } else {
+    let dist = 0, ticking = false;
+    const size = () => {
+      dist = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+      reel.style.height = `${window.innerHeight + dist}px`;
+      move();
+    };
+    const move = () => {
+      const top = reel.getBoundingClientRect().top;
+      const p = dist ? Math.min(1, Math.max(0, -top / dist)) : 0;
+      track.style.transform = `translate3d(${-p * dist}px, 0, 0)`;
+      bar.style.setProperty('--p', p.toFixed(4));
+      ticking = false;
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(move); } }, { passive: true });
+    addEventListener('resize', size);
+    addEventListener('load', size);
+    size();
+  }
   paint();
 })();
 </script>
