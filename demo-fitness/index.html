@@ -48,8 +48,21 @@
   .site-header nav a:hover { color: var(--forest); }
   .site-header .btn { min-height: 44px; padding: 0 18px; }
 
-  .hero { padding-block: clamp(20px, 3vw, 40px) clamp(32px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px clamp(24px, 4vw, 64px); align-items: end; }
-  .hero h1 { font-size: clamp(2.6rem, 1rem + 5.4vw, 5.6rem); font-weight: 800; }
+  .hero { padding-block: clamp(20px, 3vw, 40px) clamp(40px, 5vw, 64px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px clamp(24px, 4vw, 64px); align-items: center; }
+  .hero h1 { font-size: clamp(2.6rem, 1rem + 4.4vw, 5rem); font-weight: 800; margin-bottom: 20px; }
+  .hero-photo { position: relative; padding-bottom: 40px; }
+  .hp-main { display: block; width: 100%; height: auto; aspect-ratio: 11 / 9; object-fit: cover; border-radius: 28px; }
+  .hp-small { position: absolute; left: -28px; bottom: 0; width: 34%; height: auto; aspect-ratio: 5 / 6; object-fit: cover; border-radius: 20px; border: 6px solid var(--sage); }
+  .hp-chip { position: absolute; right: 18px; bottom: 58px; padding: 12px 18px; border-radius: 16px; background: var(--white); font-size: .9375rem; color: var(--forest-soft); box-shadow: 0 16px 32px -16px rgba(22, 53, 42, .5); }
+  .hp-chip b { color: var(--violet); font-size: 1.4rem; font-weight: 800; margin-right: 4px; }
+
+  .kind img { display: block; width: 100%; height: auto; aspect-ratio: 7 / 5.2; object-fit: cover; border-radius: 18px; margin-bottom: 18px; }
+  .hall { padding-bottom: clamp(64px, 9vw, 112px); }
+  .hall-fig { position: relative; margin: 0; border-radius: 28px; overflow: hidden; }
+  .hall-fig img { display: block; width: 100%; height: auto; aspect-ratio: 18 / 8.6; object-fit: cover; }
+  .hall-fig figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(20px, 4vw, 48px); color: var(--white); background: linear-gradient(to top, rgba(10, 26, 20, .92) 0%, rgba(10, 26, 20, .7) 55%, rgba(10, 26, 20, 0) 100%); padding-top: 120px; }
+  .hall-fig h2 { font-size: clamp(1.6rem, 1rem + 2vw, 2.6rem); font-weight: 800; margin-bottom: 8px; }
+  .hall-fig p { margin: 0; max-width: 52ch; color: #e1ebdc; }
   .hero h1 em { font-style: normal; color: var(--violet); }
   .hero p { margin: 0 0 20px; max-width: 40ch; font-size: 1.125rem; color: var(--forest-soft); }
   .offer { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -123,6 +136,8 @@
     .hero, .trial-grid { grid-template-columns: minmax(0, 1fr); }
     .week { grid-template-columns: repeat(7, minmax(120px, 1fr)); overflow-x: auto; padding-bottom: 6px; }
     .kinds, .plans { grid-template-columns: minmax(0, 1fr); }
+    .hp-small { left: 0; }
+    .hall-fig img { aspect-ratio: 4 / 5; }
   }
   @media (max-width: 680px) {
     .site-header nav { display: none; }
@@ -146,14 +161,19 @@
 
 <main>
   <section class="wrap hero" aria-labelledby="hero-title">
-    <h1 id="hero-title">Йога и пилатес <em>рядом с домом</em></h1>
     <div>
+      <h1 id="hero-title">Йога и пилатес <em>рядом с домом</em></h1>
       <p>Небольшие группы до 10 человек. Выберите занятие в расписании — первое пробное за 500 ₽.</p>
-      <div class="offer"><a class="btn btn-violet" href="#trial">Записаться на пробное</a></div>
+      <div class="offer"><a class="btn btn-violet" href="#trial">Записаться на пробное</a><a class="btn btn-ghost" href="#schedule">Расписание</a></div>
+    </div>
+    <div class="hero-photo">
+      <img class="hp-main" src="https://images.unsplash.com/photo-1787647089633-37e49ee2e054?auto=format&fit=crop&w=1100&h=900&q=75" alt="Групповое занятие йогой в светлом зале" width="1100" height="900">
+      <img class="hp-small" src="https://images.unsplash.com/photo-1747239069226-55382c570116?auto=format&fit=crop&w=500&h=600&q=75" alt="Занятие пилатесом на реформере" width="500" height="600">
+      <div class="hp-chip"><b>10</b> человек в группе — максимум</div>
     </div>
   </section>
 
-  <section class="wrap" aria-labelledby="sched-title">
+  <section class="wrap" id="schedule" aria-labelledby="sched-title">
     <div class="schedule">
       <div class="sched-head">
         <h2 id="sched-title">Расписание на неделю</h2>
@@ -169,10 +189,22 @@
       <h2 class="big" id="kinds-title">Направления</h2>
       <p class="section-lead">Подойдут и тем, кто никогда не занимался: тренер подскажет облегчённые варианты.</p>
       <div class="kinds">
-        <div class="kind" style="--c:var(--yoga)"><h3>Йога</h3><p>Хатха и мягкая виньяса: гибкость, дыхание, спокойная голова после работы.</p></div>
-        <div class="kind" style="--c:var(--pilates)"><h3>Пилатес</h3><p>Мышцы кора и правильная осанка. Хорошо для спины и тех, кто много сидит.</p></div>
-        <div class="kind" style="--c:var(--stretch)"><h3>Растяжка</h3><p>Плавная работа над шпагатами и подвижностью суставов без рывков.</p></div>
+        <div class="kind" style="--c:var(--yoga)"><img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=700&h=520&q=75" alt="Девушка сидит в позе йоги" loading="lazy" width="700" height="520"><h3>Йога</h3><p>Хатха и мягкая виньяса: гибкость, дыхание, спокойная голова после работы.</p></div>
+        <div class="kind" style="--c:var(--pilates)"><img src="https://images.unsplash.com/photo-1747238415033-b74eec07eb59?auto=format&fit=crop&w=700&h=520&q=75" alt="Упражнение пилатеса на реформере" loading="lazy" width="700" height="520"><h3>Пилатес</h3><p>Мышцы кора и правильная осанка. Хорошо для спины и тех, кто много сидит.</p></div>
+        <div class="kind" style="--c:var(--stretch)"><img src="https://images.unsplash.com/photo-1683056255281-e52a141924f0?auto=format&fit=crop&w=700&h=520&q=75" alt="Группа делает растяжку на ковриках" loading="lazy" width="700" height="520"><h3>Растяжка</h3><p>Плавная работа над шпагатами и подвижностью суставов без рывков.</p></div>
       </div>
+    </div>
+  </section>
+
+  <section class="hall" aria-labelledby="hall-title">
+    <div class="wrap">
+      <figure class="hall-fig">
+        <img src="https://images.unsplash.com/photo-1783841193384-4269c68aa050?auto=format&fit=crop&w=1800&h=860&q=75" alt="Светлый зал студии с реформерами" loading="lazy" width="1800" height="860">
+        <figcaption>
+          <h2 id="hall-title">Светлый зал на втором этаже</h2>
+          <p>Коврики, блоки, ремни и реформеры — всё есть в студии. Приходите в удобной одежде, остальное найдётся.</p>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
@@ -219,7 +251,7 @@
     </div>
   </section>
 </main>
-<footer class="wrap">«Поток» — демо-проект для портфолио. Студия, тренеры и цены вымышлены.</footer>
+<footer class="wrap">«Поток» — демо-проект для портфолио. Студия, тренеры и цены вымышлены. Фото: Unsplash.</footer>
 
 <script>
 (() => {

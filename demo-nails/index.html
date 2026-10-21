@@ -36,6 +36,9 @@
   .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 26px; border: 0; border-radius: 999px; font: 700 1rem 'Manrope', sans-serif; text-decoration: none; cursor: pointer; transition: transform .25s var(--ease), background-color .2s; }
   .btn:hover { transform: translateY(-2px); }
   .btn-light { background: var(--white); color: var(--cherry); }
+  .btn-outline { background: transparent; color: var(--white); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .5); }
+  .btn-outline:hover { box-shadow: inset 0 0 0 2px var(--white); }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn-cherry { background: var(--cherry); color: var(--white); }
   .btn-cherry:hover { background: var(--cherry-deep); }
   .btn:disabled { opacity: .7; cursor: progress; transform: none; }
@@ -53,6 +56,29 @@
   .hero h1 { font-size: clamp(2.4rem, 1.2rem + 4vw, 4.4rem); }
   .lead { margin: 18px 0 26px; max-width: 42ch; font-size: 1.125rem; color: var(--blush); }
 
+  /* Фото-коллаж на первом экране */
+  .collage { position: relative; padding: 0 0 32px 0; }
+  .c-main { display: block; width: 84%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 32px; margin-left: auto; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .6); }
+  .c-small { position: absolute; left: 0; bottom: 0; width: 42%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 24px; border: 6px solid var(--cherry); box-shadow: 0 24px 48px -24px rgba(0, 0, 0, .6); }
+  .badge { position: absolute; right: -8px; top: 28px; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: var(--white); color: var(--ink); font-weight: 700; font-size: .9375rem; box-shadow: 0 16px 32px -16px rgba(0, 0, 0, .5); }
+
+  /* Галерея работ */
+  .gallery-sec { background: var(--petal); }
+  .sec-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 12px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(28px, 4vw, 48px); }
+  .sec-head h2 { margin: 0; }
+  .sec-head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+  .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px); }
+  .gallery figure { position: relative; margin: 0; border-radius: 22px; overflow: hidden; background: var(--blush); }
+  .gallery figure:nth-child(3n + 2) { transform: translateY(32px); }
+  .gallery img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform .6s var(--ease); }
+  .gallery figure:hover img { transform: scale(1.05); }
+  .gallery figcaption { position: absolute; left: 12px; bottom: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--ink); font-weight: 700; font-size: .875rem; }
+  .credit { margin: 52px 0 0; color: var(--ink-soft); font-size: .8125rem; }
+
+  /* Подбор цвета */
+  .studio-sec { background: var(--cherry); color: var(--white); }
+  .studio-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px clamp(24px, 5vw, 72px); align-items: center; }
+  .studio-sec h2 { margin-bottom: 0; }
   .studio { background: var(--cherry-deep); border-radius: 28px; padding: clamp(18px, 2.4vw, 28px); }
   .fingers { display: block; width: 100%; height: auto; }
   .fingers .nail { transition: fill .5s var(--ease); }
@@ -119,7 +145,11 @@
   footer { background: var(--ink); color: var(--blush); font-size: .875rem; padding-block: 0 28px; opacity: .85; }
 
   @media (max-width: 900px) {
-    .hero-grid, .booking-grid { grid-template-columns: minmax(0, 1fr); }
+    .hero-grid, .booking-grid, .studio-grid, .sec-head { grid-template-columns: minmax(0, 1fr); }
+    .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gallery figure:nth-child(3n + 2) { transform: none; }
+    .credit { margin-top: 20px; }
+    .badge { right: 0; }
     .prices { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 680px) {
@@ -137,17 +167,52 @@
 <div class="hero">
   <header class="wrap site-header">
     <a class="logo" href="#top">Палитра</a>
-    <nav aria-label="Разделы"><a href="#prices">Цены</a><a href="#masters">Мастера</a><a href="#contacts">Контакты</a></nav>
+    <nav aria-label="Разделы"><a href="#works">Работы</a><a href="#prices">Цены</a><a href="#masters">Мастера</a><a href="#contacts">Контакты</a></nav>
     <a class="btn btn-light" href="#booking">Записаться</a>
   </header>
 
   <section class="wrap hero-grid" aria-labelledby="hero-title">
     <div>
       <h1 id="hero-title">Маникюр в цвете вашего настроения</h1>
-      <p class="lead">Студия маникюра и педикюра. Выберите оттенок прямо здесь — мастер подготовит его к вашему визиту.</p>
-      <a class="btn btn-light" href="#booking">Записаться онлайн</a>
+      <p class="lead">Студия маникюра и педикюра. Подберите оттенок прямо на сайте — мастер подготовит его к вашему визиту.</p>
+      <div class="hero-actions"><a class="btn btn-light" href="#booking">Записаться онлайн</a><a class="btn btn-outline" href="#color">Подобрать цвет</a></div>
     </div>
 
+    <div class="collage">
+      <img class="c-main" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=1000&h=1250&q=75" alt="Мастер делает маникюр клиентке" width="1000" height="1250">
+      <img class="c-small" src="https://images.unsplash.com/photo-1607779097040-26e80aa78e66?auto=format&fit=crop&w=600&h=600&q=75" alt="Маникюр с лавандовым покрытием и блёстками" width="600" height="600">
+      <div class="badge">
+        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#6d0f2a"/><path d="m6.5 11.3 3 3 6-6.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Онлайн-запись за 1 минуту
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="section gallery-sec" id="works" aria-labelledby="works-title">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="works-title">Наши работы</h2>
+      <p>От аккуратного нюда до авторской росписи. Покажите мастеру понравившийся дизайн — повторим или придумаем ваш.</p>
+    </div>
+    <div class="gallery">
+      <figure><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=700&h=875&q=75" alt="Черепаховый дизайн ногтей" loading="lazy" width="700" height="875"><figcaption>Черепаховый дизайн</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1610992015762-45dca7fa3a85?auto=format&fit=crop&w=700&h=875&q=75" alt="Натуральный нюдовый маникюр" loading="lazy" width="700" height="875"><figcaption>Натуральный нюд</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1571290274554-6a2eaa771e5f?auto=format&fit=crop&w=700&h=875&q=75" alt="Яркая авторская роспись ногтей" loading="lazy" width="700" height="875"><figcaption>Авторская роспись</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1612887390768-fb02affea7a6?auto=format&fit=crop&w=700&h=875&q=75" alt="Розовый маникюр миндальной формы" loading="lazy" width="700" height="875"><figcaption>Розовый миндаль</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1630843599725-32ead7671867?auto=format&fit=crop&w=700&h=875&q=75" alt="Молочный маникюр и тонкое кольцо" loading="lazy" width="700" height="875"><figcaption>Молочный минимализм</figcaption></figure>
+      <figure><img src="https://images.unsplash.com/photo-1736434518489-0eb84070017f?auto=format&fit=crop&w=700&h=875&q=75" alt="Маникюр цвета капучино" loading="lazy" width="700" height="875"><figcaption>Тёплый капучино</figcaption></figure>
+    </div>
+    <p class="credit">Фото: Unsplash</p>
+  </div>
+</section>
+
+<section class="section studio-sec" id="color" aria-labelledby="color-title">
+  <div class="wrap studio-grid">
+    <div>
+      <h2 id="color-title">Подберите цвет до визита</h2>
+      <p class="lead">Нажмите на оттенок и посмотрите, как он смотрится на ногтях. Выбранный цвет попадёт в запись, и мастер подготовит его заранее.</p>
+    </div>
     <div class="studio" id="studio">
       <svg class="fingers" viewBox="0 0 400 260" role="img" aria-label="Пальцы с покрытием выбранного цвета">
         <g id="fingers"></g>
@@ -162,8 +227,8 @@
       <div class="swatches" id="swatches" role="group" aria-label="Оттенки"></div>
       <button type="button" class="btn btn-light" id="book-color">Записаться с этим цветом</button>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <main>
   <section class="section" id="prices" aria-labelledby="prices-title">
@@ -221,7 +286,7 @@
     </div>
   </section>
 </main>
-<footer><div class="wrap">«Палитра» — демо-проект для портфолио. Студия и цены вымышлены.</div></footer>
+<footer><div class="wrap">«Палитра» — демо-проект для портфолио. Студия и цены вымышлены. Фото: Unsplash.</div></footer>
 
 <script>
 (() => {
