@@ -82,7 +82,7 @@
   .stem-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; border-bottom: 1px solid var(--night-line); }
   .stem-add { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 64px; padding: 6px 4px; border: 0; background: none; text-align: left; cursor: pointer; border-radius: 12px; transition: background-color .2s; }
   @media (hover: hover) { .stem-add:hover { background: rgba(255, 255, 255, .05); } .stem-add:hover .ico { transform: rotate(-8deg) scale(1.08); } }
-  .ico { width: 48px; height: 48px; transition: transform .45s var(--spring); }
+  .ico { width: 48px; height: 48px; object-fit: contain; transition: transform .45s var(--spring); }
   .stem-add b { display: block; font-weight: 500; font-size: 1.0625rem; line-height: 1.25; }
   .stem-add small { display: block; color: var(--on-night-soft); font-size: .875rem; line-height: 1.35; }
   .stem-add b em { display: none; font-style: normal; font-weight: 400; color: var(--on-night-soft); margin-left: 8px; font-size: .9375rem; font-variant-numeric: tabular-nums; }
@@ -102,10 +102,10 @@
   .papers button[aria-pressed="true"] { background: var(--on-night); color: var(--ink); }
   .bouquet { display: block; width: 100%; height: auto; max-height: 72vh; margin: 4px auto 0; overflow: visible; -webkit-tap-highlight-color: transparent; }
   .bouquet .stem { transition: transform .8s var(--ease); }
-  .bouquet .s-up { transition: transform .7s var(--ease); }
-  .bouquet .head { transition: transform .7s var(--ease); cursor: pointer; }
-  .bouquet .bloom { transition: transform .55s var(--spring) .28s, filter .2s; }
-  @media (hover: hover) { .bouquet .head:hover .bloom { filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 255, 255, .35)); } }
+  .bouquet .slide { transition: transform .8s var(--ease), opacity .5s; }
+  .bouquet image { cursor: pointer; transition: filter .2s; }
+  @media (hover: hover) { .bouquet image:hover { filter: brightness(1.12); } }
+  #layers { filter: drop-shadow(0 6px 8px rgba(20, 4, 16, .45)); }
   .bouquet .paper-back, .bouquet .paper-front { transition: transform .8s var(--ease), fill .5s; }
   .bouquet .paper-front path, .bouquet .paper-back path { transition: fill .5s; }
   .stage-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: -8px; }
@@ -286,16 +286,26 @@
         <svg class="bouquet" id="bouquet" viewBox="40 150 520 500" role="img" aria-label="Ваш букет">
           <defs>
             <radialGradient id="floor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+            <filter id="grain" x="0" y="0" width="100%" height="100%">
+              <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="4" result="noise"/>
+              <feColorMatrix in="noise" type="matrix" values="0 0 0 0 .2  0 0 0 0 .12  0 0 0 0 .05  0 0 0 .55 0" result="fibres"/>
+              <feComposite in="fibres" in2="SourceGraphic" operator="in" result="grain"/>
+              <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="grain"/></feMerge>
+            </filter>
+            <linearGradient id="fold" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".48" stop-color="#000" stop-opacity="0"/><stop offset=".52" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>
+            <clipPath id="trim"><rect x="0" y="0" width="600" height="624"/></clipPath>
           </defs>
           <ellipse cx="300" cy="628" rx="150" ry="16" fill="url(#floor)"/>
-          <g class="paper-back" id="paper-back" style="transform-origin: 300px 640px">
+          <g class="paper-back" id="paper-back" style="transform-origin: 300px 640px" filter="url(#grain)">
             <path d="M246 606 L124 322 Q146 262 204 274 Q238 214 300 232 Q362 214 396 274 Q454 262 476 322 L354 606 Z"/>
             <path d="M246 606 L124 322 Q146 262 204 274 L300 610 Z" opacity=".55"/>
           </g>
-          <g id="layers"></g>
-          <g class="paper-front" id="paper-front">
+          <g id="layers" clip-path="url(#trim)"></g>
+          <g class="paper-front" id="paper-front" filter="url(#grain)">
             <path d="M246 604 L164 436 Q232 474 300 454 Q368 474 436 436 L354 604 Q300 618 246 604 Z"/>
             <path d="M246 604 L164 436 Q232 474 300 454 L300 612 Q270 612 246 604 Z" opacity=".6"/>
+            <path d="M246 604 L164 436 Q232 474 300 454 Q368 474 436 436 L354 604 Q300 618 246 604 Z" fill="url(#fold)" style="fill:url(#fold)"/>
+            <path d="M200 468 Q236 530 262 600 M396 470 Q360 540 338 602" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
             <g id="ribbon">
               <path d="M226 494 Q300 512 374 494 L372 510 Q300 528 228 510 Z"/>
               <path d="M300 502 C 270 470, 236 476, 250 500 C 262 520, 290 512, 300 502 Z"/>
@@ -410,82 +420,46 @@
   // детерминированный «случай» по номеру стебля: букет не дёргается при перерисовке
   const rnd = (i, k = 1) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
 
-  /* ---------- Рисунки цветов: вырезанная бумага, центр головки в 0,0 ---------- */
-  const ring = (n, dist, rx, ry, fill, rot = 0) => Array.from({ length: n }, (_, i) =>
-    `<ellipse cx="0" cy="${-dist}" rx="${rx}" ry="${ry}" fill="${fill}" transform="rotate(${rot + i * 360 / n})"/>`).join('');
-  const leaf = (y, side, len = 34, fill = '#5f8a6b') =>
-    `<path d="M0 ${y} q ${side * len * .5} ${-len * .55} ${side * len} ${-len * .2} q ${-side * len * .45} ${len * .45} ${-side * len} ${len * .2}z" fill="${fill}"/>`;
-
-  const DRAW = {
-    peony: (i) => {
-      const tint = ['#f7a1b6', '#f3b2c2', '#f592ac'][Math.floor(rnd(i, 3) * 3)];
-      return leaf(96, rnd(i, 4) > .5 ? 1 : -1) + ring(9, 24, 21, 26, tint) + ring(9, 22, 16, 20, '#f58aa5', 20) + ring(7, 13, 14, 17, '#f9b4c6', 8) + ring(6, 6, 9, 12, '#ffd0db', 30) + '<circle r="6" fill="#ffe3ea"/>';
-    },
-    rose: (i) => {
-      const c = rnd(i, 3) > .5 ? ['#d6264f', '#e8466c', '#b8173f'] : ['#ee5a6f', '#f57a8a', '#d23f58'];
-      return leaf(70, rnd(i, 4) > .5 ? 1 : -1, 28) + `<circle r="27" fill="${c[0]}"/><circle cx="2" cy="-2" r="21" fill="${c[1]}"/><circle cx="-2" cy="1" r="15" fill="${c[0]}"/><circle cx="1" cy="-1" r="9" fill="${c[2]}"/>
-        <path d="M-20 -6 a21 21 0 0 1 30 -14 M14 -16 a18 18 0 0 1 4 26 M-12 14 a16 16 0 0 1 -4 -18 M-6 -6 a8 8 0 0 1 12 2" fill="none" stroke="rgba(60,0,20,.28)" stroke-width="2" stroke-linecap="round"/>`;
-    },
-    ranunculus: (i) => {
-      const [a, b] = rnd(i, 3) > .4 ? ['#ff9a6c', '#f47b4f'] : ['#ffb38a', '#f39062'];
-      return [27, 23, 19, 15, 11, 7].map((r, k) => `<circle cx="${k % 2 ? .8 : -.8}" cy="${k * .4}" r="${r}" fill="${k % 2 ? b : a}" stroke="rgba(120,40,10,.18)" stroke-width="1"/>`).join('') + '<circle r="3.5" fill="#6d7f32"/>';
-    },
-    tulip: (i) => {
-      const [a, b] = rnd(i, 3) > .5 ? ['#ff6f91', '#e64b72'] : ['#ff8fa8', '#f0607f'];
-      return `<path d="M0 30 q -40 -6 -36 -82 q 10 4 14 10 q 4 -16 22 -26 q 18 10 22 26 q 4 -6 14 -10 q 4 76 -36 82z" fill="#5f8a6b" transform="translate(0 70) scale(.36)"/>
-        <path d="M-16 6 C -22 -14 -14 -32 -4 -34 C 2 -22 2 -6 -16 6 Z" fill="${b}"/><path d="M16 6 C 22 -14 14 -32 4 -34 C -2 -22 -2 -6 16 6 Z" fill="${b}"/>
-        <path d="M-14 8 C -16 -10 -8 -30 0 -36 C 8 -30 16 -10 14 8 Q 0 16 -14 8 Z" fill="${a}"/>`;
-    },
-    chamomile: () => {
-      const head = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${ring(11, 8, 3.4, 7, '#fbf6ee')}<circle r="4.6" fill="#f2c14e"/></g>`;
-      return `<path d="M0 0 L0 60 M-20 14 Q-12 40 0 60 M18 18 Q10 42 0 60 M-6 -14 L0 0" stroke="#5f8a6b" stroke-width="2" fill="none"/>` + head(0, 0, 1) + head(-20, 14, .82) + head(18, 18, .9) + head(-6, -16, .7);
-    },
-    hydrangea: (i) => {
-      const cols = rnd(i, 3) > .5 ? ['#a9bdf0', '#c3b3ee', '#93aee6'] : ['#c9b4ec', '#b0c4f2', '#dcc6f2'];
-      let s = '<circle r="44" fill="#8ea6db"/>';
-      for (let k = 0; k < 34; k++) {
-        const r = 40 * Math.sqrt((k + .5) / 34), a = k * 2.39996;
-        const x = r * Math.cos(a), y = r * Math.sin(a), c = cols[k % 3];
-        s += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(k * 37) % 90})"><rect x="-6" y="-6" width="12" height="12" rx="5" fill="${c}"/><circle r="1.6" fill="#f4f1ff"/></g>`;
-      }
-      return leaf(84, 1, 40) + leaf(92, -1, 36) + s;
-    },
-    eucalyptus: (i) => {
-      let s = '';
-      for (let k = 0; k < 9; k++) {
-        const y = k * 15, side = k % 2 ? 1 : -1, r = 10.5 - k * .5;
-        s += `<circle cx="${side * (r + 2)}" cy="${y}" r="${r}" fill="${k % 3 ? '#8fb3a0' : '#a6c4b4'}"/>`;
-      }
-      return `<path d="M0 -10 L0 140" stroke="#6e8f7c" stroke-width="2"/>${s}<circle cy="-12" r="7" fill="#a6c4b4"/>`;
-    },
+  /* ---------- Стебли: настоящие фото с вырезанным фоном ---------- */
+  // [файл, высота в букете, ширина/высота, центр головки по x и y в долях картинки]
+  const FLOWERS = {
+    peony: [['peony-crimson', 250, 0.597, 0.499, 0.199], ['peony-bud', 290, 0.703, 0.522, 0.108], ['peony-coral', 150, 0.883, 0.456, 0.366]],
+    rose: [['rose-red', 360, 0.367, 0.480, 0.075], ['rose-peach', 330, 0.455, 0.528, 0.139]],
+    ranunculus: [['ranunculus-pink', 175, 0.530, 0.477, 0.210], ['ranunculus-orange', 300, 0.422, 0.407, 0.136]],
+    tulip: [['tulip-pink', 330, 0.219, 0.429, 0.169], ['tulip-pink-2', 270, 0.308, 0.576, 0.150], ['tulip-yellow', 200, 0.550, 0.559, 0.235]],
+    hydrangea: [['hydrangea-violet', 320, 0.458, 0.509, 0.219]],
+    eustoma: [['eustoma-white', 175, 0.630, 0.479, 0.171]],
+    eucalyptus: [['eucalyptus', 230, 0.258, 0.512, 0.150], ['eucalyptus-2', 220, 0.389, 0.509, 0.150]],
   };
 
   const TYPES = {
-    peony: { name: 'Пион', note: 'Сара Бернар, пышный и душистый', price: 450, rank: 1, len: 0, scale: 1.45 },
-    hydrangea: { name: 'Гортензия', note: 'Одна шапка — полбукета', price: 590, rank: 0, len: 22, scale: 1.3 },
-    rose: { name: 'Роза кустовая', note: 'Несколько бутонов на стебле', price: 320, rank: 2, len: 10, scale: 1.5 },
-    ranunculus: { name: 'Ранункулюс', note: 'Коралловый, как маленький пион', price: 280, rank: 3, len: 4, scale: 1.45 },
-    tulip: { name: 'Тюльпан', note: 'Пионовидный, нежно-розовый', price: 190, rank: 4, len: 20, scale: 1.4 },
-    chamomile: { name: 'Матрикария', note: 'Мелкие ромашки для лёгкости', price: 150, rank: 5, len: 26, scale: 1.45 },
-    eucalyptus: { name: 'Эвкалипт', note: 'Серебристая зелень, пахнет мятой', price: 220, rank: 6, len: 34, scale: 1.15 },
+    peony: { name: 'Пион', note: 'Малиновый, коралловый или в бутоне', price: 450, rank: 1, len: 0 },
+    hydrangea: { name: 'Гортензия', note: 'Одна шапка — полбукета', price: 590, rank: 0, len: 22 },
+    rose: { name: 'Роза', note: 'Красная или персиковая, Эквадор', price: 320, rank: 2, len: 10 },
+    ranunculus: { name: 'Ранункулюс', note: 'Как маленький пион, сотня лепестков', price: 280, rank: 3, len: 4 },
+    tulip: { name: 'Тюльпан', note: 'Розовый или жёлтый, голландский', price: 190, rank: 4, len: 20 },
+    eustoma: { name: 'Эустома', note: 'Нежная, как шёлковая бумага', price: 260, rank: 5, len: 14 },
+    eucalyptus: { name: 'Эвкалипт', note: 'Серебристая зелень, пахнет мятой', price: 220, rank: 6, len: 34 },
   };
-  // от дальнего слоя к ближнему: зелень сзади, мелкие ромашки поверх всего
-  const LAYERS = ['eucalyptus', 'peony', 'hydrangea', 'tulip', 'rose', 'ranunculus', 'chamomile'];
-  const ICON_BOX = { chamomile: '-34 -34 68 68', eucalyptus: '-30 -20 60 120', hydrangea: '-48 -48 96 96', peony: '-48 -48 96 96', default: '-34 -40 68 68' };
+  // от дальнего слоя к ближнему: зелень сзади, мелкие головки впереди
+  const LAYERS = ['eucalyptus', 'peony', 'hydrangea', 'eustoma', 'tulip', 'rose', 'ranunculus'];
+  const ICON = { peony: 'peony-crimson', hydrangea: 'hydrangea-violet', rose: 'rose-red', ranunculus: 'ranunculus-pink', tulip: 'tulip-pink-2', eustoma: 'eustoma-white', eucalyptus: 'eucalyptus-2' };
   const PAPERS = {
     kraft: { name: 'Крафт', price: 0, fill: '#c99b68', shade: '#a77a49', ribbon: '#2b1428' },
     calque: { name: 'Калька', price: 150, fill: '#efe6e1', shade: '#cdbdb4', ribbon: '#ff6f91' },
     powder: { name: 'Пудра', price: 150, fill: '#f2bccb', shade: '#d994a8', ribbon: '#2b1428' },
   };
   const MAX = 35, DELIVERY = 390, FREE_FROM = 6000;
-  const DAY = { peony: 3, rose: 3, ranunculus: 3, eucalyptus: 2, chamomile: 2 };
+  const DAY = { peony: 3, rose: 3, ranunculus: 3, eustoma: 2, eucalyptus: 2 };
   const READY = [
-    { name: 'Персиковый вечер', photo: '1494336850228-54adc1dd87ad', alt: 'Букет из белых и персиковых роз с папоротником', text: 'Кустовые розы и коралловые ранункулюсы с эвкалиптом. Тёплый, как свет лампы вечером.', mix: { rose: 5, ranunculus: 4, eucalyptus: 3 }, paper: 'calque' },
-    { name: 'Сад после дождя', photo: '1780892057871-a58ab617718f', alt: 'Яркий букет из пионов, ранункулюсов и гортензии в руке', text: 'Всего понемногу, как будто нарвали в саду: пионы, гортензия, тюльпаны и ромашки.', mix: { hydrangea: 1, peony: 2, ranunculus: 3, tulip: 3, chamomile: 3 }, paper: 'kraft' },
-    { name: 'Пионовая ночь', photo: '1511201173873-c327e63eb6c4', alt: 'Бледно-розовые пионы на чёрном фоне', text: 'Девять пионов Сара Бернар и облако матрикарии. Когда нужно без слов.', mix: { peony: 9, chamomile: 2 }, paper: 'powder' },
-    { name: 'Красный разговор', photo: '1457089328109-e5d9bd499191', alt: 'Тёмно-красные цветы в букете на тёмном фоне', text: 'Глубокие красные розы, ранункулюсы и немного зелени. Для важного свидания или извинения.', mix: { rose: 7, ranunculus: 4, eucalyptus: 2 }, paper: 'kraft' },
+    { name: 'Персиковый вечер', photo: '1494336850228-54adc1dd87ad', alt: 'Букет из белых и персиковых роз с папоротником', text: 'Кустовые розы и коралловые ранункулюсы с эвкалиптом. Тёплый, как свет лампы вечером.', mix: { rose: [5, 'rose-peach'], ranunculus: [4, 'ranunculus-orange'], eucalyptus: 3 }, paper: 'calque' },
+    { name: 'Сад после дождя', photo: '1780892057871-a58ab617718f', alt: 'Яркий букет из пионов, ранункулюсов и гортензии в руке', text: 'Всего понемногу, как будто нарвали в саду: пионы, гортензия, тюльпаны и эустома.', mix: { hydrangea: 1, peony: 2, ranunculus: 3, tulip: 3, eustoma: 2 }, paper: 'kraft' },
+    { name: 'Пионовая ночь', photo: '1511201173873-c327e63eb6c4', alt: 'Бледно-розовые пионы на чёрном фоне', text: 'Девять пионов и две белые эустомы. Когда нужно без слов.', mix: { peony: 9, eustoma: 2 }, paper: 'powder' },
+    { name: 'Красный разговор', photo: '1457089328109-e5d9bd499191', alt: 'Тёмно-красные цветы в букете на тёмном фоне', text: 'Глубокие красные розы, ранункулюсы и немного зелени. Для важного свидания или извинения.', mix: { rose: [7, 'rose-red'], ranunculus: 4, eucalyptus: 2 }, paper: 'kraft' },
   ];
-  const priceOf = (mix, paper = 'kraft') => Object.entries(mix).reduce((s, [t, n]) => s + TYPES[t].price * n, 0) + PAPERS[paper].price;
+  // в составе можно указать сорт: { rose: [7, 'rose-red'] }
+  const qty = (v) => (Array.isArray(v) ? v[0] : v);
+  const priceOf = (mix, paper = 'kraft') => Object.entries(mix).reduce((s, [t, n]) => s + TYPES[t].price * qty(n), 0) + PAPERS[paper].price;
 
   let stems = [];      // [{ id, type, el }]
   let nextId = 1;
@@ -495,7 +469,7 @@
   $('#stems').innerHTML = Object.entries(TYPES).map(([t, f]) => `
     <li class="stem-row" data-t="${t}">
       <button type="button" class="stem-add" data-add="${t}" aria-label="Добавить: ${f.name}, ${rub(f.price)} за стебель">
-        <svg class="ico" viewBox="${ICON_BOX[t] || ICON_BOX.default}" aria-hidden="true">${DRAW[t](3)}</svg>
+        <img class="ico" src="flowers/${ICON[t]}-icon.webp" alt="" width="48" height="48">
         <span><b>${f.name}<em>${rub(f.price)}</em></b><small>${f.note}</small></span>
         <span class="price">${rub(f.price)}</span>
       </button>
@@ -519,21 +493,28 @@
   const layers = {};
   LAYERS.forEach((t) => { const g = document.createElementNS(NS, 'g'); g.dataset.layer = t; $('#layers').appendChild(g); layers[t] = g; });
 
-  function makeStem(type, id) {
+  // стебель: группа повёрнута вокруг связки, внутри фото едет вдоль своей оси; головка — в 0,0
+  function makeStem(type, id, prefer) {
+    const vars = FLOWERS[type];
+    const v = vars.find((x) => x[0] === prefer) || vars[Math.floor(rnd(id, 5) * vars.length)];
+    const [src, h0, ratio, hx, hy] = v;
+    const h = h0 * 1.22;
+    const w = h * ratio;
+    // лёгкое отражение, чтобы одинаковые стебли не выглядели копиями
+    const flip = rnd(id, 6) > .5 ? -1 : 1;
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'stem');
     g.dataset.id = id;
-    g.innerHTML = `<line x1="0" y1="0" x2="0" y2="150" stroke="#4f7a5a" stroke-width="3.2" stroke-linecap="round"/>
-      <line class="s-up" x1="0" y1="0" x2="0" y2="-1" stroke="#4f7a5a" stroke-width="3.2" vector-effect="non-scaling-stroke"/>
-      <g class="head"><g class="bloom"><g transform="scale(${TYPES[type].scale})">${DRAW[type](id)}</g></g></g>`;
+    g.innerHTML = `<g class="slide"><line class="tail" x1="0" y1="${((1 - hy) * h - 6).toFixed(1)}" x2="0" y2="300" stroke="#5c7a45" stroke-width="3" stroke-linecap="round"/>
+      <image href="flowers/${src}.webp" x="${(-hx * w).toFixed(1)}" y="${(-hy * h).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" transform="scale(${flip} 1)"/></g>`;
     return g;
   }
 
   // раскладка: подсолнечная спираль в полукупол; крупные цветы в центре, зелень по краю
   function layout() {
     const n = stems.length;
-    const spread = Math.min(58, 16 + n * 2.5);
-    const base = 196 + Math.min(n, 24) * 1.1;
+    const spread = Math.min(64, 22 + n * 2.6);
+    const base = 200 + Math.min(n, 24) * 1.1;
     const slots = Array.from({ length: n }, (_, k) => {
       const r = Math.sqrt((k + .5) / Math.max(n, 1)), a = k * 2.39996;
       return { x: r * Math.cos(a), y: r * Math.sin(a), r };
@@ -551,38 +532,37 @@
 
   function place(s) {
     s.el.style.transform = `translate(300px, 470px) rotate(${s.angle.toFixed(2)}deg)`;
-    s.el.querySelector('.s-up').style.transform = `scaleY(${s.len.toFixed(1)})`;
-    s.el.querySelector('.head').style.transform = `translateY(${(-s.len).toFixed(1)}px) rotate(${(-s.angle * .55).toFixed(2)}deg)`;
+    s.el.querySelector('.slide').style.transform = `translateY(${(-s.len).toFixed(1)}px)`;
+    // хвост стебля дотягиваем до низа упаковки
+    s.el.querySelector('.tail').setAttribute('y2', (s.len + 150).toFixed(1));
   }
 
-  function addStem(type, quiet) {
+  function addStem(type, quiet, prefer) {
     if (stems.length >= MAX) { $('#limit').textContent = `В одну упаковку помещается ${stemsWord(MAX)}. Для большого букета позвоните нам — соберём в коробке.`; return; }
     const s = { id: nextId++, type };
-    s.el = makeStem(type, s.id);
+    s.el = makeStem(type, s.id, prefer);
     layers[type].appendChild(s.el);
     stems.push(s);
     layout();
-    // рост: стебель вытягивается из связки, головка раскрывается с отскоком
-    const up = s.el.querySelector('.s-up'), head = s.el.querySelector('.head'), bloom = s.el.querySelector('.bloom');
-    const end = [up.style.transform, head.style.transform];
-    up.style.transition = head.style.transition = bloom.style.transition = 'none';
-    up.style.transform = 'scaleY(0)';
-    head.style.transform = `translateY(0px) rotate(0deg)`;
-    bloom.style.transform = 'scale(0)';
+    // флорист вставляет стебель сверху: он опускается в букет и проявляется
+    const slide = s.el.querySelector('.slide'), end = slide.style.transform;
+    slide.style.transition = 'none';
+    slide.style.transform = `translateY(${(-s.len - 90).toFixed(1)}px)`;
+    slide.style.opacity = 0;
     s.el.getBoundingClientRect();
-    up.style.transition = head.style.transition = bloom.style.transition = '';
-    up.style.transform = end[0]; head.style.transform = end[1]; bloom.style.transform = 'scale(1)';
+    slide.style.transition = '';
+    slide.style.transform = end;
+    slide.style.opacity = 1;
     if (!quiet) update();
   }
 
   function removeStem(s) {
     stems = stems.filter((x) => x !== s);
-    const up = s.el.querySelector('.s-up'), head = s.el.querySelector('.head'), bloom = s.el.querySelector('.bloom');
-    bloom.style.transition = 'transform .3s var(--ease)';
-    bloom.style.transform = 'scale(0)';
-    up.style.transform = 'scaleY(0)';
-    head.style.transform = 'translateY(0px)';
-    setTimeout(() => s.el.remove(), reduced ? 0 : 700);
+    const slide = s.el.querySelector('.slide');
+    s.el.style.pointerEvents = 'none';
+    slide.style.transform = `translateY(${(-s.len - 110).toFixed(1)}px)`;
+    slide.style.opacity = 0;
+    setTimeout(() => s.el.remove(), reduced ? 0 : 600);
     $('#limit').textContent = '';
     layout(); update();
   }
@@ -606,12 +586,12 @@
     [...stems].forEach((s) => { s.el.remove(); });
     stems = [];
     $('#limit').textContent = '';
-    const list = Object.entries(mix).flatMap(([t, n]) => Array(n).fill(t));
-    // перемешиваем, чтобы цветы вырастали вперемешку, а не по сортам
-    list.sort((a, b) => rnd(a.length * 7 + list.indexOf(a)) - rnd(b.length * 7 + list.indexOf(b)));
+    const list = Object.entries(mix).flatMap(([t, v]) => Array(qty(v)).fill([t, Array.isArray(v) ? v[1] : null]));
+    // перемешиваем, чтобы цветы появлялись вперемешку, а не по сортам
+    const order = list.map((x, i) => [rnd(i + nextId, 11), x]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
     setPaper(paperKey || paper);
-    if (reduced) { list.forEach((t) => addStem(t, true)); update(); return; }
-    list.forEach((t, i) => setTimeout(() => { addStem(t, true); update(); }, 160 + i * 110));
+    if (reduced) { order.forEach(([t, v]) => addStem(t, true, v)); update(); return; }
+    order.forEach(([t, v], i) => setTimeout(() => { addStem(t, true, v); update(); }, 160 + i * 120));
   }
 
   /* ---------- Цена и сводка ---------- */
@@ -648,7 +628,7 @@
     summary();
   }
   // копия букета для сводки: без id, чтобы не было двойников в документе
-  const art = () => $('#bouquet').innerHTML.replace(/ id="(?!floor)[^"]*"/g, '').replace(/<radialGradient[\s\S]*?<\/radialGradient>/, '');
+  const art = () => $('#bouquet').innerHTML.replace(/<defs>[\s\S]*?<\/defs>/, '').replace(/ id="[^"]*"/g, '');
   const describe = (c) => Object.entries(c).map(([t, k]) => `${TYPES[t].name.toLowerCase()} × ${k}`).join(', ');
 
   /* ---------- Готовые букеты ---------- */
