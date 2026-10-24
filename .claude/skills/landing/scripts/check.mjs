@@ -41,6 +41,8 @@ for (const dir of dirs) {
     page.on('console', (m) => m.type() === 'error' && problems.push(`console.error: ${m.text()}`));
     page.on('requestfailed', (r) => problems.push(`не загрузилось: ${r.url()}`));
     page.on('response', (r) => r.status() >= 400 && problems.push(`${r.status()}: ${r.url()}`));
+    let bytes = 0;
+    page.on('requestfinished', async (r) => { try { bytes += (await r.sizes()).responseBodySize; } catch {} });
 
     await page.goto(`${base}/${dir.replace(/\/+$/, '')}/`, { waitUntil: 'networkidle', timeout: 45000 }).catch((e) => problems.push(`не открылась: ${e.message}`));
     // прокрутка до конца, чтобы сработали lazy-картинки и анимации при прокрутке
@@ -71,6 +73,51 @@ for (const dir of dirs) {
         title: document.title,
         description: !!document.querySelector('meta[name="description"]'),
         lang: document.documentElement.lang,
+        meta: [['link[rel~="icon"]', 'иконки сайта (favicon)'], ['meta[property="og:image"]', 'og:image — превью ссылки в мессенджерах'], ['meta[name="theme-color"]', 'theme-color']]
+          .filter(([sel]) => !document.querySelector(sel)).map(([, what]) => what),
+        // русская типографика в видимом тексте
+        typo: (() => {
+          const found = new Map(); // вид ошибки → [сколько, пример]
+          const add = (kind, t) => { const [n, ex] = found.get(kind) || [0, t.trim().slice(0, 40)]; found.set(kind, [n + 1, ex]); };
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          for (let n; (n = walker.nextNode());) {
+            const el = n.parentElement;
+            if (!el || el.closest('script, style, code, pre') || !el.getClientRects().length) continue;
+            const t = n.textContent;
+            if (/["']/.test(t)) add('прямые кавычки вместо «ёлочек»', t);
+            if (/\s-\s/.test(t)) add('дефис вместо тире', t);
+            if (/\.\.\./.test(t)) add('три точки вместо многоточия', t);
+            if (/\d \d{3}(?!\d)/.test(t) || /\d ₽/.test(t)) add('обычный пробел в числе или перед ₽ (нужен неразрывный)', t);
+          }
+          return [...found].map(([kind, [n, ex]]) => `${kind}: ${n} шт., например «${ex}»`);
+        })(),
+        // контраст текста на сплошном фоне; текст поверх фото не проверяется — смотрите глазами
+        contrast: (() => {
+          const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+          const lum = ([r, g, b]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+          const bad = new Map();
+          for (const el of document.querySelectorAll('body *')) {
+            if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+            const cs = getComputedStyle(el);
+            if (cs.visibility === 'hidden' || +cs.opacity === 0 || !el.getClientRects().length || el.closest('[aria-hidden="true"], [disabled], [aria-disabled="true"]')) continue;
+            let bg = null;
+            for (let p = el; p; p = p.parentElement) {
+              const ps = getComputedStyle(p);
+              if (ps.backgroundImage !== 'none' || p.tagName === 'IMG' || p.tagName === 'VIDEO') { bg = null; break; }
+              const c = rgb(ps.backgroundColor);
+              if (c.length === 3 || (c.length === 4 && c[3] >= 0.95)) { bg = c; break; }
+              if (c.length === 4 && c[3] > 0) { bg = null; break; }
+            }
+            if (!bg) continue;
+            const fg = rgb(cs.color);
+            if (fg.length === 4 && fg[3] < 1) continue;
+            const [a, b] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+            const ratio = (a + 0.05) / (b + 0.05);
+            const size = parseFloat(cs.fontSize), large = size >= 24 || (size >= 18.6 && +cs.fontWeight >= 700);
+            if (ratio < (large ? 3 : 4.5)) bad.set(el.textContent.trim().slice(0, 30), ratio.toFixed(2));
+          }
+          return [...bad].slice(0, 6).map(([t, r]) => `«${t}» ${r}:1`);
+        })(),
         smallTaps: [...document.querySelectorAll('a, button, input, select, [role="button"]')].filter((el) => {
           const r = el.getBoundingClientRect();
           if (el.matches('header a:first-of-type, [class*="logo"]')) return false;
@@ -87,7 +134,16 @@ for (const dir of dirs) {
     if (facts.h1 !== 1) problems.push(`h1 на странице: ${facts.h1}, нужен ровно один`);
     if (!facts.description) problems.push('нет meta description');
     if (facts.lang !== 'ru') problems.push(`lang="${facts.lang}", ожидался ru`);
-    const warn = label === 'phone' && facts.smallTaps.length ? `  ! мелко для пальца (ниже 36px): ${facts.smallTaps.join('; ')}` : '';
+    const warns = [];
+    if (label === 'phone' && facts.smallTaps.length) warns.push(`мелко для пальца (ниже 36px): ${facts.smallTaps.join('; ')}`);
+    if (label === 'desktop') {
+      if (facts.meta.length) warns.push(`нет ${facts.meta.join(', ')}`);
+      facts.typo.forEach((t) => warns.push(t));
+      if (facts.contrast.length) warns.push(`слабый контраст: ${facts.contrast.join('; ')}`);
+      const mb = bytes / 1048576;
+      if (mb > 3) warns.push(`это много: ужмите фото (w=, q=) и шрифты`);
+      warns.unshift(`вес страницы: ${mb.toFixed(2)} МБ`);
+    }
 
     await page.screenshot({ path: join(shots, `${name}-${label}.png`), fullPage: true });
     if (card && label === 'desktop') {
@@ -98,7 +154,7 @@ for (const dir of dirs) {
 
     console.log(`${problems.length ? '✗' : '✓'} ${dir} · ${label} ${width}px · «${facts.title}»`);
     problems.forEach((p) => console.log('    ' + p));
-    if (warn) console.log('  ' + warn);
+    warns.forEach((w) => console.log('    ! ' + w));
     if (problems.length) failed = true;
     await page.close();
   }
