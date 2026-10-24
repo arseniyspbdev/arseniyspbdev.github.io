@@ -5,72 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Кондитерская «Корж»</title>
 <meta name="description" content="Демо-лендинг кондитерской: торт собирается в 3D по слоям — ярусы, бисквит, начинка, покрытие, свечи и надпись, — а потом разрезается, чтобы показать начинку.">
-<meta name="theme-color" content="#c9dcb0">
+<meta name="theme-color" content="#2a1b17">
 <meta property="og:title" content="Кондитерская «Корж»">
 <meta property="og:description" content="Соберите торт на экране — испечём точно такой за два дня.">
 <meta property="og:image" content="https://arseniyspbdev.github.io/img/cake.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c9dcb0'/%3E%3Crect x='12' y='30' width='40' height='22' rx='4' fill='%232b1a14'/%3E%3Crect x='18' y='18' width='28' height='14' rx='4' fill='%23d81f4f'/%3E%3Crect x='30' y='8' width='4' height='10' fill='%232b1a14'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232a1b17'/%3E%3Crect x='12' y='30' width='40' height='22' rx='4' fill='%23f3ede7'/%3E%3Crect x='18' y='18' width='28' height='14' rx='4' fill='%23c8284f'/%3E%3Crect x='30' y='8' width='4' height='10' fill='%23cfaa6e'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Prosto+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Yeseva+One&display=swap" rel="stylesheet">
 <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js" crossorigin>
 <style>
-  /* Фисташка, шоколад и малина: десертная палитра без розовой пудры. Главное — торт в 3D, который собирают по слоям,
-     а прокрутка режет его, зажигает свечи и складывает вокруг коробку */
+  /* Какао и фарфор: тёмная витрина дорогой кондитерской, тёплый свет на торте, малина и золото — только в деталях.
+     Главное — торт в 3D, который собирают по слоям, а прокрутка режет его, зажигает свечи и складывает вокруг коробку */
   :root {
-    --pista: #c9dcb0;
-    --pista-2: #b5cc97;
-    --choc: #2b1a14;
-    --choc-soft: #5b4940;
-    --rasp: #d81f4f;
-    --rasp-hi: #ee3563;
-    --cream: #fbf6ec;
-    --line: rgba(43, 26, 20, .16);
-    --night: #1d1410;
-    --bg: var(--pista);
-    --display: 'Prosto One', 'Arial Black', sans-serif;
-    --body: 'Nunito', system-ui, sans-serif;
+    --cocoa: #2a1b17;
+    --cocoa-2: #3b2722;
+    --cocoa-3: #4a332c;
+    --porcelain: #f3ede7;
+    --porcelain-2: #e8dfd7;
+    --on-dark: #f3ede7;
+    --on-dark-soft: #c7b3a7;
+    --ink: #2a1b17;
+    --ink-soft: #6e5850;
+    --rasp: #c8284f;
+    --rasp-hi: #dc3a62;
+    --gold: #cfaa6e;
+    --hair: rgba(243, 237, 231, .14);
+    --hair-strong: rgba(243, 237, 231, .28);
+    --line: rgba(42, 27, 23, .14);
+    --bg: var(--cocoa);
+    --display: 'Yeseva One', Georgia, serif;
+    --body: 'Jost', system-ui, sans-serif;
     --ease: cubic-bezier(.16, 1, .3, 1);
   }
   *, *::before, *::after { box-sizing: border-box; }
   html { background: var(--bg); transition: background-color .25s linear; overflow-x: clip; }
-  body { margin: 0; overflow-x: clip; color: var(--choc); font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  body { margin: 0; overflow-x: clip; color: var(--on-dark); font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
   html.lenis, html.lenis body { height: auto; }
   .lenis.lenis-smooth { scroll-behavior: auto !important; }
-  ::selection { background: var(--rasp); color: var(--cream); }
-  :focus-visible { outline: 3px solid var(--rasp); outline-offset: 3px; border-radius: 8px; }
-  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; font-variant-numeric: lining-nums; }
+  ::selection { background: var(--rasp); color: #fff; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 8px; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; line-height: 1.04; letter-spacing: -0.005em; text-wrap: balance; font-variant-numeric: lining-nums; }
   p { text-wrap: pretty; }
   button, input { font: inherit; color: inherit; }
   .wrap { max-width: 1320px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
   section[id] { scroll-margin-top: 64px; }
 
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px; font: 800 1rem var(--body); text-decoration: none; cursor: pointer; transition: transform .3s var(--ease), background-color .2s, color .2s; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 28px; border: 0; border-radius: 999px; font: 500 1rem var(--body); letter-spacing: .01em; text-decoration: none; cursor: pointer; transition: transform .3s var(--ease), background-color .2s, color .2s, box-shadow .2s; }
   .btn:active { transform: scale(.97); }
-  .btn-rasp { background: var(--rasp); color: #fff; }
-  .btn-choc { background: var(--choc); color: var(--cream); }
-  .btn-line { background: transparent; color: var(--choc); box-shadow: inset 0 0 0 2px var(--choc); }
+  .btn-rasp { background: var(--rasp); color: #fff; box-shadow: 0 12px 30px -14px rgba(200, 40, 79, .8); }
+  .btn-choc { background: var(--porcelain); color: var(--ink); }
+  .btn-line { background: transparent; color: inherit; box-shadow: inset 0 0 0 1px currentColor; }
   @media (hover: hover) {
     .btn-rasp:hover { background: var(--rasp-hi); transform: translateY(-2px); }
-    .btn-choc:hover { background: #45302a; transform: translateY(-2px); }
-    .btn-line:hover { background: var(--choc); color: var(--cream); }
+    .btn-choc:hover { background: #fff; transform: translateY(-2px); }
   }
   .btn:disabled { opacity: .7; cursor: progress; transform: none; }
 
-  .demo-bar { position: relative; z-index: 5; background: var(--choc); color: #e6d9c8; text-align: center; font-size: .8125rem; padding: 6px 16px; }
+  .demo-bar { position: relative; z-index: 5; background: #160e0b; color: var(--on-dark-soft); text-align: center; font-size: .8125rem; padding: 6px 16px; }
 
   /* ---------- Шапка ---------- */
   .site-header { position: sticky; top: 0; z-index: 20; transition: background-color .3s; }
-  .scrolled .site-header { background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .scrolled .site-header { background: rgba(30, 19, 16, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
   .site-header .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
-  .logo { display: flex; align-items: center; gap: 10px; font: 400 1.6rem/1 var(--display); color: var(--choc); text-decoration: none; transition: color .3s; }
-  .night .logo, .night .site-header nav a { color: var(--cream); }
-  .site-header nav { display: flex; gap: 26px; margin-left: auto; }
-  .site-header nav a { color: var(--choc-soft); text-decoration: none; font-weight: 700; font-size: .9375rem; transition: color .2s; }
-  .site-header nav a:hover { color: var(--choc); }
-  .site-header .btn { min-height: 44px; padding: 0 20px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 400 1.6rem/1 var(--display); color: var(--on-dark); text-decoration: none; }
+  .site-header nav { display: flex; gap: 28px; margin-left: auto; }
+  .site-header nav a { color: var(--on-dark-soft); text-decoration: none; font-weight: 500; font-size: .9375rem; transition: color .2s; }
+  .site-header nav a:hover { color: var(--on-dark); }
+  .site-header .btn { min-height: 42px; padding: 0 20px; }
 
-  /* ---------- 3D ---------- */
+  /* ---------- 3D: холст и свет за тортом ---------- */
+  /* пятно двигаем только через transform: менять CSS-переменную каждый кадр — пересчитывать стили всей страницы */
+  .spot { position: fixed; left: 0; top: 60vh; z-index: 0; width: 84vmax; height: 76vmax; margin: -38vmax 0 0 -42vmax; pointer-events: none; border-radius: 50%; background: radial-gradient(closest-side, rgba(207, 170, 110, .22), transparent); will-change: transform; }
+  .spot.warm { background: radial-gradient(closest-side, rgba(255, 140, 60, .26), transparent); opacity: 0; }
   #stage { position: fixed; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1s var(--ease); touch-action: pan-y; }
   #stage.ready { opacity: 1; }
   #stage.off { visibility: hidden; }
@@ -78,158 +85,156 @@
   main, footer { position: relative; z-index: 2; }
   main { pointer-events: none; }
   main > :not(.builder):not(.journey) { pointer-events: auto; }
-  .loading { position: fixed; left: 36%; top: 50%; transform: translate(-50%, -50%); z-index: 1; color: var(--choc-soft); font-weight: 700; transition: opacity .6s; }
+  .loading { position: fixed; left: 36%; top: 50%; transform: translate(-50%, -50%); z-index: 1; color: var(--on-dark-soft); transition: opacity .6s; }
   .fallback { display: none; }
 
   /* ---------- Конструктор ---------- */
   .builder { position: relative; min-height: calc(100svh - 64px - 31px); }
   .builder .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 32px; align-items: start; padding-block: clamp(16px, 3vw, 40px) 32px; }
-  .intro h1 { font-size: clamp(2.2rem, 1rem + 2.2vw, 3.3rem); max-width: 11ch; margin-bottom: 14px; }
-  .intro p { margin: 0; max-width: 34ch; color: var(--choc-soft); font-weight: 600; }
-  .drag-hint { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+  .intro h1 { font-size: clamp(2.3rem, 1rem + 2.4vw, 3.5rem); max-width: 11ch; margin-bottom: 16px; }
+  .intro p { margin: 0; max-width: 34ch; color: var(--on-dark-soft); }
+  .drag-hint { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: .875rem; color: var(--on-dark-soft); }
 
-  .panel { pointer-events: auto; background: rgba(251, 246, 236, .86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-radius: 28px; padding: 18px; box-shadow: 0 30px 60px -40px rgba(43, 26, 20, .6); }
-  .tabs { display: flex; flex-wrap: wrap; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: -4px -4px 14px; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab { flex: none; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-weight: 800; font-size: .875rem; color: var(--choc-soft); transition: background-color .2s, color .2s; }
-  .tab[aria-selected="true"] { background: var(--choc); color: var(--cream); }
-  .pane { min-height: 168px; }
+  .panel { pointer-events: auto; position: relative; background: linear-gradient(160deg, rgba(74, 51, 44, .72), rgba(42, 27, 23, .82)); -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--hair); border-radius: 26px; padding: 22px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 40px 80px -40px rgba(0, 0, 0, .8); }
+  .tabs { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 4px; margin: -6px 0 18px; padding-bottom: 6px; border-bottom: 1px solid var(--hair); }
+  .tab { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 4px; border: 0; background: none; cursor: pointer; font-weight: 500; font-size: .9375rem; color: var(--on-dark-soft); transition: color .2s; }
+  .tab b { font: 400 .75rem var(--body); color: var(--gold); opacity: .8; font-variant-numeric: tabular-nums; }
+  .tab:hover, .tab[aria-selected="true"] { color: var(--on-dark); }
+  .tab-ink { position: absolute; left: 0; top: 0; height: 2px; width: 40px; border-radius: 2px; background: var(--gold); transition: transform .45s var(--ease), width .45s var(--ease); }
+  .pane { min-height: 196px; }
   .pane[hidden] { display: none; }
-  .pane h2 { font-size: 1.25rem; margin-bottom: 4px; }
-  .pane > p { margin: 0 0 12px; font-size: .9375rem; color: var(--choc-soft); }
+  .pane h2 { font-size: 1.5rem; margin-bottom: 4px; }
+  .pane > p { margin: 0 0 16px; font-size: .9375rem; color: var(--on-dark-soft); }
   .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .opt { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; border: 2px solid transparent; border-radius: 16px; background: #fff; cursor: pointer; text-align: left; font-weight: 700; font-size: .9375rem; line-height: 1.2; transition: border-color .2s, transform .25s var(--ease); }
-  .opt:hover { transform: translateY(-1px); }
-  .opt[aria-pressed="true"] { border-color: var(--choc); }
-  .opt i { flex: none; width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .2), inset 0 2px 3px rgba(255, 255, 255, .4); }
-  .opt small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
-  .tiers .opt { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
-  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 12px; border-radius: 16px; background: #fff; margin-bottom: 8px; font-weight: 700; }
-  .row small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
-  .switch { position: relative; width: 52px; height: 30px; flex: none; border: 0; border-radius: 999px; background: #d8d2c6; cursor: pointer; transition: background-color .2s; }
-  .switch::after { content: ""; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform .3s var(--ease); }
-  .switch[aria-checked="true"] { background: var(--rasp); }
-  .switch[aria-checked="true"]::after { transform: translateX(22px); }
-  .stepper { display: flex; align-items: center; gap: 4px; }
-  .stepper button { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--cream); cursor: pointer; font-size: 1.15rem; font-weight: 800; }
-  .stepper button:disabled { opacity: .35; cursor: default; }
-  .stepper output { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
-  .text-field { display: block; }
-  .text-field input { width: 100%; min-height: 52px; padding: 0 14px; border: 2px solid transparent; border-radius: 16px; background: #fff; font-weight: 700; color: var(--choc); }
-  .text-field input:focus { outline: none; border-color: var(--choc); }
-  .text-field small { display: block; margin-top: 6px; font-size: .8125rem; color: var(--choc-soft); font-variant-numeric: tabular-nums; }
-  .sum { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
-  .sum small { display: block; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
-  .sum output { display: block; font: 400 2rem/1.05 var(--display); font-variant-numeric: tabular-nums lining-nums; }
-  .sum .btn { min-height: 48px; padding: 0 20px; }
+  .opt { position: relative; display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 12px; border: 1px solid var(--hair); border-radius: 16px; background: rgba(255, 255, 255, .02); cursor: pointer; text-align: left; font-weight: 500; font-size: .9375rem; line-height: 1.25; transition: border-color .25s, background-color .25s, transform .3s var(--ease); }
+  .opt:hover { border-color: var(--hair-strong); background: rgba(255, 255, 255, .05); }
+  .opt[aria-pressed="true"] { border-color: var(--gold); background: rgba(207, 170, 110, .1); }
+  .opt small { display: block; margin-top: 2px; font-weight: 400; font-size: .8125rem; color: var(--on-dark-soft); }
+  .sw { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 45%), var(--c); box-shadow: inset 0 -4px 8px rgba(0, 0, 0, .3), 0 0 0 1px rgba(255, 255, 255, .12); transition: box-shadow .3s; }
+  .opt[aria-pressed="true"] .sw { box-shadow: inset 0 -4px 8px rgba(0, 0, 0, .3), 0 0 0 2px var(--cocoa), 0 0 0 3.5px var(--gold); }
+  .tiers .opt { flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; min-height: 118px; padding: 12px 8px 12px; text-align: center; }
+  .tiers svg { width: 64px; height: 52px; color: var(--on-dark-soft); transition: color .25s; }
+  .tiers .opt[aria-pressed="true"] svg { color: var(--gold); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; padding: 8px 4px; border-bottom: 1px solid var(--hair); font-weight: 500; }
+  .row:last-child { border-bottom: 0; }
+  .row small { display: block; font-weight: 400; font-size: .8125rem; color: var(--on-dark-soft); }
+  .switch { position: relative; width: 46px; height: 26px; flex: none; border: 1px solid var(--hair-strong); border-radius: 999px; background: transparent; cursor: pointer; transition: background-color .25s, border-color .25s; }
+  .switch::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--on-dark-soft); transition: transform .35s var(--ease), background-color .25s; }
+  .switch[aria-checked="true"] { background: var(--gold); border-color: var(--gold); }
+  .switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--cocoa); }
+  .stepper { display: flex; align-items: center; gap: 6px; }
+  .stepper button { width: 36px; height: 36px; border: 1px solid var(--hair-strong); border-radius: 50%; background: none; cursor: pointer; font-size: 1.1rem; transition: border-color .2s, background-color .2s; }
+  .stepper button:hover:not(:disabled) { border-color: var(--gold); }
+  .stepper button:disabled { opacity: .3; cursor: default; }
+  .stepper output { min-width: 22px; text-align: center; font: 400 1.25rem var(--display); font-variant-numeric: tabular-nums lining-nums; }
+  .text-field { display: block; margin-top: 4px; }
+  .text-field input { width: 100%; min-height: 54px; padding: 0 16px; border: 1px solid var(--hair-strong); border-radius: 14px; background: rgba(0, 0, 0, .15); font: 400 1.25rem var(--display); color: var(--on-dark); transition: border-color .2s; }
+  .text-field input:focus { outline: none; border-color: var(--gold); }
+  .text-field small { display: block; margin-top: 6px; font-size: .8125rem; color: var(--on-dark-soft); font-variant-numeric: tabular-nums; }
+  .sum { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hair); }
+  .sum small { display: block; font-size: .875rem; color: var(--on-dark-soft); }
+  .sum output { display: block; font: 400 2.1rem/1.05 var(--display); font-variant-numeric: tabular-nums lining-nums; }
+  .sum .btn { min-height: 48px; padding: 0 22px; }
 
   /* ---------- Сцены на прокрутке ---------- */
   .journey { position: relative; height: 480vh; }
   .journey-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; pointer-events: none; }
-  .step { position: absolute; left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); top: 50%; width: min(38%, 480px); transform: translateY(-50%); opacity: 0; visibility: hidden; }
-  .step .tag { display: inline-block; margin-bottom: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(43, 26, 20, .08); font-size: .875rem; font-weight: 800; }
+  .step { position: absolute; left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); top: 50%; width: min(36%, 460px); transform: translateY(-50%); opacity: 0; visibility: hidden; }
+  .step .tag { display: inline-block; margin-bottom: 18px; font-size: .875rem; font-weight: 500; color: var(--gold); letter-spacing: .02em; }
   .step h2 { font-size: clamp(2.2rem, 1.2rem + 2.4vw, 3.6rem); margin-bottom: 16px; }
-  .step p { margin: 0 0 14px; max-width: 40ch; color: var(--choc-soft); font-weight: 600; }
+  .step p { margin: 0 0 14px; max-width: 40ch; color: var(--on-dark-soft); }
   .layers-list { list-style: none; margin: 0; padding: 0; }
-  .layers-list li { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-weight: 700; }
-  .layers-list i { width: 34px; height: 12px; border-radius: 4px; flex: none; }
-  .layers-list small { margin-left: auto; color: var(--choc-soft); font-weight: 600; }
-  .night .step { color: var(--cream); }
-  .night .step p { color: #d9c9b6; }
-  .night .step .tag { background: rgba(251, 246, 236, .12); }
-  .wish { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); padding: 10px 18px; border-radius: 999px; background: rgba(251, 246, 236, .12); color: var(--cream); font-weight: 700; font-size: .9375rem; opacity: 0; transition: opacity .4s; white-space: nowrap; }
+  .layers-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+  .layers-list i { width: 34px; height: 10px; border-radius: 3px; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+  .layers-list small { margin-left: auto; color: var(--on-dark-soft); }
+  .wish { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); padding: 10px 20px; border: 1px solid var(--hair-strong); border-radius: 999px; color: var(--on-dark); font-size: .9375rem; opacity: 0; transition: opacity .4s; white-space: nowrap; }
   .night .wish.on { opacity: 1; }
 
-  /* ---------- Сплошные разделы ---------- */
-  .solid { background: var(--pista); }
+  /* ---------- Тёмная галерея и фарфоровые разделы ---------- */
+  .solid { background: var(--porcelain); color: var(--ink); }
   .section { padding-block: clamp(80px, 11vw, 140px); }
   .section-head { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
-  .section-head h2 { font-size: clamp(2.4rem, 1.2rem + 3.4vw, 4.4rem); }
-  .section-head p { margin: 0; max-width: 46ch; color: var(--choc-soft); font-weight: 600; }
+  .section-head h2 { font-size: clamp(2.4rem, 1.2rem + 3.2vw, 4.2rem); }
+  .section-head p { margin: 0; max-width: 46ch; color: var(--ink-soft); }
 
-  /* Галерея: на компьютере едет вбок при прокрутке, на телефоне листается пальцем */
-  .gallery { background: var(--choc); color: var(--cream); overflow: hidden; }
-  .gallery .section-head p { color: #d9c9b6; }
+  .gallery { background: #1e1310; color: var(--on-dark); overflow: hidden; }
+  .gallery .section-head p { color: var(--on-dark-soft); }
   .gallery-pin { padding-block: clamp(72px, 9vw, 112px); }
   .track { display: flex; gap: clamp(16px, 2vw, 28px); padding-inline: max(clamp(16px, 4vw, 48px), calc((100vw - 1320px) / 2 + 48px)); will-change: transform; }
   .cake-card { flex: none; width: clamp(260px, 28vw, 400px); margin: 0; }
-  .cake-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 22px; }
+  .cake-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 200px 200px 18px 18px; }
   .cake-card:nth-child(even) { margin-top: 56px; }
-  .cake-card figcaption { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font-weight: 700; }
-  .cake-card figcaption span { color: #c9b8a4; font-weight: 600; white-space: nowrap; }
+  .cake-card figcaption { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; font: 400 1.2rem var(--display); }
+  .cake-card figcaption span { font: 400 .9375rem var(--body); color: var(--on-dark-soft); white-space: nowrap; }
 
   .how { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: s; }
-  .how li { counter-increment: s; border-top: 2px solid var(--choc); padding-top: 14px; }
-  .how li::before { content: counter(s); display: block; font: 400 2.6rem/1 var(--display); color: var(--rasp); margin-bottom: 10px; }
-  .how b { display: block; font-size: 1.125rem; margin-bottom: 4px; }
-  .how p { margin: 0; color: var(--choc-soft); font-weight: 600; }
+  .how li { counter-increment: s; border-top: 1px solid var(--ink); padding-top: 16px; }
+  .how li::before { content: counter(s); display: block; font: 400 2.4rem/1 var(--display); color: var(--rasp); margin-bottom: 12px; }
+  .how b { display: block; font-weight: 600; font-size: 1.125rem; margin-bottom: 4px; }
+  .how p { margin: 0; color: var(--ink-soft); }
 
   .order-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 4vw, 64px); align-items: start; }
   .your-cake { position: sticky; top: 96px; }
-  .portrait { position: relative; aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden; background: radial-gradient(70% 60% at 50% 42%, #e2edd3, var(--pista-2)); }
+  .portrait { position: relative; aspect-ratio: 4 / 5; border-radius: 220px 220px 24px 24px; overflow: hidden; background: radial-gradient(70% 55% at 50% 45%, #4a332c, var(--cocoa) 75%); }
   .portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-  .portrait p { position: absolute; left: 16px; right: 16px; bottom: 16px; margin: 0; text-align: center; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
-  .spec { list-style: none; margin: 14px 0 0; padding: 0; font-weight: 700; }
-  .spec li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
-  .spec span { color: var(--choc-soft); font-weight: 600; }
-  .form { background: var(--cream); border-radius: 28px; padding: clamp(20px, 3vw, 36px); }
-  .form h3 { font-size: 1.4rem; margin-bottom: 12px; }
-  .form h3 ~ h3 { margin-top: 26px; }
+  .portrait p { position: absolute; left: 16px; right: 16px; bottom: 18px; margin: 0; text-align: center; font-size: .875rem; color: var(--on-dark-soft); }
+  .spec { list-style: none; margin: 16px 0 0; padding: 0; }
+  .spec li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .spec span { color: var(--ink-soft); font-weight: 400; }
+  .form { background: #fff; border-radius: 26px; padding: clamp(20px, 3vw, 36px); box-shadow: 0 30px 60px -44px rgba(42, 27, 23, .45); }
+  .form h3 { font-size: 1.5rem; margin-bottom: 14px; }
+  .form h3 ~ h3 { margin-top: 28px; }
   .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip { min-height: 44px; padding: 0 16px; border: 2px solid var(--line); border-radius: 999px; background: none; cursor: pointer; font-weight: 700; font-size: .9375rem; font-variant-numeric: tabular-nums; transition: background-color .2s, border-color .2s, color .2s; }
-  .chip:hover { border-color: var(--choc); }
-  .chip[aria-pressed="true"] { background: var(--choc); border-color: var(--choc); color: var(--cream); }
+  .chip { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: none; cursor: pointer; font-weight: 500; font-size: .9375rem; font-variant-numeric: tabular-nums; transition: background-color .2s, border-color .2s, color .2s; }
+  .chip:hover { border-color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--porcelain); }
   .chips + .chips { margin-top: 10px; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .field { display: block; }
   .field.wide { grid-column: 1 / -1; }
-  .field span { display: block; margin-bottom: 6px; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
-  .field input { width: 100%; min-height: 50px; padding: 0 14px; border: 2px solid var(--line); border-radius: 14px; background: #fff; color: var(--choc); caret-color: var(--rasp); }
-  .field input:focus { outline: none; border-color: var(--choc); }
+  .field span { display: block; margin-bottom: 6px; font-size: .875rem; font-weight: 500; color: var(--ink-soft); }
+  .field input { width: 100%; min-height: 50px; padding: 0 14px; border: 1px solid rgba(42, 27, 23, .22); border-radius: 12px; background: #fff; color: var(--ink); caret-color: var(--rasp); transition: border-color .2s, box-shadow .2s; }
+  .field input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(207, 170, 110, .3); }
   .field input[aria-invalid="true"] { border-color: #b3261e; }
   .field[hidden] { display: none; }
   .totals { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
-  .totals dt { color: var(--choc-soft); font-weight: 600; }
-  .totals dd { margin: 0; text-align: right; font-weight: 700; }
-  .totals .big { font: 400 1.8rem var(--display); color: var(--choc); padding-top: 6px; }
-  .err { margin: 14px 0 0; color: #b3261e; font-weight: 700; font-size: .9375rem; }
+  .totals dt { color: var(--ink-soft); }
+  .totals dd { margin: 0; text-align: right; font-weight: 500; }
+  .totals .big { font: 400 1.8rem var(--display); color: var(--ink); padding-top: 6px; }
+  .err { margin: 14px 0 0; color: #b3261e; font-weight: 500; font-size: .9375rem; }
   .err:empty { display: none; }
   .form .btn { width: 100%; margin-top: 18px; }
   .done { text-align: center; padding-block: 8px; }
   .done h3 { font-size: 2.2rem; margin-bottom: 10px; }
-  .done p { margin: 0 auto 10px; max-width: 44ch; color: var(--choc-soft); font-weight: 600; }
+  .done p { margin: 0 auto 10px; max-width: 44ch; color: var(--ink-soft); }
 
   .contacts { border-top: 1px solid var(--line); padding-block: 48px; }
   .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
-  .facts dt { font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
-  .facts dd { margin: 4px 0 0; font-weight: 800; font-size: 1.0625rem; }
-  .facts small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
-  .page-foot { background: var(--pista); padding-block: 0 32px; color: var(--choc-soft); font-size: .875rem; font-weight: 600; }
+  .facts dt { font-size: .875rem; color: var(--ink-soft); }
+  .facts dd { margin: 4px 0 0; font-weight: 600; font-size: 1.0625rem; }
+  .facts small { display: block; font-weight: 400; font-size: .8125rem; color: var(--ink-soft); }
+  .page-foot { background: var(--porcelain); padding-block: 0 32px; color: var(--ink-soft); font-size: .875rem; }
 
   /* ---------- Без WebGL ---------- */
-  .no-webgl .fallback { display: block; width: 100%; max-width: 560px; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: 32px; margin-top: 24px; pointer-events: auto; }
-  .no-webgl .loading, .no-webgl .drag-hint, .no-webgl .wish { display: none; }
+  .no-webgl .fallback { display: block; width: 100%; max-width: 560px; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: 220px 220px 24px 24px; margin-top: 24px; pointer-events: auto; }
+  .no-webgl .loading, .no-webgl .drag-hint, .no-webgl .wish, .no-webgl .spot { display: none; }
   .no-webgl .journey { height: auto; padding-block: 64px; }
   .no-webgl .journey-pin { position: static; height: auto; overflow: visible; }
   .no-webgl .step { position: static; width: auto; max-width: 640px; transform: none; opacity: 1; visibility: visible; margin: 0 auto 72px; padding: 0 16px; }
 
   @media (max-width: 960px) {
     .builder .wrap { grid-template-columns: minmax(0, 1fr); padding-top: 12px; }
-    .intro h1 { font-size: 2.1rem; margin-bottom: 8px; }
+    .intro h1 { font-size: 2.2rem; margin-bottom: 8px; }
     .intro p { font-size: .9375rem; }
     .drag-hint { display: none; }
-    .tabs { flex-wrap: nowrap; }
-    .panel { margin-top: 44svh; }
+    .panel { margin-top: 44svh; padding: 18px; }
     .no-webgl .panel { margin-top: 0; }
-    .step { width: auto; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); top: auto; bottom: 20px; transform: none; padding: 18px; border-radius: 22px; background: rgba(251, 246, 236, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
-    .night .step { color: var(--choc); }
-    .night .step p { color: var(--choc-soft); }
-    .night .step .tag { background: rgba(43, 26, 20, .08); }
+    .step { width: auto; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); top: auto; bottom: 20px; transform: none; padding: 18px; border: 1px solid var(--hair); border-radius: 22px; background: rgba(42, 27, 23, .82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
     .step h2 { font-size: 2rem; margin-bottom: 8px; }
     .step .tag { margin-bottom: 8px; }
     .step p { font-size: .9375rem; margin-bottom: 8px; }
-    .layers-list li { padding: 4px 0; font-size: .875rem; }
+    .layers-list li { padding: 5px 0; font-size: .875rem; }
     .wish { display: none; }
     .section-head, .order-grid { grid-template-columns: minmax(0, 1fr); }
     .how { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -244,7 +249,8 @@
     .site-header nav { display: none; }
     .site-header .wrap { justify-content: space-between; }
     .grid2, .how, .facts { grid-template-columns: minmax(0, 1fr); }
-    .opts.three { grid-template-columns: minmax(0, 1fr); }
+    .opts.three:not(.tiers) { grid-template-columns: minmax(0, 1fr); }
+    .tiers .opt { min-height: 104px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: .01ms !important; }
@@ -253,13 +259,14 @@
 </head>
 <body class="touchable">
 <div class="demo-bar">Демо-проект для портфолио: кондитерская и цены вымышлены, заказ никуда не отправляется.</div>
+<div class="spot" aria-hidden="true"></div><div class="spot warm" aria-hidden="true"></div>
 <canvas id="stage" aria-label="3D-торт на подставке. Потяните, чтобы повернуть."></canvas>
 <p class="loading" id="loading">Взбиваем крем…</p>
 
 <header class="site-header">
   <div class="wrap">
     <a class="logo" href="#build" aria-label="Корж — к конструктору">
-      <svg width="30" height="28" viewBox="0 0 30 28" aria-hidden="true"><rect x="2" y="14" width="26" height="12" rx="3" fill="#2b1a14"/><rect x="6" y="6" width="18" height="9" rx="3" fill="#d81f4f"/><rect x="14" y="0" width="2.5" height="6" fill="#2b1a14"/></svg>
+      <svg width="30" height="28" viewBox="0 0 30 28" aria-hidden="true"><rect x="2" y="14" width="26" height="12" rx="3" fill="#f3ede7"/><rect x="6" y="6" width="18" height="9" rx="3" fill="#c8284f"/><rect x="14" y="0" width="2.5" height="6" fill="#cfaa6e"/></svg>
       Корж
     </a>
     <nav aria-label="Разделы"><a href="#build">Собрать</a><a href="#cut">Разрез</a><a href="#cakes">Торты</a><a href="#order">Заказ</a></nav>
@@ -414,7 +421,7 @@ window.KORZH = (() => {
   const DECOR = { berries: { name: 'Ягоды', note: 'малина и голубика', price: 900 }, macarons: { name: 'Макаруны', note: 'шесть штук', price: 700 } };
   const CANDLE = 50, TOPPER = 450, DELIVERY = 590;
 
-  const cfg = { tiers: 2, sponge: 'choco', filling: 'raspberry', coat: 'ganache', berries: true, macarons: false, candles: 3, topper: true, text: 'С днём рождения!' };
+  const cfg = { tiers: 2, sponge: 'choco', filling: 'raspberry', coat: 'cream', berries: true, macarons: false, candles: 3, topper: true, text: 'С днём рождения!' };
   const listeners = [];
   const set = (patch) => { Object.assign(cfg, patch); render(); listeners.forEach((f) => f(cfg, patch)); };
   const price = () => {
@@ -424,15 +431,21 @@ window.KORZH = (() => {
 
   /* Вкладки конструктора */
   const TABS = [['tiers', 'Ярусы'], ['sponge', 'Бисквит'], ['filling', 'Начинка'], ['coat', 'Покрытие'], ['decor', 'Украшения'], ['text', 'Надпись']];
-  $('#tabs').innerHTML = TABS.map(([k, n], i) => `<button type="button" class="tab" role="tab" id="tab-${k}" aria-controls="pane-${k}" aria-selected="${i === 0}" data-tab="${k}">${n}</button>`).join('');
+  $('#tabs').innerHTML = TABS.map(([k, n], i) => `<button type="button" class="tab" role="tab" id="tab-${k}" aria-controls="pane-${k}" aria-selected="${i === 0}" data-tab="${k}"><b>${i + 1}</b>${n}</button>`).join('') + '<i class="tab-ink" aria-hidden="true"></i>';
+  // полоска под вкладками переезжает к выбранной
+  const ink = () => { const t = $('.tab[aria-selected="true"]'), ink = $('.tab-ink'); ink.style.width = t.offsetWidth - 8 + 'px'; ink.style.transform = `translate(${t.offsetLeft + 4}px, ${t.offsetTop + t.offsetHeight - 6}px)`; };
+  addEventListener('resize', ink); document.fonts.ready.then(ink); requestAnimationFrame(ink);
   $('#panes').innerHTML = TABS.map(([k], i) => `<div class="pane" role="tabpanel" id="pane-${k}" aria-labelledby="tab-${k}" ${i ? 'hidden' : ''}></div>`).join('');
   $('#tabs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-tab]'); if (!b) return;
     document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t === b)));
     document.querySelectorAll('.pane').forEach((p) => { p.hidden = p.id !== 'pane-' + b.dataset.tab; });
+    ink();
   });
-  const swatches = (key, data) => Object.entries(data).map(([k, v]) => `<button type="button" class="opt" data-set="${key}" data-val="${k}"><i style="background:${v.color}"></i><span>${v.name}${v.note ? `<small>${v.note}</small>` : ''}</span></button>`).join('');
-  $('#pane-tiers').innerHTML = `<h2>Сколько ярусов</h2><p>Вес и порции считаем сразу.</p><div class="opts three tiers">${TIERS.map((t) => `<button type="button" class="opt" data-set="tiers" data-val="${t.n}">${t.label}<small>${t.size}</small></button>`).join('')}</div>`;
+  // силуэт торта для выбора ярусов
+  const tierIcon = (n) => `<svg viewBox="0 0 64 52" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">${[[6, 58, 16], [14, 50, 14], [21, 43, 12]].slice(0, n).map(([x1, x2, h], i) => { const y = 48 - [0, 16, 30][i] - h; return `<rect x="${x1}" y="${y}" width="${x2 - x1}" height="${h}" rx="3"/>`; }).join('')}<path d="M2 49.5h60"/></svg>`;
+  const swatches = (key, data) => Object.entries(data).map(([k, v]) => `<button type="button" class="opt" data-set="${key}" data-val="${k}"><i class="sw" style="--c:${v.color}"></i><span>${v.name}${v.note ? `<small>${v.note}</small>` : ''}</span></button>`).join('');
+  $('#pane-tiers').innerHTML = `<h2>Сколько ярусов</h2><p>Вес и порции считаем сразу.</p><div class="opts three tiers">${TIERS.map((t) => `<button type="button" class="opt" data-set="tiers" data-val="${t.n}">${tierIcon(t.n)}<span>${t.label}<small>${t.size}</small></span></button>`).join('')}</div>`;
   $('#pane-sponge').innerHTML = `<h2>Бисквит</h2><p>Пропитываем сиропом, чтобы был влажным.</p><div class="opts">${swatches('sponge', SPONGES)}</div>`;
   $('#pane-filling').innerHTML = `<h2>Начинка</h2><p>Между коржами&nbsp;— сливочный крем и&nbsp;прослойка.</p><div class="opts">${swatches('filling', FILLINGS)}</div>`;
   $('#pane-coat').innerHTML = `<h2>Покрытие</h2><p>Ганаш стекает подтёками&nbsp;— каждый раз по-своему.</p><div class="opts three">${swatches('coat', COATS)}</div>`;
@@ -536,6 +549,7 @@ window.KORZH = (() => {
 /* ---------- 3D: торт по слоям ---------- */
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 const K = window.KORZH;
 const $ = (s) => document.querySelector(s);
@@ -564,14 +578,17 @@ const camera = new THREE.PerspectiveCamera(30, 1, .1, 100);
 const key = new THREE.DirectionalLight(0xfff4e6, 2.2);
 key.position.set(-4, 8, 5);
 key.castShadow = true;
-key.shadow.mapSize.set(1024, 1024);
-key.shadow.camera.left = key.shadow.camera.bottom = -4;
-key.shadow.camera.right = key.shadow.camera.top = 4;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = key.shadow.camera.bottom = -7;
+key.shadow.camera.right = key.shadow.camera.top = 7;
 key.shadow.radius = 6;
 key.shadow.bias = -.0005;
 const hemi = new THREE.HemisphereLight(0xfffaf0, 0x5d4a40, .6);
 const glow = new THREE.PointLight(0xffa04a, 0, 8, 1.6);
-scene.add(key, hemi, glow);
+// контровой тёплый свет сзади: отделяет торт от тёмного фона
+const rim = new THREE.DirectionalLight(0xffd6a8, 1.6);
+rim.position.set(2, 5, -7);
+scene.add(key, hemi, glow, rim);
 
 /* Фактура бисквита: поры */
 function poreTexture() {
@@ -589,12 +606,35 @@ function poreTexture() {
 }
 const pores = poreTexture();
 
+// следы шпателя: неровные горизонтальные полосы
+const spatula = (() => {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 256;
+  const g = c.getContext('2d'); g.fillStyle = '#888'; g.fillRect(0, 0, 64, 256);
+  for (let y = 0; y < 256; y += 2 + Math.random() * 6) { g.fillStyle = `rgba(${Math.random() > .5 ? '255,255,255' : '0,0,0'},${Math.random() * .25})`; g.fillRect(0, y, 64, 1 + Math.random() * 3); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 1);
+  return t;
+})();
+// крем, снятый шпателем: где-то плотный, где-то бисквит просвечивает
+const scrape = (() => {
+  // полосы идут вокруг торта: прозрачность меняется только по высоте, плавно (сумма синусов)
+  const c = document.createElement('canvas'); c.width = 4; c.height = 512;
+  const g = c.getContext('2d');
+  for (let y = 0; y < 512; y++) {
+    const t = y / 512, v = .5 + .16 * Math.sin(t * 11) + .08 * Math.sin(t * 29 + 1.3) + .05 * Math.sin(t * 67 + 4);
+    const a = Math.max(.2, Math.min(.8, v));
+    g.fillStyle = `rgb(${a * 255},${a * 255},${a * 255})`; g.fillRect(0, y, 4, 1);
+  }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+})();
 const M = {
   sponge: new THREE.MeshStandardMaterial({ color: K.SPONGES[K.cfg.sponge].color, roughness: .9, map: pores, bumpMap: pores, bumpScale: 2 }),
-  cream: new THREE.MeshPhysicalMaterial({ color: 0xfbf7ef, roughness: .55, sheen: .4, sheenColor: 0xffffff }),
+  cream: new THREE.MeshPhysicalMaterial({ color: 0xf7efe2, roughness: .5, sheen: .4, sheenColor: 0xffffff, bumpMap: spatula, bumpScale: 1.2 }),
   jam: new THREE.MeshPhysicalMaterial({ color: K.FILLINGS[K.cfg.filling].color, roughness: .2, clearcoat: 1, clearcoatRoughness: .15 }),
   coat: new THREE.MeshPhysicalMaterial({ color: K.COATS[K.cfg.coat].color, roughness: .45, clearcoat: .2 }),
-  stand: new THREE.MeshPhysicalMaterial({ color: 0xf6f2ea, roughness: .25, clearcoat: 1, clearcoatRoughness: .1 }),
+  stand: new THREE.MeshPhysicalMaterial({ color: 0xf3ede7, roughness: .22, clearcoat: 1, clearcoatRoughness: .08 }),
+  gold: new THREE.MeshStandardMaterial({ color: 0xd6b27a, metalness: 1, roughness: .28 }),
+  wash: new THREE.MeshPhysicalMaterial({ color: 0xfbf5ea, roughness: .6, transparent: true, alphaMap: scrape, depthWrite: false }),
 };
 [M.sponge, M.cream, M.jam, M.coat].forEach((m) => { m.side = THREE.FrontSide; });
 
@@ -609,7 +649,12 @@ const body = new THREE.Group();      // торт без куска
 const slice = new THREE.Group();     // кусок, который выезжает
 cake.add(body, slice);
 const world = new THREE.Group();
-world.add(stand, cake);
+// золотой ободок по краю подставки и мягкая тень на «столе»
+const goldRim = new THREE.Mesh(new THREE.TorusGeometry(2.13, .018, 10, 160), M.gold);
+goldRim.rotation.x = Math.PI / 2; goldRim.position.y = -.06;
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({ opacity: .45 }));
+floor.rotation.x = -Math.PI / 2; floor.position.y = -1.15; floor.receiveShadow = true;
+world.add(stand, goldRim, floor, cake);
 scene.add(world);
 
 /* Сектор кольца/круга → объёмный слой высотой h */
@@ -642,6 +687,30 @@ function part(name) {
 const tierBase = (i) => i * (TH + COAT);
 const cakeTop = () => tierBase(K.cfg.tiers - 1) + TH + COAT;
 
+/* Розочка крема: конус со звёздчатым сечением, закрученный по высоте, — как из кондитерской насадки */
+const rosetteGeo = (() => {
+  const g = new THREE.ConeGeometry(.085, .15, 32, 6);
+  const p = g.attributes.position, v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    const h = (v.y + .075) / .15, r = Math.hypot(v.x, v.z);
+    if (r < 1e-4) continue;
+    const th = Math.atan2(v.z, v.x) + h * 1.6;
+    const rr = r * (1 + .2 * Math.cos(8 * th)) * (1 + .45 * Math.sin(Math.min(1, h * 1.3) * Math.PI));
+    p.setXYZ(i, rr * Math.cos(th), v.y + .075, rr * Math.sin(th));
+  }
+  g.computeVertexNormals();
+  return g;
+})();
+function pipe(p, r, y, n, scale = 1, phase = 0) {
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2 + phase;
+    const m = new THREE.Mesh(rosetteGeo, M.cream);
+    m.position.copy(polar(r, a, y)); m.scale.setScalar(scale); m.rotation.y = k * 1.7;
+    m.castShadow = true;
+    p.pick(a).add(m);
+  }
+}
 function buildTier(i) {
   const p = part('tier' + i), r = RADII[i], y0 = tierBase(i);
   both((g, a0, a1) => {
@@ -649,9 +718,15 @@ function buildTier(i) {
     let y = y0;
     STACK.forEach(([mat, h]) => { add(into, sector(r, h, y, a0, a1), M[mat]); y += h; });
     if (K.cfg.coat !== 'naked') add(into, sector(r + COAT, TH, y0, a0, a1, r), M.coat);
+    // голый торт: тонкий слой крема снят шпателем, бисквит просвечивает
+    else add(into, sector(r + .014, TH - .02, y0 + .01, a0, a1, r - .002), M.wash, false);
     // сверху всегда крем или ганаш
     add(into, sector(r + (K.cfg.coat === 'naked' ? 0 : COAT), COAT, y0 + TH, a0, a1), K.cfg.coat === 'ganache' ? M.coat : M.cream);
   });
+  // бордюр из розочек: по верхнему краю и у основания яруса
+  const top = y0 + TH + COAT, edge = r + (K.cfg.coat === 'naked' ? 0 : COAT);
+  pipe(p, edge - .1, top - .01, Math.round(19 * r), 1.45, i * .2);
+  pipe(p, edge + .05, y0 - .01, Math.round(24 * r), 1.1, i * .2 + .1);
   return p;
 }
 function buildDrips() {
@@ -670,14 +745,40 @@ function buildDrips() {
     both((g, a0, a1) => add(g === body ? p.body : p.slice, new THREE.TorusGeometry(RADII[i] + COAT * .6, .045, 8, 120, a1 - a0).rotateX(Math.PI / 2).rotateY(-a0 * 0 ).translate(0, tierBase(i) + TH + COAT, 0), M.coat));
     // тор строится от угла 0 — поворачиваем на начало сектора
     [p.body, p.slice].forEach((g) => { const t = g.children[g.children.length - 1]; t.rotation.y = g === p.body ? (WC + WEDGE / 2) : (WC - WEDGE / 2); });
+    // золотая поталь: несколько рваных хлопьев на боку под подтёками
+    for (let k = 0; k < 4; k++) {
+      const a = k * 1.9 + i, sh = new THREE.Shape(), n = 7;
+      for (let j = 0; j < n; j++) { const t = (j / n) * Math.PI * 2, q = .035 + ((Math.sin(j * 9.1 + k * 3.7 + i) + 1) / 2) * .04; j ? sh.lineTo(Math.cos(t) * q, Math.sin(t) * q) : sh.moveTo(Math.cos(t) * q, Math.sin(t) * q); }
+      const f = new THREE.Mesh(new THREE.ShapeGeometry(sh), M.gold);
+      f.position.copy(polar(RADII[i] + COAT + .004, a, tierBase(i) + TH * (.35 + (k % 3) * .14)));
+      f.rotation.y = a + Math.PI / 2; f.rotation.z = k;
+      p.pick(a).add(f);
+    }
   }
   return p;
 }
 // ягоды: малина — шершавый шарик, голубика — гладкий с «короной»
-const raspGeo = (() => { const g = new THREE.IcosahedronGeometry(.1, 3); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const v = new THREE.Vector3().fromBufferAttribute(p, i); const n = 1 + .12 * Math.abs(Math.sin(v.x * 70) * Math.sin(v.y * 70) * Math.sin(v.z * 70)); v.multiplyScalar(n); v.y *= 1.15; p.setXYZ(i, v.x, v.y, v.z); } g.computeVertexNormals(); return g; })();
-const raspMat = new THREE.MeshPhysicalMaterial({ color: 0xc8143c, roughness: .45, clearcoat: .6, sheen: .5, sheenColor: 0xff7a95 });
-const blueGeo = new THREE.SphereGeometry(.075, 20, 14);
-const blueMat = new THREE.MeshPhysicalMaterial({ color: 0x2d3a6e, roughness: .35, sheen: 1, sheenColor: 0x8fa3d9, sheenRoughness: .3 });
+// малина: ~70 «зёрнышек» по поверхности вытянутого купола, снизу — ямка от плодоножки
+const raspGeo = (() => {
+  const parts = [], N = 46;
+  for (let k = 0; k < N; k++) {
+    const y = 1 - (k / (N - 1)) * 1.7, rr = Math.sqrt(Math.max(0, 1 - y * y)), a = k * 2.39996;
+    const d = new THREE.SphereGeometry(.036, 6, 4);
+    d.translate(rr * Math.cos(a) * .08, y * .1 + .09, rr * Math.sin(a) * .08);
+    parts.push(d);
+  }
+  parts.push(new THREE.SphereGeometry(.072, 10, 8).scale(1, 1.2, 1).translate(0, .09, 0));
+  return mergeGeometries(parts);
+})();
+// голубика: приплюснутая ягода с пятилучевой чашечкой сверху
+const blueGeo = (() => {
+  const b = new THREE.SphereGeometry(.075, 24, 16).scale(1, .86, 1);
+  const crown = new THREE.CylinderGeometry(.022, .016, .016, 5).translate(0, .066, 0);
+  return mergeGeometries([b.toNonIndexed(), crown.toNonIndexed()].map((g) => { g.deleteAttribute('uv'); return g; }));
+})();
+const raspMat = new THREE.MeshPhysicalMaterial({ color: 0xb8123a, roughness: .38, clearcoat: .7, clearcoatRoughness: .25, sheen: .6, sheenColor: 0xff8aa3 });
+// налёт на голубике — через sheen
+const blueMat = new THREE.MeshPhysicalMaterial({ color: 0x27325e, roughness: .5, sheen: 1, sheenColor: 0x9db0e0, sheenRoughness: .25 });
 function buildBerries() {
   const p = part('berries');
   if (!K.cfg.berries) return p;
@@ -686,16 +787,16 @@ function buildBerries() {
   for (let k = 0; k < ring; k++) {
     const a = (k / ring) * Math.PI * 2, rasp = k % 3 !== 2;
     const m = new THREE.Mesh(rasp ? raspGeo : blueGeo, rasp ? raspMat : blueMat);
-    m.position.copy(polar(r * .8, a, top + (rasp ? .1 : .07))); m.castShadow = true; m.rotation.set(k, k * 2, 0);
+    m.position.copy(polar(r - .3, a, top + (rasp ? -.01 : .06))); m.castShadow = true; m.rotation.set(rasp ? .15 : 0, k * 2, rasp ? .1 : 0);
     p.pick(a).add(m);
   }
   // ягоды на уступах нижних ярусов
   for (let t = 0; t < K.cfg.tiers - 1; t++) {
-    const rr = (RADII[t] + RADII[t + 1] + COAT) / 2, y = tierBase(t) + TH + COAT * 2, n = Math.round(9 * rr);
+    const rr = RADII[t + 1] + COAT + .14, y = tierBase(t) + TH + COAT, n = Math.round(9 * rr);
     for (let k = 0; k < n; k++) {
       const a = (k / n) * Math.PI * 2 + .2, rasp = k % 2 === 0;
       const m = new THREE.Mesh(rasp ? raspGeo : blueGeo, rasp ? raspMat : blueMat);
-      m.position.copy(polar(rr, a, y + (rasp ? .1 : .07))); m.castShadow = true;
+      m.position.copy(polar(rr, a, y + (rasp ? -.01 : .06))); m.castShadow = true;
       p.pick(a).add(m);
     }
   }
@@ -771,15 +872,15 @@ function buildTopper() {
   const text = K.cfg.text.trim();
   if (!K.cfg.topper || !text) return p;
   const c = document.createElement('canvas'), g = c.getContext('2d');
-  g.font = '64px "Prosto One"';
+  g.font = '64px "Yeseva One"';
   const w = Math.min(900, Math.ceil(g.measureText(text).width) + 60);
   c.width = w; c.height = 110;
-  g.font = '64px "Prosto One"'; g.fillStyle = '#2b1a14'; g.textBaseline = 'middle'; g.textAlign = 'center';
+  g.font = '64px "Yeseva One"'; g.fillStyle = '#ffffff'; g.textBaseline = 'middle'; g.textAlign = 'center';
   g.fillText(text, w / 2, 58);
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   const W = Math.min(1.9, w / 110 * .32), H = .32;
   const grp = new THREE.Group();
-  const plate = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: .5, side: THREE.DoubleSide, alphaTest: .05 }));
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshStandardMaterial({ map: tex, color: 0xf2d39b, emissive: 0x6b4a1c, emissiveMap: tex, metalness: .7, roughness: .28, transparent: true, side: THREE.DoubleSide, alphaTest: .05 }));
   plate.position.y = .62; plate.castShadow = true;
   const stickMat = new THREE.MeshStandardMaterial({ color: 0xd9b26b, roughness: .4, metalness: .3 });
   [-W * .3, W * .3].forEach((x) => { const s = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .62, 6), stickMat); s.position.set(x, .3, -.005); grp.add(s); });
@@ -834,8 +935,8 @@ K.onChange((cfg, patch) => {
 
 /* Коробка: стенки поднимаются вокруг торта, крышка опускается сверху */
 const box = new THREE.Group();
-const boxTex = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#b5cc97'; g.fillRect(0, 0, 512, 512); g.fillStyle = '#2b1a14'; g.font = '120px "Prosto One"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Корж', 256, 260); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
-const boxMat = new THREE.MeshStandardMaterial({ color: 0xb5cc97, roughness: .85 });
+const boxTex = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#f3ede7'; g.fillRect(0, 0, 512, 512); g.fillStyle = '#2a1b17'; g.font = '120px "Yeseva One"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Корж', 256, 260); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const boxMat = new THREE.MeshStandardMaterial({ color: 0xf3ede7, roughness: .85 });
 const boxFront = new THREE.MeshStandardMaterial({ map: boxTex, roughness: .85 });
 const walls = [];
 function buildBox() {
@@ -862,7 +963,9 @@ world.add(box);
 /* Состояние сцен на прокрутке */
 const look = { x: mobile ? 0 : -1.05, zoom: 0, cut: 0, night: 0, box: 0, yaw: 0, y: 0, ty: 0 };
 let yaw = .4, yawVel = .25, dragging = null;
-const nightC = new THREE.Color('#1d1410'), dayC = new THREE.Color('#c9dcb0'), bgC = new THREE.Color();
+const nightC = new THREE.Color('#110a08'), dayC = new THREE.Color('#2a1b17'), bgC = new THREE.Color();
+const spots = [...document.querySelectorAll('.spot')];
+let spotX = -1, warmO = -1;
 const wishEl = $('#wish');
 let inBuild = true;
 function applyLook() {
@@ -965,6 +1068,12 @@ function frame(now) {
     });
     glow.intensity = on * 1.8 * (1 + Math.sin(now * .023) * .08);
     glow.position.set(world.position.x, h + .8, 0);
+    // световое пятно за тортом следует за ним по экрану; ночью — тёплое от свечей
+    const sp = new THREE.Vector3(world.position.x, 0, 0).project(camera);
+    const spx = Math.round((sp.x + 1) / 2 * innerWidth);
+    if (spx !== spotX) { spotX = spx; spots.forEach((el) => { el.style.transform = `translateX(${spx}px)`; }); }
+    const wo = Math.round(look.night * 20) / 20;
+    if (wo !== warmO) { warmO = wo; spots[1].style.opacity = wo; }
     for (let i = smoke.length - 1; i >= 0; i--) {
       const s = smoke[i], u = s.userData; u.t += dt;
       const t = u.t - u.d; if (t < 0) continue;
@@ -978,7 +1087,7 @@ function frame(now) {
 }
 
 /* Старт: дождаться шрифта для надписей, собрать торт, уронить ярусы */
-await document.fonts.load('64px "Prosto One"').catch(() => {});
+await document.fonts.load('64px "Yeseva One"').catch(() => {});
 rebuildAll(true);
 buildBox();
 applyLook();
@@ -998,10 +1107,10 @@ function scroll() {
     gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
     document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => { const id = a.getAttribute('href'); if (id.length > 1 && document.querySelector(id)) { e.preventDefault(); lenis.scrollTo(id, { offset: id === '#cut' ? 0 : -64 }); } }));
   }
-  ScrollTrigger.create({ start: 80, onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
+  ScrollTrigger.create({ start: 80, end: 'max', onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
   // касания к холсту — только в конструкторе и у свечей
   ScrollTrigger.create({ trigger: '#build', start: 'top top', end: 'bottom 30%', onToggle: (st) => { inBuild = st.isActive; applyLook(); } });
-  ScrollTrigger.create({ trigger: '#cut', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#c9dcb0'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyLook(); } });
+  ScrollTrigger.create({ trigger: '#cut', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#1e1310'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyLook(); } });
 
   // разрез → свечи → коробка: вход, удержание, выход у каждого шага
   const steps = gsap.utils.toArray('.step');
@@ -1011,7 +1120,7 @@ function scroll() {
   tl.to(look, { x: mobile ? 0 : 1.4, zoom: mobile ? -2.5 : 1.5, y: .4, ty: mobile ? -1.6 : 0, cut: 1, duration: 1.2, ease: 'power2.inOut', onUpdate: applyLook }, 0);
   tl.fromTo(steps[0], { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5 }, .5);
   tl.to(steps[0], { autoAlpha: 0, y: -60, duration: .4 }, 2.2);
-  tl.to(look, { cut: 0, night: 1, zoom: mobile ? 2.5 : 4.5, y: .8, ty: mobile ? .6 : 2, duration: 1, ease: 'power2.inOut', onUpdate: applyLook }, 2.3);
+  tl.to(look, { cut: 0, night: 1, zoom: mobile ? 2.5 : 3.4, y: .8, ty: mobile ? .6 : 1.7, duration: 1, ease: 'power2.inOut', onUpdate: applyLook }, 2.3);
   tl.fromTo(steps[1], { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5 }, 3);
   tl.to(steps[1], { autoAlpha: 0, y: -60, duration: .4 }, 4.6);
   tl.to(look, { night: 0, zoom: .5, y: .3, ty: 0, duration: .8, ease: 'power2.inOut', onUpdate: applyLook }, 4.7);

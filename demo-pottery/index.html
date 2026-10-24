@@ -837,7 +837,7 @@ function scroll() {
   ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom 40%', onToggle: (st) => document.body.classList.toggle('in-hero', st.isActive) });
   // за пределами пути вазы холст не нужен — перестаём рисовать
   ScrollTrigger.create({ trigger: '#journey', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#d3cec6'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyStage(); } });
-  ScrollTrigger.create({ start: 80, onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
+  ScrollTrigger.create({ start: 80, end: 'max', onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
 
   // каждый этап: вход, удержание, выход; ваза едет вправо, камера подходит ближе
   const steps = gsap.utils.toArray('.step'), bars = gsap.utils.toArray('.progress b');
