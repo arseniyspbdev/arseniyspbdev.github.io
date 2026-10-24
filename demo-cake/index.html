@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кондитерская «Корж»</title>
+<meta name="description" content="Демо-лендинг кондитерской: торт собирается в 3D по слоям — ярусы, бисквит, начинка, покрытие, свечи и надпись, — а потом разрезается, чтобы показать начинку.">
+<meta name="theme-color" content="#c9dcb0">
+<meta property="og:title" content="Кондитерская «Корж»">
+<meta property="og:description" content="Соберите торт на экране — испечём точно такой за два дня.">
+<meta property="og:image" content="https://arseniyspbdev.github.io/img/cake.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c9dcb0'/%3E%3Crect x='12' y='30' width='40' height='22' rx='4' fill='%232b1a14'/%3E%3Crect x='18' y='18' width='28' height='14' rx='4' fill='%23d81f4f'/%3E%3Crect x='30' y='8' width='4' height='10' fill='%232b1a14'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Prosto+One&display=swap" rel="stylesheet">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js" crossorigin>
+<style>
+  /* Фисташка, шоколад и малина: десертная палитра без розовой пудры. Главное — торт в 3D, который собирают по слоям,
+     а прокрутка режет его, зажигает свечи и складывает вокруг коробку */
+  :root {
+    --pista: #c9dcb0;
+    --pista-2: #b5cc97;
+    --choc: #2b1a14;
+    --choc-soft: #5b4940;
+    --rasp: #d81f4f;
+    --rasp-hi: #ee3563;
+    --cream: #fbf6ec;
+    --line: rgba(43, 26, 20, .16);
+    --night: #1d1410;
+    --bg: var(--pista);
+    --display: 'Prosto One', 'Arial Black', sans-serif;
+    --body: 'Nunito', system-ui, sans-serif;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--bg); transition: background-color .25s linear; overflow-x: clip; }
+  body { margin: 0; overflow-x: clip; color: var(--choc); font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  ::selection { background: var(--rasp); color: var(--cream); }
+  :focus-visible { outline: 3px solid var(--rasp); outline-offset: 3px; border-radius: 8px; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; font-variant-numeric: lining-nums; }
+  p { text-wrap: pretty; }
+  button, input { font: inherit; color: inherit; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  section[id] { scroll-margin-top: 64px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px; font: 800 1rem var(--body); text-decoration: none; cursor: pointer; transition: transform .3s var(--ease), background-color .2s, color .2s; }
+  .btn:active { transform: scale(.97); }
+  .btn-rasp { background: var(--rasp); color: #fff; }
+  .btn-choc { background: var(--choc); color: var(--cream); }
+  .btn-line { background: transparent; color: var(--choc); box-shadow: inset 0 0 0 2px var(--choc); }
+  @media (hover: hover) {
+    .btn-rasp:hover { background: var(--rasp-hi); transform: translateY(-2px); }
+    .btn-choc:hover { background: #45302a; transform: translateY(-2px); }
+    .btn-line:hover { background: var(--choc); color: var(--cream); }
+  }
+  .btn:disabled { opacity: .7; cursor: progress; transform: none; }
+
+  .demo-bar { position: relative; z-index: 5; background: var(--choc); color: #e6d9c8; text-align: center; font-size: .8125rem; padding: 6px 16px; }
+
+  /* ---------- Шапка ---------- */
+  .site-header { position: sticky; top: 0; z-index: 20; transition: background-color .3s; }
+  .scrolled .site-header { background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .site-header .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 400 1.6rem/1 var(--display); color: var(--choc); text-decoration: none; transition: color .3s; }
+  .night .logo, .night .site-header nav a { color: var(--cream); }
+  .site-header nav { display: flex; gap: 26px; margin-left: auto; }
+  .site-header nav a { color: var(--choc-soft); text-decoration: none; font-weight: 700; font-size: .9375rem; transition: color .2s; }
+  .site-header nav a:hover { color: var(--choc); }
+  .site-header .btn { min-height: 44px; padding: 0 20px; }
+
+  /* ---------- 3D ---------- */
+  #stage { position: fixed; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1s var(--ease); touch-action: pan-y; }
+  #stage.ready { opacity: 1; }
+  #stage.off { visibility: hidden; }
+  body:not(.touchable) #stage { pointer-events: none; }
+  main, footer { position: relative; z-index: 2; }
+  main { pointer-events: none; }
+  main > :not(.builder):not(.journey) { pointer-events: auto; }
+  .loading { position: fixed; left: 36%; top: 50%; transform: translate(-50%, -50%); z-index: 1; color: var(--choc-soft); font-weight: 700; transition: opacity .6s; }
+  .fallback { display: none; }
+
+  /* ---------- Конструктор ---------- */
+  .builder { position: relative; min-height: calc(100svh - 64px - 31px); }
+  .builder .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 32px; align-items: start; padding-block: clamp(16px, 3vw, 40px) 32px; }
+  .intro h1 { font-size: clamp(2.2rem, 1rem + 2.2vw, 3.3rem); max-width: 11ch; margin-bottom: 14px; }
+  .intro p { margin: 0; max-width: 34ch; color: var(--choc-soft); font-weight: 600; }
+  .drag-hint { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+
+  .panel { pointer-events: auto; background: rgba(251, 246, 236, .86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-radius: 28px; padding: 18px; box-shadow: 0 30px 60px -40px rgba(43, 26, 20, .6); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: -4px -4px 14px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-weight: 800; font-size: .875rem; color: var(--choc-soft); transition: background-color .2s, color .2s; }
+  .tab[aria-selected="true"] { background: var(--choc); color: var(--cream); }
+  .pane { min-height: 168px; }
+  .pane[hidden] { display: none; }
+  .pane h2 { font-size: 1.25rem; margin-bottom: 4px; }
+  .pane > p { margin: 0 0 12px; font-size: .9375rem; color: var(--choc-soft); }
+  .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .opt { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; border: 2px solid transparent; border-radius: 16px; background: #fff; cursor: pointer; text-align: left; font-weight: 700; font-size: .9375rem; line-height: 1.2; transition: border-color .2s, transform .25s var(--ease); }
+  .opt:hover { transform: translateY(-1px); }
+  .opt[aria-pressed="true"] { border-color: var(--choc); }
+  .opt i { flex: none; width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .2), inset 0 2px 3px rgba(255, 255, 255, .4); }
+  .opt small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
+  .tiers .opt { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 8px 12px; border-radius: 16px; background: #fff; margin-bottom: 8px; font-weight: 700; }
+  .row small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
+  .switch { position: relative; width: 52px; height: 30px; flex: none; border: 0; border-radius: 999px; background: #d8d2c6; cursor: pointer; transition: background-color .2s; }
+  .switch::after { content: ""; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform .3s var(--ease); }
+  .switch[aria-checked="true"] { background: var(--rasp); }
+  .switch[aria-checked="true"]::after { transform: translateX(22px); }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--cream); cursor: pointer; font-size: 1.15rem; font-weight: 800; }
+  .stepper button:disabled { opacity: .35; cursor: default; }
+  .stepper output { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+  .text-field { display: block; }
+  .text-field input { width: 100%; min-height: 52px; padding: 0 14px; border: 2px solid transparent; border-radius: 16px; background: #fff; font-weight: 700; color: var(--choc); }
+  .text-field input:focus { outline: none; border-color: var(--choc); }
+  .text-field small { display: block; margin-top: 6px; font-size: .8125rem; color: var(--choc-soft); font-variant-numeric: tabular-nums; }
+  .sum { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .sum small { display: block; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+  .sum output { display: block; font: 400 2rem/1.05 var(--display); font-variant-numeric: tabular-nums lining-nums; }
+  .sum .btn { min-height: 48px; padding: 0 20px; }
+
+  /* ---------- Сцены на прокрутке ---------- */
+  .journey { position: relative; height: 480vh; }
+  .journey-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; pointer-events: none; }
+  .step { position: absolute; left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); top: 50%; width: min(38%, 480px); transform: translateY(-50%); opacity: 0; visibility: hidden; }
+  .step .tag { display: inline-block; margin-bottom: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(43, 26, 20, .08); font-size: .875rem; font-weight: 800; }
+  .step h2 { font-size: clamp(2.2rem, 1.2rem + 2.4vw, 3.6rem); margin-bottom: 16px; }
+  .step p { margin: 0 0 14px; max-width: 40ch; color: var(--choc-soft); font-weight: 600; }
+  .layers-list { list-style: none; margin: 0; padding: 0; }
+  .layers-list li { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-weight: 700; }
+  .layers-list i { width: 34px; height: 12px; border-radius: 4px; flex: none; }
+  .layers-list small { margin-left: auto; color: var(--choc-soft); font-weight: 600; }
+  .night .step { color: var(--cream); }
+  .night .step p { color: #d9c9b6; }
+  .night .step .tag { background: rgba(251, 246, 236, .12); }
+  .wish { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); padding: 10px 18px; border-radius: 999px; background: rgba(251, 246, 236, .12); color: var(--cream); font-weight: 700; font-size: .9375rem; opacity: 0; transition: opacity .4s; white-space: nowrap; }
+  .night .wish.on { opacity: 1; }
+
+  /* ---------- Сплошные разделы ---------- */
+  .solid { background: var(--pista); }
+  .section { padding-block: clamp(80px, 11vw, 140px); }
+  .section-head { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
+  .section-head h2 { font-size: clamp(2.4rem, 1.2rem + 3.4vw, 4.4rem); }
+  .section-head p { margin: 0; max-width: 46ch; color: var(--choc-soft); font-weight: 600; }
+
+  /* Галерея: на компьютере едет вбок при прокрутке, на телефоне листается пальцем */
+  .gallery { background: var(--choc); color: var(--cream); overflow: hidden; }
+  .gallery .section-head p { color: #d9c9b6; }
+  .gallery-pin { padding-block: clamp(72px, 9vw, 112px); }
+  .track { display: flex; gap: clamp(16px, 2vw, 28px); padding-inline: max(clamp(16px, 4vw, 48px), calc((100vw - 1320px) / 2 + 48px)); will-change: transform; }
+  .cake-card { flex: none; width: clamp(260px, 28vw, 400px); margin: 0; }
+  .cake-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 22px; }
+  .cake-card:nth-child(even) { margin-top: 56px; }
+  .cake-card figcaption { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font-weight: 700; }
+  .cake-card figcaption span { color: #c9b8a4; font-weight: 600; white-space: nowrap; }
+
+  .how { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: s; }
+  .how li { counter-increment: s; border-top: 2px solid var(--choc); padding-top: 14px; }
+  .how li::before { content: counter(s); display: block; font: 400 2.6rem/1 var(--display); color: var(--rasp); margin-bottom: 10px; }
+  .how b { display: block; font-size: 1.125rem; margin-bottom: 4px; }
+  .how p { margin: 0; color: var(--choc-soft); font-weight: 600; }
+
+  .order-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 4vw, 64px); align-items: start; }
+  .your-cake { position: sticky; top: 96px; }
+  .portrait { position: relative; aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden; background: radial-gradient(70% 60% at 50% 42%, #e2edd3, var(--pista-2)); }
+  .portrait img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .portrait p { position: absolute; left: 16px; right: 16px; bottom: 16px; margin: 0; text-align: center; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+  .spec { list-style: none; margin: 14px 0 0; padding: 0; font-weight: 700; }
+  .spec li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .spec span { color: var(--choc-soft); font-weight: 600; }
+  .form { background: var(--cream); border-radius: 28px; padding: clamp(20px, 3vw, 36px); }
+  .form h3 { font-size: 1.4rem; margin-bottom: 12px; }
+  .form h3 ~ h3 { margin-top: 26px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { min-height: 44px; padding: 0 16px; border: 2px solid var(--line); border-radius: 999px; background: none; cursor: pointer; font-weight: 700; font-size: .9375rem; font-variant-numeric: tabular-nums; transition: background-color .2s, border-color .2s, color .2s; }
+  .chip:hover { border-color: var(--choc); }
+  .chip[aria-pressed="true"] { background: var(--choc); border-color: var(--choc); color: var(--cream); }
+  .chips + .chips { margin-top: 10px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .field { display: block; }
+  .field.wide { grid-column: 1 / -1; }
+  .field span { display: block; margin-bottom: 6px; font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+  .field input { width: 100%; min-height: 50px; padding: 0 14px; border: 2px solid var(--line); border-radius: 14px; background: #fff; color: var(--choc); caret-color: var(--rasp); }
+  .field input:focus { outline: none; border-color: var(--choc); }
+  .field input[aria-invalid="true"] { border-color: #b3261e; }
+  .field[hidden] { display: none; }
+  .totals { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .totals dt { color: var(--choc-soft); font-weight: 600; }
+  .totals dd { margin: 0; text-align: right; font-weight: 700; }
+  .totals .big { font: 400 1.8rem var(--display); color: var(--choc); padding-top: 6px; }
+  .err { margin: 14px 0 0; color: #b3261e; font-weight: 700; font-size: .9375rem; }
+  .err:empty { display: none; }
+  .form .btn { width: 100%; margin-top: 18px; }
+  .done { text-align: center; padding-block: 8px; }
+  .done h3 { font-size: 2.2rem; margin-bottom: 10px; }
+  .done p { margin: 0 auto 10px; max-width: 44ch; color: var(--choc-soft); font-weight: 600; }
+
+  .contacts { border-top: 1px solid var(--line); padding-block: 48px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .facts dt { font-size: .875rem; font-weight: 700; color: var(--choc-soft); }
+  .facts dd { margin: 4px 0 0; font-weight: 800; font-size: 1.0625rem; }
+  .facts small { display: block; font-weight: 600; font-size: .8125rem; color: var(--choc-soft); }
+  .page-foot { background: var(--pista); padding-block: 0 32px; color: var(--choc-soft); font-size: .875rem; font-weight: 600; }
+
+  /* ---------- Без WebGL ---------- */
+  .no-webgl .fallback { display: block; width: 100%; max-width: 560px; aspect-ratio: 4 / 5; height: auto; object-fit: cover; border-radius: 32px; margin-top: 24px; pointer-events: auto; }
+  .no-webgl .loading, .no-webgl .drag-hint, .no-webgl .wish { display: none; }
+  .no-webgl .journey { height: auto; padding-block: 64px; }
+  .no-webgl .journey-pin { position: static; height: auto; overflow: visible; }
+  .no-webgl .step { position: static; width: auto; max-width: 640px; transform: none; opacity: 1; visibility: visible; margin: 0 auto 72px; padding: 0 16px; }
+
+  @media (max-width: 960px) {
+    .builder .wrap { grid-template-columns: minmax(0, 1fr); padding-top: 12px; }
+    .intro h1 { font-size: 2.1rem; margin-bottom: 8px; }
+    .intro p { font-size: .9375rem; }
+    .drag-hint { display: none; }
+    .tabs { flex-wrap: nowrap; }
+    .panel { margin-top: 44svh; }
+    .no-webgl .panel { margin-top: 0; }
+    .step { width: auto; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); top: auto; bottom: 20px; transform: none; padding: 18px; border-radius: 22px; background: rgba(251, 246, 236, .86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    .night .step { color: var(--choc); }
+    .night .step p { color: var(--choc-soft); }
+    .night .step .tag { background: rgba(43, 26, 20, .08); }
+    .step h2 { font-size: 2rem; margin-bottom: 8px; }
+    .step .tag { margin-bottom: 8px; }
+    .step p { font-size: .9375rem; margin-bottom: 8px; }
+    .layers-list li { padding: 4px 0; font-size: .875rem; }
+    .wish { display: none; }
+    .section-head, .order-grid { grid-template-columns: minmax(0, 1fr); }
+    .how { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .your-cake { position: static; max-width: 420px; }
+    .track { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: none; }
+    .track::-webkit-scrollbar { display: none; }
+    .cake-card { scroll-snap-align: center; width: 72vw; }
+    .cake-card:nth-child(even) { margin-top: 0; }
+  }
+  @media (max-width: 680px) {
+    .site-header nav { display: none; }
+    .site-header .wrap { justify-content: space-between; }
+    .grid2, .how, .facts { grid-template-columns: minmax(0, 1fr); }
+    .opts.three { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body class="touchable">
+<div class="demo-bar">Демо-проект для портфолио: кондитерская и цены вымышлены, заказ никуда не отправляется.</div>
+<canvas id="stage" aria-label="3D-торт на подставке. Потяните, чтобы повернуть."></canvas>
+<p class="loading" id="loading">Взбиваем крем…</p>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#build" aria-label="Корж — к конструктору">
+      <svg width="30" height="28" viewBox="0 0 30 28" aria-hidden="true"><rect x="2" y="14" width="26" height="12" rx="3" fill="#2b1a14"/><rect x="6" y="6" width="18" height="9" rx="3" fill="#d81f4f"/><rect x="14" y="0" width="2.5" height="6" fill="#2b1a14"/></svg>
+      Корж
+    </a>
+    <nav aria-label="Разделы"><a href="#build">Собрать</a><a href="#cut">Разрез</a><a href="#cakes">Торты</a><a href="#order">Заказ</a></nav>
+    <a class="btn btn-choc" href="#order">Заказать</a>
+  </div>
+</header>
+
+<main>
+  <section class="builder" id="build" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="intro">
+        <h1 id="hero-title">Торт, который вы собрали сами</h1>
+        <p>Ярусы, бисквит, начинка, надпись&nbsp;— всё меняется прямо на&nbsp;экране. Кондитер испечёт точно такой за&nbsp;два дня.</p>
+        <span class="drag-hint"><svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 7h20M5 3 1 7l4 4M17 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Торт можно повернуть мышкой или пальцем</span>
+        <img class="fallback" src="https://images.unsplash.com/photo-1650419424455-d0513aaf0dd6?auto=format&fit=crop&w=900&h=1125&q=72" alt="Голый торт с ягодами на подставке" width="900" height="1125">
+      </div>
+
+      <div class="panel" aria-label="Конструктор торта">
+        <div class="tabs" role="tablist" aria-label="Что настроить" id="tabs"></div>
+        <div id="panes"></div>
+        <div class="sum">
+          <div><small id="sum-note"></small><output id="sum-price" aria-live="polite"></output></div>
+          <a class="btn btn-rasp" href="#order">Оформить</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey" id="cut" aria-label="Торт в разрезе, свечи и коробка">
+    <div class="journey-pin">
+      <article class="step">
+        <span class="tag">Разрез</span>
+        <h2>Внутри&nbsp;— то, что вы выбрали</h2>
+        <ul class="layers-list" id="layers-list"></ul>
+      </article>
+      <article class="step">
+        <span class="tag">Свечи</span>
+        <h2>Загадайте желание</h2>
+        <p>Нажмите на&nbsp;огонёк&nbsp;— задуете. Свечи кладём в&nbsp;коробку, если выбрали их в&nbsp;конструкторе.</p>
+      </article>
+      <article class="step">
+        <span class="tag">Доставка</span>
+        <h2>Коробка по&nbsp;размеру торта</h2>
+        <p>Собираем коробку под ваш торт, чтобы он не&nbsp;ездил внутри. Довезём по&nbsp;Петербургу за&nbsp;590&nbsp;₽ или заберёте сами с&nbsp;Литейного.</p>
+      </article>
+      <p class="wish" id="wish">Нажмите на&nbsp;огонёк</p>
+    </div>
+  </section>
+
+  <section class="gallery" id="cakes" aria-labelledby="cakes-title">
+    <div class="gallery-pin">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="cakes-title">Уже съели</h2>
+          <p>Торты этого месяца. Каждый начался с&nbsp;такой&nbsp;же сборки, как наверху, и&nbsp;звонка кондитера.</p>
+        </div>
+      </div>
+      <div class="track" id="track"></div>
+    </div>
+  </section>
+
+  <div class="solid">
+    <section class="section" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-head"><h2 id="how-title">Как заказать</h2><p>Минимум за&nbsp;два дня до&nbsp;праздника: столько нужно бисквиту, чтобы пропитаться.</p></div>
+        <ol class="how">
+          <li><b>Собираете торт</b><p>Здесь, на&nbsp;сайте. Сборка сохранится в&nbsp;заказе вместе с&nbsp;картинкой.</p></li>
+          <li><b>Кондитер звонит</b><p>В&nbsp;течение часа: уточнит детали, аллергии и&nbsp;надпись.</p></li>
+          <li><b>Печём и&nbsp;фотографируем</b><p>Пришлём фото готового торта в&nbsp;Telegram до&nbsp;отправки.</p></li>
+          <li><b>Привозим</b><p>В&nbsp;коробке по&nbsp;размеру, в&nbsp;выбранное трёхчасовое окно.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="order" aria-labelledby="order-title" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head"><h2 id="order-title">Заказ</h2><p>Оплата после звонка кондитера&nbsp;— когда всё уточним.</p></div>
+        <div class="order-grid">
+          <div class="your-cake">
+            <div class="portrait"><img id="cake-img" alt="" hidden><p id="cake-note">Соберите торт наверху&nbsp;— он появится здесь</p></div>
+            <ul class="spec" id="spec"></ul>
+          </div>
+          <form class="form" id="form" novalidate>
+            <div id="form-body">
+              <h3>Когда</h3>
+              <div class="chips" id="o-days" role="group" aria-label="День"></div>
+              <div class="chips" id="o-slots" role="group" aria-label="Время"></div>
+              <h3>Как получить</h3>
+              <div class="chips" id="o-way" role="group" aria-label="Способ получения"></div>
+              <h3>Контакты</h3>
+              <div class="grid2">
+                <label class="field"><span>Имя</span><input id="o-name" autocomplete="given-name" placeholder="Как к вам обращаться"></label>
+                <label class="field"><span>Телефон</span><input id="o-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67"></label>
+                <label class="field wide" id="o-addr-wrap"><span>Адрес доставки</span><input id="o-addr" autocomplete="street-address" placeholder="Улица, дом, квартира"></label>
+              </div>
+              <dl class="totals" id="totals"></dl>
+              <p class="err" id="o-err" aria-live="polite"></p>
+              <button class="btn btn-rasp" type="submit" id="o-submit">Отправить заказ кондитеру</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap contacts" aria-label="Контакты">
+      <dl class="facts">
+        <div><dt>Кондитерская</dt><dd>Литейный проспект, 00<small>адрес вымышлен</small></dd></div>
+        <div><dt>Открыто</dt><dd>Каждый день 10:00–21:00</dd></div>
+        <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+        <div><dt>Заказы</dt><dd>За&nbsp;2 дня до&nbsp;праздника<small>срочно&nbsp;— позвоните, попробуем</small></dd></div>
+      </dl>
+    </section>
+  </div>
+</main>
+<footer class="page-foot"><div class="wrap">«Корж»&nbsp;— демо-проект для портфолио. Кондитерская и&nbsp;цены вымышлены. Фото: Unsplash. 3D: Three.js.</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+
+<script>
+/* ---------- Данные, цены, конструктор и заказ: работают и без 3D ---------- */
+window.KORZH = (() => {
+  const $ = (s) => document.querySelector(s);
+  const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const TIERS = [
+    { n: 1, label: '1 ярус', size: 'Ø 18 см', kg: 1.5, serv: '8–10 порций' },
+    { n: 2, label: '2 яруса', size: 'Ø 18 и 14 см', kg: 3.2, serv: '18–20 порций' },
+    { n: 3, label: '3 яруса', size: 'Ø 18, 14 и 10 см', kg: 4.6, serv: '28–30 порций' },
+  ];
+  const SPONGES = {
+    vanilla: { name: 'Ванильный', color: '#ecc98a', kg: 2600 },
+    choco: { name: 'Шоколадный', color: '#5b3322', kg: 2800 },
+    velvet: { name: 'Красный бархат', color: '#a2202e', kg: 2900 },
+    pistachio: { name: 'Фисташковый', color: '#b4c071', kg: 3400 },
+  };
+  const FILLINGS = {
+    raspberry: { name: 'Малиновый конфитюр', color: '#b3123c' },
+    caramel: { name: 'Солёная карамель', color: '#c47a2a' },
+    lemon: { name: 'Лимонный курд', color: '#f0c544' },
+    cherry: { name: 'Пьяная вишня', color: '#5e0c1c' },
+  };
+  const COATS = {
+    naked: { name: 'Голый', note: 'видно бисквит', color: '#f7f0e2', price: 0 },
+    cream: { name: 'Сливочный крем', note: 'гладкий, белый', color: '#fbf7ef', price: 0 },
+    ganache: { name: 'Ганаш', note: 'шоколадные подтёки', color: '#3a2016', price: 600 },
+  };
+  const DECOR = { berries: { name: 'Ягоды', note: 'малина и голубика', price: 900 }, macarons: { name: 'Макаруны', note: 'шесть штук', price: 700 } };
+  const CANDLE = 50, TOPPER = 450, DELIVERY = 590;
+
+  const cfg = { tiers: 2, sponge: 'choco', filling: 'raspberry', coat: 'ganache', berries: true, macarons: false, candles: 3, topper: true, text: 'С днём рождения!' };
+  const listeners = [];
+  const set = (patch) => { Object.assign(cfg, patch); render(); listeners.forEach((f) => f(cfg, patch)); };
+  const price = () => {
+    const t = TIERS[cfg.tiers - 1];
+    return Math.round(t.kg * SPONGES[cfg.sponge].kg / 10) * 10 + COATS[cfg.coat].price + (cfg.berries ? DECOR.berries.price : 0) + (cfg.macarons ? DECOR.macarons.price : 0) + cfg.candles * CANDLE + (cfg.topper && cfg.text.trim() ? TOPPER : 0);
+  };
+
+  /* Вкладки конструктора */
+  const TABS = [['tiers', 'Ярусы'], ['sponge', 'Бисквит'], ['filling', 'Начинка'], ['coat', 'Покрытие'], ['decor', 'Украшения'], ['text', 'Надпись']];
+  $('#tabs').innerHTML = TABS.map(([k, n], i) => `<button type="button" class="tab" role="tab" id="tab-${k}" aria-controls="pane-${k}" aria-selected="${i === 0}" data-tab="${k}">${n}</button>`).join('');
+  $('#panes').innerHTML = TABS.map(([k], i) => `<div class="pane" role="tabpanel" id="pane-${k}" aria-labelledby="tab-${k}" ${i ? 'hidden' : ''}></div>`).join('');
+  $('#tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tab]'); if (!b) return;
+    document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t === b)));
+    document.querySelectorAll('.pane').forEach((p) => { p.hidden = p.id !== 'pane-' + b.dataset.tab; });
+  });
+  const swatches = (key, data) => Object.entries(data).map(([k, v]) => `<button type="button" class="opt" data-set="${key}" data-val="${k}"><i style="background:${v.color}"></i><span>${v.name}${v.note ? `<small>${v.note}</small>` : ''}</span></button>`).join('');
+  $('#pane-tiers').innerHTML = `<h2>Сколько ярусов</h2><p>Вес и порции считаем сразу.</p><div class="opts three tiers">${TIERS.map((t) => `<button type="button" class="opt" data-set="tiers" data-val="${t.n}">${t.label}<small>${t.size}</small></button>`).join('')}</div>`;
+  $('#pane-sponge').innerHTML = `<h2>Бисквит</h2><p>Пропитываем сиропом, чтобы был влажным.</p><div class="opts">${swatches('sponge', SPONGES)}</div>`;
+  $('#pane-filling').innerHTML = `<h2>Начинка</h2><p>Между коржами&nbsp;— сливочный крем и&nbsp;прослойка.</p><div class="opts">${swatches('filling', FILLINGS)}</div>`;
+  $('#pane-coat').innerHTML = `<h2>Покрытие</h2><p>Ганаш стекает подтёками&nbsp;— каждый раз по-своему.</p><div class="opts three">${swatches('coat', COATS)}</div>`;
+  $('#pane-decor').innerHTML = `<h2>Украшения</h2>
+    ${Object.entries(DECOR).map(([k, d]) => `<div class="row"><span>${d.name}<small>${d.note}, +${rub(d.price)}</small></span><button type="button" class="switch" role="switch" data-toggle="${k}" aria-label="${d.name}"></button></div>`).join('')}
+    <div class="row"><span>Свечи<small>${rub(CANDLE)} за штуку</small></span><span class="stepper"><button type="button" data-candles="-1" aria-label="Меньше свечей">−</button><output id="candles-out"></output><button type="button" data-candles="1" aria-label="Больше свечей">+</button></span></div>`;
+  $('#pane-text').innerHTML = `<h2>Надпись на&nbsp;топпере</h2><p>Вырежем из&nbsp;дерева и&nbsp;воткнём сверху, +${rub(TOPPER)}.</p>
+    <div class="row"><span>Топпер с надписью</span><button type="button" class="switch" role="switch" data-toggle="topper" aria-label="Топпер с надписью"></button></div>
+    <label class="text-field"><input id="topper-text" maxlength="18" value="${cfg.text}" aria-label="Текст надписи"><small id="topper-count"></small></label>`;
+  $('#panes').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-set], [data-toggle], [data-candles]'); if (!b) return;
+    if (b.dataset.set) set({ [b.dataset.set]: b.dataset.set === 'tiers' ? Number(b.dataset.val) : b.dataset.val });
+    if (b.dataset.toggle) set({ [b.dataset.toggle]: !cfg[b.dataset.toggle] });
+    if (b.dataset.candles) set({ candles: Math.max(0, Math.min(9, cfg.candles + Number(b.dataset.candles))) });
+  });
+  $('#topper-text').addEventListener('input', (e) => set({ text: e.target.value, topper: true }));
+
+  function render() {
+    document.querySelectorAll('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(String(cfg[b.dataset.set]) === b.dataset.val)));
+    document.querySelectorAll('[data-toggle]').forEach((b) => b.setAttribute('aria-checked', String(!!cfg[b.dataset.toggle])));
+    $('#candles-out').textContent = cfg.candles;
+    document.querySelector('[data-candles="-1"]').disabled = !cfg.candles;
+    document.querySelector('[data-candles="1"]').disabled = cfg.candles >= 9;
+    $('#topper-count').textContent = `${cfg.text.length} из 18`;
+    const t = TIERS[cfg.tiers - 1];
+    $('#sum-note').textContent = `${t.kg.toLocaleString('ru-RU')} кг · ${t.serv}`;
+    $('#sum-price').textContent = rub(price());
+    $('#layers-list').innerHTML = [
+      [SPONGES[cfg.sponge].color, `${SPONGES[cfg.sponge].name} бисквит`, '3 коржа'],
+      ['#fbf7ef', 'Сливочный крем', 'на сыре'],
+      [FILLINGS[cfg.filling].color, FILLINGS[cfg.filling].name, 'прослойка'],
+      [COATS[cfg.coat].color, cfg.coat === 'naked' ? 'Тонкий слой крема снаружи' : COATS[cfg.coat].name, 'снаружи'],
+    ].map(([c, n, s]) => `<li><i style="background:${c}"></i>${n}<small>${s}</small></li>`).join('');
+    const spec = [['Ярусы', `${t.label}, ${t.size}`], ['Вес', `${t.kg.toLocaleString('ru-RU')} кг, ${t.serv}`], ['Бисквит', SPONGES[cfg.sponge].name], ['Начинка', FILLINGS[cfg.filling].name], ['Покрытие', COATS[cfg.coat].name]];
+    const extra = [cfg.berries && 'ягоды', cfg.macarons && 'макаруны', cfg.candles && `свечи × ${cfg.candles}`].filter(Boolean);
+    if (extra.length) spec.push(['Украшения', extra.join(', ')]);
+    if (cfg.topper && cfg.text.trim()) spec.push(['Надпись', `«${esc(cfg.text.trim())}»`]);
+    $('#spec').innerHTML = spec.map(([a, b]) => `<li><span>${a}</span>${b}</li>`).join('');
+    renderTotals();
+  }
+
+  /* Галерея */
+  const CAKES = [
+    ['1650419424455-d0513aaf0dd6', 'Голый с ягодами', '2 кг', 'Голый торт с клубникой и голубикой'],
+    ['1565661834013-d196ca46e14e', 'Свадебный с инжиром', '4,5 кг', 'Двухъярусный голый торт с инжиром'],
+    ['1557925923-33b27f891f88', 'Малиновый', '1,6 кг', 'Торт со сливочным кремом и малиной сверху'],
+    ['1568827999250-3f6afff96e66', 'Клубника и ромашки', '1,8 кг', 'Торт с клубникой и живыми ромашками'],
+    ['1606890737304-57a1ca8a5b62', 'Шварцвальд', '2,2 кг', 'Шоколадный торт с вишней и сливками'],
+    ['1488477304112-4944851de03d', 'Апельсиновый', '1,5 кг', 'Двухслойный торт с цитрусами'],
+  ];
+  $('#track').innerHTML = CAKES.map(([id, n, w, alt]) => `<figure class="cake-card"><img src="https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=640&h=800&q=72" alt="${alt}" width="640" height="800" loading="lazy"><figcaption>${n}<span>${w}</span></figcaption></figure>`).join('');
+
+  /* Заказ */
+  const WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Array.from({ length: 6 }, (_, i) => { const d = new Date(today); d.setDate(d.getDate() + 2 + i); return d; });
+  const SLOTS = ['10–13', '13–16', '16–19', '19–22'];
+  let day = 0, slot = '16–19', way = 'delivery';
+  function renderOrder() {
+    $('#o-days').innerHTML = days.map((d, i) => `<button type="button" class="chip" data-d="${i}" aria-pressed="${i === day}">${WD[d.getDay()]}, ${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}</button>`).join('');
+    $('#o-slots').innerHTML = SLOTS.map((s) => `<button type="button" class="chip" data-s="${s}" aria-pressed="${s === slot}">${s}</button>`).join('');
+    $('#o-way').innerHTML = [['delivery', `Доставка, ${rub(DELIVERY)}`], ['pickup', 'Самовывоз с Литейного']].map(([k, n]) => `<button type="button" class="chip" data-w="${k}" aria-pressed="${k === way}">${n}</button>`).join('');
+    $('#o-addr-wrap').hidden = way !== 'delivery';
+    renderTotals();
+  }
+  function renderTotals() {
+    const p = price(), ship = way === 'delivery' ? DELIVERY : 0;
+    $('#totals').innerHTML = `<dt>Торт</dt><dd>${rub(p)}</dd><dt>${way === 'delivery' ? 'Доставка' : 'Самовывоз'}</dt><dd>${ship ? rub(ship) : 'бесплатно'}</dd><dt class="big">Итого</dt><dd class="big">${rub(p + ship)}</dd>`;
+  }
+  $('#form').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-d], [data-s], [data-w]'); if (!b) return;
+    if (b.dataset.d) day = Number(b.dataset.d);
+    if (b.dataset.s) slot = b.dataset.s;
+    if (b.dataset.w) way = b.dataset.w;
+    renderOrder();
+  });
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('#o-name').value.trim(), digits = $('#o-phone').value.replace(/\D/g, ''), addr = $('#o-addr').value.trim();
+    const checks = [['#o-name', name.length >= 2, 'Напишите имя — кондитер позвонит и спросит вас.'], ['#o-phone', digits.length >= 10 && digits.length <= 11, 'Нужен телефон из 10–11 цифр, например +7 900 123-45-67.'], ['#o-addr', way !== 'delivery' || addr.length >= 6, 'Укажите адрес доставки: улицу, дом и квартиру.']];
+    let first = null;
+    checks.forEach(([sel, ok, msg]) => { $(sel).setAttribute('aria-invalid', String(!ok)); if (!ok && !first) first = [sel, msg]; });
+    if (first) { $('#o-err').textContent = first[1]; $(first[0]).focus(); return; }
+    $('#o-err').textContent = '';
+    const d = days[day], btn = $('#o-submit'); btn.disabled = true; btn.textContent = 'Отправляем…';
+    setTimeout(() => {
+      $('#form-body').innerHTML = `<div class="done"><h3>Заказ у кондитера</h3>
+        <p>${esc(name)}, кондитер позвонит в течение часа, чтобы всё уточнить. Торт будет готов к ${WD[d.getDay()]} ${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}, ${slot}.</p>
+        <p style="font-size:.875rem">Это демо: заказ никуда не ушёл. В рабочей версии он пришёл бы кондитеру в Telegram вместе с картинкой торта.</p></div>`;
+    }, 650);
+  });
+  render(); renderOrder();
+
+  const piece = { snapshot: null };
+  const showSnapshot = (url) => { piece.snapshot = url; $('#cake-img').src = url; $('#cake-img').alt = 'Ваш торт: ' + [...document.querySelectorAll('#spec li')].map((li) => li.textContent).join(', '); $('#cake-img').hidden = false; $('#cake-note').hidden = true; };
+  return { cfg, SPONGES, FILLINGS, COATS, TIERS, reduced, onChange: (f) => listeners.push(f), showSnapshot };
+})();
+</script>
+
+<script type="module">
+/* ---------- 3D: торт по слоям ---------- */
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const K = window.KORZH;
+const $ = (s) => document.querySelector(s);
+const canvas = $('#stage');
+const mobile = matchMedia('(max-width: 960px)').matches;
+
+// без WebGL — обычная страница: фото торта, разрез и свечи текстом
+const probe = document.createElement('canvas');
+if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) {
+  document.documentElement.classList.add('no-webgl');
+  $('#loading').remove();
+  await new Promise(() => {});
+}
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.75));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .6;
+const camera = new THREE.PerspectiveCamera(30, 1, .1, 100);
+const key = new THREE.DirectionalLight(0xfff4e6, 2.2);
+key.position.set(-4, 8, 5);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.camera.left = key.shadow.camera.bottom = -4;
+key.shadow.camera.right = key.shadow.camera.top = 4;
+key.shadow.radius = 6;
+key.shadow.bias = -.0005;
+const hemi = new THREE.HemisphereLight(0xfffaf0, 0x5d4a40, .6);
+const glow = new THREE.PointLight(0xffa04a, 0, 8, 1.6);
+scene.add(key, hemi, glow);
+
+/* Фактура бисквита: поры */
+function poreTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 1400; i++) {
+    const r = Math.random() * 2.2 + .4;
+    g.fillStyle = `rgba(0,0,0,${.12 + Math.random() * .25})`;
+    g.beginPath(); g.ellipse(Math.random() * 256, Math.random() * 256, r, r * (.6 + Math.random() * .6), Math.random() * 3, 0, Math.PI * 2); g.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 3);
+  return t;
+}
+const pores = poreTexture();
+
+const M = {
+  sponge: new THREE.MeshStandardMaterial({ color: K.SPONGES[K.cfg.sponge].color, roughness: .9, map: pores, bumpMap: pores, bumpScale: 2 }),
+  cream: new THREE.MeshPhysicalMaterial({ color: 0xfbf7ef, roughness: .55, sheen: .4, sheenColor: 0xffffff }),
+  jam: new THREE.MeshPhysicalMaterial({ color: K.FILLINGS[K.cfg.filling].color, roughness: .2, clearcoat: 1, clearcoatRoughness: .15 }),
+  coat: new THREE.MeshPhysicalMaterial({ color: K.COATS[K.cfg.coat].color, roughness: .45, clearcoat: .2 }),
+  stand: new THREE.MeshPhysicalMaterial({ color: 0xf6f2ea, roughness: .25, clearcoat: 1, clearcoatRoughness: .1 }),
+};
+[M.sponge, M.cream, M.jam, M.coat].forEach((m) => { m.side = THREE.FrontSide; });
+
+/* Подставка */
+const stand = new THREE.Mesh(new THREE.LatheGeometry([
+  [0, -1.15], [.95, -1.15], [1, -1.1], [.92, -1.05], [.32, -.85], [.22, -.4], [.3, -.14], [2.05, -.1], [2.15, -.04], [2.12, 0], [0, 0],
+].map(([x, y]) => new THREE.Vector2(x, y)), 96), M.stand);
+stand.receiveShadow = true;
+
+const cake = new THREE.Group();      // всё, что крутится
+const body = new THREE.Group();      // торт без куска
+const slice = new THREE.Group();     // кусок, который выезжает
+cake.add(body, slice);
+const world = new THREE.Group();
+world.add(stand, cake);
+scene.add(world);
+
+/* Сектор кольца/круга → объёмный слой высотой h */
+const WEDGE = Math.PI / 4.2, WC = -Math.PI / 2 + .55; // кусок смотрит на зрителя чуть справа
+function sector(r, h, y, a0, a1, rIn = 0) {
+  const s = new THREE.Shape();
+  if (rIn > 0) { s.absarc(0, 0, r, a0, a1, false); s.absarc(0, 0, rIn, a1, a0, true); s.closePath(); }
+  else { s.moveTo(0, 0); s.absarc(0, 0, r, a0, a1, false); s.lineTo(0, 0); }
+  const g = new THREE.ExtrudeGeometry(s, { depth: h, bevelEnabled: false, curveSegments: Math.max(6, Math.round(160 * (a1 - a0) / (Math.PI * 2))) });
+  g.rotateX(-Math.PI / 2); g.translate(0, y, 0);
+  return g;
+}
+const inWedge = (a) => { let d = ((a - WC) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI; return Math.abs(d) < WEDGE / 2; };
+const polar = (r, a, y) => new THREE.Vector3(r * Math.cos(a), y, -r * Math.sin(a));
+function add(group, geo, mat, shadow = true) { const m = new THREE.Mesh(geo, mat); m.castShadow = shadow; m.receiveShadow = true; group.add(m); return m; }
+function both(fn) { const a0 = WC + WEDGE / 2, a1 = WC - WEDGE / 2 + Math.PI * 2; fn(body, a0, a1); fn(slice, WC - WEDGE / 2, WC + WEDGE / 2); }
+
+const RADII = [1.5, 1.12, .78], TH = .92, COAT = .045;
+// слои яруса снизу вверх: бисквит, крем, конфитюр, бисквит, крем, конфитюр, бисквит
+const STACK = [['sponge', .24], ['cream', .05], ['jam', .03], ['sponge', .24], ['cream', .05], ['jam', .03], ['sponge', .24]];
+
+/* Части торта: при смене настроек пересобираем только изменившееся и бросаем новое сверху */
+const parts = {};
+function part(name) {
+  if (parts[name]) { parts[name].forEach((g) => { g.parent.remove(g); g.traverse((o) => o.geometry && o.geometry.dispose()); }); }
+  const b = new THREE.Group(), s = new THREE.Group(); b.name = s.name = name;
+  body.add(b); slice.add(s); parts[name] = [b, s];
+  return { body: b, slice: s, pick: (a) => (inWedge(a) ? s : b) };
+}
+const tierBase = (i) => i * (TH + COAT);
+const cakeTop = () => tierBase(K.cfg.tiers - 1) + TH + COAT;
+
+function buildTier(i) {
+  const p = part('tier' + i), r = RADII[i], y0 = tierBase(i);
+  both((g, a0, a1) => {
+    const into = g === body ? p.body : p.slice;
+    let y = y0;
+    STACK.forEach(([mat, h]) => { add(into, sector(r, h, y, a0, a1), M[mat]); y += h; });
+    if (K.cfg.coat !== 'naked') add(into, sector(r + COAT, TH, y0, a0, a1, r), M.coat);
+    // сверху всегда крем или ганаш
+    add(into, sector(r + (K.cfg.coat === 'naked' ? 0 : COAT), COAT, y0 + TH, a0, a1), K.cfg.coat === 'ganache' ? M.coat : M.cream);
+  });
+  return p;
+}
+function buildDrips() {
+  const p = part('drips');
+  if (K.cfg.coat !== 'ganache') return p;
+  for (let i = 0; i < K.cfg.tiers; i++) {
+    const r = RADII[i] + COAT + .012, top = tierBase(i) + TH + COAT, n = Math.round(22 * RADII[i]);
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + i * .3, len = .12 + ((Math.sin(k * 12.9898 + i * 78.233) * 43758.5453) % 1 + 1) % 1 * .38;
+      const holder = new THREE.Group(); holder.position.copy(polar(r, a, top - .02));
+      const d = add(holder, new THREE.CapsuleGeometry(.045, len, 4, 10), M.coat);
+      d.position.y = -len / 2; d.scale.z = .7; holder.rotation.y = a + Math.PI / 2;
+      holder.userData.drip = true;
+      p.pick(a).add(holder);
+    }
+    both((g, a0, a1) => add(g === body ? p.body : p.slice, new THREE.TorusGeometry(RADII[i] + COAT * .6, .045, 8, 120, a1 - a0).rotateX(Math.PI / 2).rotateY(-a0 * 0 ).translate(0, tierBase(i) + TH + COAT, 0), M.coat));
+    // тор строится от угла 0 — поворачиваем на начало сектора
+    [p.body, p.slice].forEach((g) => { const t = g.children[g.children.length - 1]; t.rotation.y = g === p.body ? (WC + WEDGE / 2) : (WC - WEDGE / 2); });
+  }
+  return p;
+}
+// ягоды: малина — шершавый шарик, голубика — гладкий с «короной»
+const raspGeo = (() => { const g = new THREE.IcosahedronGeometry(.1, 3); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const v = new THREE.Vector3().fromBufferAttribute(p, i); const n = 1 + .12 * Math.abs(Math.sin(v.x * 70) * Math.sin(v.y * 70) * Math.sin(v.z * 70)); v.multiplyScalar(n); v.y *= 1.15; p.setXYZ(i, v.x, v.y, v.z); } g.computeVertexNormals(); return g; })();
+const raspMat = new THREE.MeshPhysicalMaterial({ color: 0xc8143c, roughness: .45, clearcoat: .6, sheen: .5, sheenColor: 0xff7a95 });
+const blueGeo = new THREE.SphereGeometry(.075, 20, 14);
+const blueMat = new THREE.MeshPhysicalMaterial({ color: 0x2d3a6e, roughness: .35, sheen: 1, sheenColor: 0x8fa3d9, sheenRoughness: .3 });
+function buildBerries() {
+  const p = part('berries');
+  if (!K.cfg.berries) return p;
+  const i = K.cfg.tiers - 1, r = RADII[i], top = cakeTop();
+  const ring = Math.round(10 * r + 2);
+  for (let k = 0; k < ring; k++) {
+    const a = (k / ring) * Math.PI * 2, rasp = k % 3 !== 2;
+    const m = new THREE.Mesh(rasp ? raspGeo : blueGeo, rasp ? raspMat : blueMat);
+    m.position.copy(polar(r * .8, a, top + (rasp ? .1 : .07))); m.castShadow = true; m.rotation.set(k, k * 2, 0);
+    p.pick(a).add(m);
+  }
+  // ягоды на уступах нижних ярусов
+  for (let t = 0; t < K.cfg.tiers - 1; t++) {
+    const rr = (RADII[t] + RADII[t + 1] + COAT) / 2, y = tierBase(t) + TH + COAT * 2, n = Math.round(9 * rr);
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + .2, rasp = k % 2 === 0;
+      const m = new THREE.Mesh(rasp ? raspGeo : blueGeo, rasp ? raspMat : blueMat);
+      m.position.copy(polar(rr, a, y + (rasp ? .1 : .07))); m.castShadow = true;
+      p.pick(a).add(m);
+    }
+  }
+  return p;
+}
+const MAC = ['#c7dba5', '#f2a7b8', '#f3dc8a'].map((c) => new THREE.MeshPhysicalMaterial({ color: c, roughness: .7, sheen: .3 }));
+const macShell = new THREE.SphereGeometry(.16, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2).scale(1, .45, 1);
+function buildMacarons() {
+  const p = part('macarons');
+  if (!K.cfg.macarons) return p;
+  const i = K.cfg.tiers - 1, r = RADII[i], top = cakeTop();
+  for (let k = 0; k < 6; k++) {
+    const a = (k / 6) * Math.PI * 2 + .5, m = new THREE.Group(), mat = MAC[k % 3];
+    const up = new THREE.Mesh(macShell, mat); up.position.y = .035;
+    const dn = new THREE.Mesh(macShell, mat); dn.rotation.x = Math.PI; dn.position.y = -.035;
+    const f = new THREE.Mesh(new THREE.CylinderGeometry(.145, .145, .05, 24), M.cream);
+    m.add(up, dn, f); m.traverse((o) => { o.castShadow = true; });
+    m.position.copy(polar(r * .5, a, top + .16)); m.rotation.set(Math.PI / 2.6, 0, 0); m.rotation.y = -a + Math.PI / 2;
+    p.pick(a).add(m);
+  }
+  return p;
+}
+/* Свечи с огоньками и дымом */
+function flameTexture() {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 128;
+  const g = c.getContext('2d');
+  const gr = g.createRadialGradient(32, 84, 2, 32, 76, 40);
+  gr.addColorStop(0, 'rgba(255,255,235,1)'); gr.addColorStop(.25, 'rgba(255,214,120,.95)'); gr.addColorStop(.6, 'rgba(255,120,30,.5)'); gr.addColorStop(1, 'rgba(255,80,0,0)');
+  g.fillStyle = gr; g.beginPath(); g.moveTo(32, 4); g.bezierCurveTo(58, 60, 54, 118, 32, 118); g.bezierCurveTo(10, 118, 6, 60, 32, 4); g.fill();
+  return new THREE.CanvasTexture(c);
+}
+function stripeTexture() {
+  const c = document.createElement('canvas'); c.width = 8; c.height = 64;
+  const g = c.getContext('2d');
+  g.fillStyle = '#fbf6ec'; g.fillRect(0, 0, 8, 64);
+  g.fillStyle = '#d81f4f'; for (let y = 0; y < 64; y += 16) { g.fillRect(0, y, 8, 7); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+// огонь не проходит через тональную коррекцию — иначе он тускнеет
+const flameMat = new THREE.SpriteMaterial({ map: flameTexture(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false });
+const candleMat = new THREE.MeshStandardMaterial({ map: stripeTexture(), roughness: .6 });
+const flames = [];
+const lit = { demo: false };
+function buildCandles() {
+  const p = part('candles');
+  flames.length = 0;
+  const n = K.cfg.candles || (lit.demo ? 1 : 0);
+  const top = cakeTop(), r = RADII[K.cfg.tiers - 1];
+  for (let k = 0; k < n; k++) {
+    const a = n === 1 ? Math.PI / 2 : (k / n) * Math.PI * 2 + Math.PI / 2, rr = n === 1 ? 0 : r * .3;
+    const g = new THREE.Group(); g.position.copy(polar(rr, a, top));
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, .46, 12), candleMat); c.position.y = .23; c.castShadow = true;
+    const wick = new THREE.Mesh(new THREE.CylinderGeometry(.006, .006, .05, 4), new THREE.MeshBasicMaterial({ color: 0x222222 })); wick.position.y = .485;
+    const f = new THREE.Sprite(flameMat.clone()); f.scale.set(.16, .32, 1); f.position.y = .62; f.userData = { on: 0, seed: Math.random() * 10, base: .58 };
+    g.add(c, wick, f); flames.push(f);
+    p.pick(rr ? a : Math.PI).add(g);
+  }
+  return p;
+}
+const smoke = [];
+const smokeTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const smokeMat = new THREE.SpriteMaterial({ map: smokeTex, color: 0xcfc6bb, transparent: true, opacity: 0, depthWrite: false });
+function puff(at) {
+  for (let i = 0; i < 6; i++) {
+    const s = new THREE.Sprite(smokeMat.clone()); s.position.copy(at); s.scale.setScalar(.05);
+    s.userData = { t: 0, vx: (Math.random() - .5) * .15, d: i * .08 }; scene.add(s); smoke.push(s);
+  }
+}
+/* Топпер с надписью: шпажки и табличка с текстом на холсте */
+function buildTopper() {
+  const p = part('topper');
+  const text = K.cfg.text.trim();
+  if (!K.cfg.topper || !text) return p;
+  const c = document.createElement('canvas'), g = c.getContext('2d');
+  g.font = '64px "Prosto One"';
+  const w = Math.min(900, Math.ceil(g.measureText(text).width) + 60);
+  c.width = w; c.height = 110;
+  g.font = '64px "Prosto One"'; g.fillStyle = '#2b1a14'; g.textBaseline = 'middle'; g.textAlign = 'center';
+  g.fillText(text, w / 2, 58);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  const W = Math.min(1.9, w / 110 * .32), H = .32;
+  const grp = new THREE.Group();
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshStandardMaterial({ map: tex, transparent: true, roughness: .5, side: THREE.DoubleSide, alphaTest: .05 }));
+  plate.position.y = .62; plate.castShadow = true;
+  const stickMat = new THREE.MeshStandardMaterial({ color: 0xd9b26b, roughness: .4, metalness: .3 });
+  [-W * .3, W * .3].forEach((x) => { const s = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .62, 6), stickMat); s.position.set(x, .3, -.005); grp.add(s); });
+  grp.add(plate);
+  const r = RADII[K.cfg.tiers - 1];
+  grp.position.copy(polar(r * .42, Math.PI / 2, cakeTop()));
+  p.body.add(grp);
+  return p;
+}
+
+/* Анимации появления: новое падает сверху с отскоком, подтёки ганаша стекают */
+function drop(p, height = 2.4, stagger = 0) {
+  if (K.reduced || !window.gsap) return;
+  [p.body, p.slice].forEach((g) => g.children.forEach((o, i) => {
+    if (o.userData.drip) { window.gsap.fromTo(o.scale, { y: 0.01 }, { y: 1, duration: .9 + Math.random() * .6, ease: 'power2.out', delay: .2 + Math.random() * .3 }); return; }
+    window.gsap.from(o.position, { y: o.position.y + height, duration: .9, ease: 'bounce.out', delay: i * stagger });
+  }));
+}
+function pulse() { if (!K.reduced && window.gsap) window.gsap.fromTo(cake.scale, { x: 1.04, y: .94, z: 1.04 }, { x: 1, y: 1, z: 1, duration: .7, ease: 'elastic.out(1, .4)' }); }
+
+let prev = { ...K.cfg };
+function rebuildAll(first) {
+  for (let i = 0; i < 3; i++) if (i < K.cfg.tiers) buildTier(i); else part('tier' + i);
+  buildDrips(); buildBerries(); buildMacarons(); buildCandles(); buildTopper();
+  if (first) for (let i = 0; i < K.cfg.tiers; i++) drop(parts['tier' + i] && { body: parts['tier' + i][0], slice: parts['tier' + i][1] }, 3 + i, 0);
+}
+const P = (n) => ({ body: parts[n][0], slice: parts[n][1] });
+const tween = (mat, hex) => { const c = new THREE.Color(hex); if (K.reduced || !window.gsap) { mat.color.copy(c); return; } window.gsap.to(mat.color, { r: c.r, g: c.g, b: c.b, duration: .6, ease: 'power2.out' }); };
+K.onChange((cfg, patch) => {
+  if ('sponge' in patch) tween(M.sponge, K.SPONGES[cfg.sponge].color);
+  if ('filling' in patch) tween(M.jam, K.FILLINGS[cfg.filling].color);
+  if ('coat' in patch) {
+    M.coat.color.set(K.COATS[cfg.coat].color); M.coat.roughness = cfg.coat === 'ganache' ? .18 : .5; M.coat.clearcoat = cfg.coat === 'ganache' ? .9 : .2;
+    for (let i = 0; i < cfg.tiers; i++) buildTier(i);
+    buildDrips(); drop(P('drips')); pulse();
+  }
+  if ('tiers' in patch && patch.tiers !== prev.tiers) {
+    for (let i = 0; i < 3; i++) { if (i < cfg.tiers) { const was = i < prev.tiers; buildTier(i); if (!was) drop(P('tier' + i), 3); } else part('tier' + i); }
+    buildDrips(); buildBerries(); buildMacarons(); buildCandles(); buildTopper();
+    buildBox();
+    if (cfg.tiers > prev.tiers) { drop(P('berries'), 3, .02); drop(P('macarons'), 3); drop(P('candles'), 3); drop(P('topper'), 3); drop(P('drips')); }
+    else pulse();
+  }
+  if ('berries' in patch) { buildBerries(); drop(P('berries'), 2.5, .03); }
+  if ('macarons' in patch) { buildMacarons(); drop(P('macarons'), 2.5, .06); }
+  if ('candles' in patch) { buildCandles(); if (cfg.candles > prev.candles) drop(P('candles'), 1.5, .04); }
+  if ('topper' in patch || 'text' in patch) { buildTopper(); buildBox(); if ('topper' in patch && cfg.topper) drop(P('topper'), 1.5); }
+  prev = { ...cfg };
+  frame.lastChange = performance.now();
+  snap();
+});
+
+/* Коробка: стенки поднимаются вокруг торта, крышка опускается сверху */
+const box = new THREE.Group();
+const boxTex = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#b5cc97'; g.fillRect(0, 0, 512, 512); g.fillStyle = '#2b1a14'; g.font = '120px "Prosto One"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Корж', 256, 260); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const boxMat = new THREE.MeshStandardMaterial({ color: 0xb5cc97, roughness: .85 });
+const boxFront = new THREE.MeshStandardMaterial({ map: boxTex, roughness: .85 });
+const walls = [];
+function buildBox() {
+  box.clear(); walls.length = 0;
+  const s = RADII[0] * 2 + .5, h = cakeTop() + (K.cfg.topper && K.cfg.text.trim() ? 1 : .6);
+  [[0, 1, boxFront], [Math.PI / 2, 1, boxMat], [Math.PI, 1, boxMat], [-Math.PI / 2, 1, boxMat]].forEach(([rot, , mat]) => {
+    const hinge = new THREE.Group(); hinge.rotation.y = rot;
+    const pivot = new THREE.Group(); pivot.position.z = s / 2;
+    const w = new THREE.Mesh(new THREE.BoxGeometry(s, h, .03), mat); w.position.y = h / 2; w.castShadow = true;
+    pivot.add(w); hinge.add(pivot); box.add(hinge); walls.push(pivot);
+  });
+  const lid = new THREE.Group();
+  const top = new THREE.Mesh(new THREE.BoxGeometry(s + .06, .04, s + .06), boxMat);
+  const ribbonMat = new THREE.MeshPhysicalMaterial({ color: 0xd81f4f, roughness: .35, clearcoat: .5 });
+  const r1 = new THREE.Mesh(new THREE.BoxGeometry(s + .08, .05, .16), ribbonMat), r2 = new THREE.Mesh(new THREE.BoxGeometry(.16, .05, s + .08), ribbonMat);
+  r1.position.y = r2.position.y = .02;
+  const bow = new THREE.Mesh(new THREE.TorusKnotGeometry(.12, .035, 64, 8, 2, 3), ribbonMat); bow.position.y = .1; bow.scale.y = .5;
+  lid.add(top, r1, r2, bow); lid.position.y = h; lid.userData.h = h;
+  box.add(lid); box.userData.lid = lid;
+  box.visible = false;
+}
+world.add(box);
+
+/* Состояние сцен на прокрутке */
+const look = { x: mobile ? 0 : -1.05, zoom: 0, cut: 0, night: 0, box: 0, yaw: 0, y: 0, ty: 0 };
+let yaw = .4, yawVel = .25, dragging = null;
+const nightC = new THREE.Color('#1d1410'), dayC = new THREE.Color('#c9dcb0'), bgC = new THREE.Color();
+const wishEl = $('#wish');
+let inBuild = true;
+function applyLook() {
+  // кусок выезжает по биссектрисе выреза
+  const out = look.cut * 1.25;
+  slice.position.set(Math.cos(WC) * out, look.cut * .12, -Math.sin(WC) * out);
+  bgC.copy(dayC).lerp(nightC, look.night);
+  document.documentElement.style.setProperty('--bg', '#' + bgC.getHexString());
+  document.documentElement.classList.toggle('night', look.night > .5);
+  key.intensity = 2.2 * (1 - look.night * .85);
+  hemi.intensity = .6 * (1 - look.night * .8);
+  scene.environmentIntensity = .6 * (1 - look.night * .75);
+  const wantDemo = look.night > .05 && !K.cfg.candles;
+  if (wantDemo !== lit.demo) { lit.demo = wantDemo; buildCandles(); }
+  flames.forEach((f) => { if (!f.userData.out) f.userData.on = look.night; });
+  // касания к холсту: в конструкторе — поворот, ночью — свечи
+  document.body.classList.toggle('touchable', inBuild || look.night > .5);
+  wishEl.classList.toggle('on', look.night > .6);
+  // вернулись к свечам после задувания — зажигаем заново
+  if (look.night < .1 && flames.some((f) => f.userData.out)) { flames.forEach((f) => { f.userData.out = false; }); wishEl.textContent = 'Нажмите на огонёк'; }
+  // коробка: стенки встают с 0 до 0,6, крышка садится с 0,6 до 1
+  box.visible = look.box > .001;
+  walls.forEach((w) => { w.rotation.x = (1 - Math.min(1, look.box / .6)) * Math.PI / 2; });
+  const lid = box.userData.lid; if (lid) { const k = Math.max(0, (look.box - .6) / .4); lid.position.y = lid.userData.h + (1 - k) * 3; lid.visible = k > 0; }
+}
+
+/* Поворот торта пальцем и задувание свечей */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+canvas.addEventListener('pointerdown', (e) => {
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(flames.filter((f) => f.userData.on > .5 && !f.userData.out))[0];
+  if (hit) {
+    const f = hit.object; f.userData.out = true;
+    if (flames.every((x) => x.userData.out)) { wishEl.textContent = 'Загадано! Сбудется'; wishEl.classList.add('done'); }
+    const at = new THREE.Vector3(); f.getWorldPosition(at); puff(at);
+    return;
+  }
+  dragging = { x: e.clientX, t: performance.now() };
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - dragging.x, dt = Math.max(1, performance.now() - dragging.t);
+  yaw += dx * .008; yawVel = (dx * .008) / (dt / 1000);
+  dragging = { x: e.clientX, t: performance.now() };
+});
+const endDrag = () => { dragging = null; };
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+
+/* Снимок торта для заказа: в кадре, перед обычной отрисовкой — без мигания */
+let snapPending = false, snapTimer = 0;
+function snap() { clearTimeout(snapTimer); snapTimer = setTimeout(() => { snapPending = true; }, 1600); }
+function doSnap() {
+  snapPending = false;
+  const keep = { x: world.position.x, cut: look.cut, box: box.visible, yaw: cake.rotation.y };
+  world.position.x = 0; slice.position.set(0, 0, 0); box.visible = false; cake.rotation.y = .5;
+  smoke.forEach((x) => { x.visible = false; }); flames.forEach((f) => { f.visible = false; });
+  const size = new THREE.Vector2(); renderer.getSize(size);
+  const h = cakeTop();
+  const cam = new THREE.PerspectiveCamera(30, 4 / 5, .1, 100);
+  cam.position.set(0, h * .6 + 2.2, 11.5); cam.lookAt(0, h * .42 - .3, 0);
+  renderer.setSize(480, 600, false); renderer.render(scene, cam);
+  K.showSnapshot(canvas.toDataURL('image/png'));
+  renderer.setSize(size.x, size.y, false);
+  world.position.x = keep.x; box.visible = keep.box; cake.rotation.y = keep.yaw;
+  smoke.forEach((x) => { x.visible = true; }); flames.forEach((f) => { f.visible = true; }); applyLook();
+}
+
+/* Кадр */
+let visible = true, last = performance.now(), mx = 0, my = 0;
+addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (snapPending) doSnap();
+  if (visible) {
+    if (!dragging) { yawVel += (.25 - yawVel) * Math.min(1, dt * 1.5); yaw += yawVel * dt * (K.reduced ? .3 : 1); }
+    // в разрезе поворачиваем кусок к зрителю
+    const target = look.yaw;
+    cake.rotation.y = yaw * (1 - Math.min(1, look.cut * 1.6 + look.box)) + target * Math.min(1, look.cut * 1.6 + look.box);
+    const h = cakeTop();
+    world.position.x += ((mobile ? 0 : look.x) - world.position.x) * Math.min(1, dt * 4);
+    const dist = (mobile ? 19 : 12.5) + h * .9 - look.zoom;
+    camera.position.set(mx * .5, 2.6 + h * .45 - my * .3 + look.y, dist);
+    camera.lookAt(world.position.x * .25, h * .42 + (mobile ? .9 : 1.25) - look.y * .5 - look.zoom * .25 + look.ty, 0);
+    // огоньки дрожат; задутые гаснут
+    let on = 0;
+    flames.forEach((f) => {
+      const u = f.userData, target = u.out ? 0 : u.on;
+      u.v = (u.v || 0) + (target - (u.v || 0)) * Math.min(1, dt * (u.out ? 14 : 5));
+      const fl = 1 + Math.sin(now * .02 + u.seed) * .08 + Math.sin(now * .033 + u.seed * 3) * .06;
+      f.scale.set(.2 * u.v * fl, .4 * u.v * (2 - fl), 1); f.material.opacity = u.v;
+      f.position.x = Math.sin(now * .005 + u.seed) * .006;
+      on += u.v;
+    });
+    glow.intensity = on * 1.8 * (1 + Math.sin(now * .023) * .08);
+    glow.position.set(world.position.x, h + .8, 0);
+    for (let i = smoke.length - 1; i >= 0; i--) {
+      const s = smoke[i], u = s.userData; u.t += dt;
+      const t = u.t - u.d; if (t < 0) continue;
+      s.position.y += dt * .5; s.position.x += u.vx * dt; s.scale.setScalar(.05 + t * .25);
+      s.material.opacity = Math.max(0, .5 - t * .3);
+      if (t > 1.8) { scene.remove(s); smoke.splice(i, 1); }
+    }
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* Старт: дождаться шрифта для надписей, собрать торт, уронить ярусы */
+await document.fonts.load('64px "Prosto One"').catch(() => {});
+rebuildAll(true);
+buildBox();
+applyLook();
+canvas.classList.add('ready');
+$('#loading').style.opacity = 0;
+window.__cakeAt = () => { const v = new THREE.Vector3(0, cakeTop() * .5, 0); world.localToWorld(v); v.project(camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; };
+window.__flameAt = () => flames.map((f) => { const v = new THREE.Vector3(); f.getWorldPosition(v); v.project(camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; });
+requestAnimationFrame(frame);
+snap();
+
+function scroll() {
+  const { gsap, ScrollTrigger, Lenis } = window;
+  gsap.registerPlugin(ScrollTrigger);
+  if (!K.reduced && Lenis) {
+    const lenis = new Lenis({ lerp: .1 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => { const id = a.getAttribute('href'); if (id.length > 1 && document.querySelector(id)) { e.preventDefault(); lenis.scrollTo(id, { offset: id === '#cut' ? 0 : -64 }); } }));
+  }
+  ScrollTrigger.create({ start: 80, onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
+  // касания к холсту — только в конструкторе и у свечей
+  ScrollTrigger.create({ trigger: '#build', start: 'top top', end: 'bottom 30%', onToggle: (st) => { inBuild = st.isActive; applyLook(); } });
+  ScrollTrigger.create({ trigger: '#cut', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#c9dcb0'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyLook(); } });
+
+  // разрез → свечи → коробка: вход, удержание, выход у каждого шага
+  const steps = gsap.utils.toArray('.step');
+  // кусок поворачиваем к зрителю ближайшим путём
+  const front = () => { const base = Math.PI / 2 - .9; const k = Math.round((yaw - base) / (Math.PI * 2)); return base + k * Math.PI * 2; };
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '#cut', start: 'top top', end: 'bottom bottom', scrub: .6, onEnter: () => { look.yaw = front(); } } });
+  tl.to(look, { x: mobile ? 0 : 1.4, zoom: mobile ? -2.5 : 1.5, y: .4, ty: mobile ? -1.6 : 0, cut: 1, duration: 1.2, ease: 'power2.inOut', onUpdate: applyLook }, 0);
+  tl.fromTo(steps[0], { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5 }, .5);
+  tl.to(steps[0], { autoAlpha: 0, y: -60, duration: .4 }, 2.2);
+  tl.to(look, { cut: 0, night: 1, zoom: mobile ? 2.5 : 4.5, y: .8, ty: mobile ? .6 : 2, duration: 1, ease: 'power2.inOut', onUpdate: applyLook }, 2.3);
+  tl.fromTo(steps[1], { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5 }, 3);
+  tl.to(steps[1], { autoAlpha: 0, y: -60, duration: .4 }, 4.6);
+  tl.to(look, { night: 0, zoom: .5, y: .3, ty: 0, duration: .8, ease: 'power2.inOut', onUpdate: applyLook }, 4.7);
+  tl.to(look, { box: 1, duration: 1.2, ease: 'power1.inOut', onUpdate: applyLook }, 5.1);
+  tl.fromTo(steps[2], { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5 }, 5.6);
+  tl.to({}, { duration: .8 });
+
+  // галерея едет вбок, пока раздел закреплён (только на компьютере)
+  if (!mobile) {
+    const track = $('#track');
+    gsap.to(track, { x: () => -(track.scrollWidth - innerWidth), ease: 'none', scrollTrigger: { trigger: '#cakes', start: 'top top', end: () => '+=' + (track.scrollWidth - innerWidth), pin: true, scrub: .5, invalidateOnRefresh: true } });
+  }
+  ScrollTrigger.create({ trigger: '#cakes', start: 'top bottom', onEnter: () => { snapPending = true; } });
+}
+if (window.gsap && window.ScrollTrigger) scroll(); else addEventListener('load', scroll);
+</script>
+</body>
+</html>
