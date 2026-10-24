@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Цветочная мастерская «Стебель»</title>
+<meta name="description" content="Демо-лендинг цветочной мастерской: букет собирается на экране стебель за стеблем, с открыткой и доставкой ко времени.">
+<meta name="theme-color" content="#1e0f1c">
+<meta property="og:title" content="Цветочная мастерская «Стебель»">
+<meta property="og:description" content="Соберите букет сами — флорист повторит его стебель в стебель.">
+<meta property="og:image" content="https://arseniyspbdev.github.io/img/flowers.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-50 -50 100 100'%3E%3Ccircle r='48' fill='%231e0f1c'/%3E%3Cg fill='%23ff6f91'%3E%3Cellipse rx='13' ry='19' cy='-18'/%3E%3Cellipse rx='13' ry='19' cy='-18' transform='rotate(72)'/%3E%3Cellipse rx='13' ry='19' cy='-18' transform='rotate(144)'/%3E%3Cellipse rx='13' ry='19' cy='-18' transform='rotate(216)'/%3E%3Cellipse rx='13' ry='19' cy='-18' transform='rotate(288)'/%3E%3C/g%3E%3Ccircle r='9' fill='%23ffd2dc'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Commissioner:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  /* Ночная мастерская: сливовая темнота, бумага тишью и крафт; главное — букет, который растёт на экране стебель за стеблем */
+  :root {
+    --night: #1e0f1c;
+    --night-2: #2a1527;
+    --night-line: rgba(255, 236, 240, .13);
+    --on-night: #f5eeec;
+    --on-night-soft: #c6b2bf;
+    --tissue: #f5eeec;
+    --tissue-2: #ebdfdc;
+    --ink: #2b1428;
+    --ink-soft: #6a5265;
+    --line: #dccbc8;
+    --peony: #ff6f91;
+    --peony-deep: #d23c64;
+    --kraft: #c99b68;
+    --leaf: #8fb3a0;
+    --error: #b3261e;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Commissioner', system-ui, sans-serif;
+    --hand: 'Caveat', cursive;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--tissue); scrollbar-color: var(--ink-soft) var(--tissue); }
+  body { margin: 0; background: var(--tissue); color: var(--ink); font: 400 1.0625rem/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--peony); color: var(--ink); }
+  :focus-visible { outline: 3px solid var(--peony); outline-offset: 3px; border-radius: 6px; }
+  h1, h2, h3, .facts dd { font-variant-numeric: lining-nums; }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 500; margin: 0; line-height: .98; letter-spacing: -0.015em; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  button { font: inherit; color: inherit; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  section[id] { scroll-margin-top: 65px; }
+  .demo-bar { background: #120810; color: var(--on-night-soft); text-align: center; font-size: .8125rem; padding: 6px 16px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px; font: 600 1rem var(--sans); text-decoration: none; cursor: pointer; transition: transform .25s var(--ease), background-color .2s, box-shadow .2s; }
+  .btn:active { transform: scale(.97); }
+  .btn-peony { background: var(--peony); color: var(--ink); }
+  .btn-ink { background: var(--ink); color: var(--tissue); }
+  @media (hover: hover) {
+    .btn-peony:hover { background: #ff8aa5; transform: translateY(-2px); }
+    .btn-ink:hover { background: #45213f; transform: translateY(-2px); }
+  }
+  .btn:disabled { opacity: .7; cursor: progress; transform: none; }
+
+  /* ---------- Шапка ---------- */
+  .site-header { position: sticky; top: 0; z-index: 40; background: var(--night); color: var(--on-night); border-bottom: 1px solid var(--night-line); }
+  .site-header .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 600 1.75rem/1 var(--serif); letter-spacing: -0.01em; text-decoration: none; color: var(--on-night); }
+  .site-header nav { display: flex; gap: 26px; margin-left: auto; }
+  .site-header nav a { color: var(--on-night-soft); text-decoration: none; font-size: .9375rem; transition: color .2s; }
+  .site-header nav a:hover { color: var(--on-night); }
+  .bag { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; padding: 0 18px; border-radius: 999px; background: rgba(255, 255, 255, .08); color: var(--on-night); text-decoration: none; font-weight: 500; font-size: .9375rem; font-variant-numeric: tabular-nums; white-space: nowrap; transition: background-color .2s; }
+  .bag:hover { background: rgba(255, 255, 255, .15); }
+  .bag i { width: 8px; height: 8px; border-radius: 50%; background: var(--peony); }
+
+  /* ---------- Первый экран: мастерская ---------- */
+  .studio { position: relative; background: var(--night); color: var(--on-night); overflow: clip; }
+  .studio::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 55% at 72% 46%, rgba(255, 111, 145, .14), transparent 70%); }
+  .studio .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 24px clamp(24px, 4vw, 64px); padding-block: clamp(28px, 4vw, 56px) clamp(40px, 5vw, 72px); }
+  .studio h1 { font-size: clamp(3.2rem, 1.4rem + 5.4vw, 6.6rem); line-height: .9; letter-spacing: -0.025em; margin-bottom: 22px; }
+  .lead { margin: 0 0 28px; max-width: 40ch; color: var(--on-night-soft); font-size: 1.125rem; }
+
+  .stems { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--night-line); }
+  .stem-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; border-bottom: 1px solid var(--night-line); }
+  .stem-add { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 64px; padding: 6px 4px; border: 0; background: none; text-align: left; cursor: pointer; border-radius: 12px; transition: background-color .2s; }
+  @media (hover: hover) { .stem-add:hover { background: rgba(255, 255, 255, .05); } .stem-add:hover .ico { transform: rotate(-8deg) scale(1.08); } }
+  .ico { width: 48px; height: 48px; transition: transform .45s var(--spring); }
+  .stem-add b { display: block; font-weight: 500; font-size: 1.0625rem; line-height: 1.25; }
+  .stem-add small { display: block; color: var(--on-night-soft); font-size: .875rem; line-height: 1.35; }
+  .stem-add b em { display: none; font-style: normal; font-weight: 400; color: var(--on-night-soft); margin-left: 8px; font-size: .9375rem; font-variant-numeric: tabular-nums; }
+  .stem-add .price { font-variant-numeric: tabular-nums; color: var(--on-night-soft); font-size: .9375rem; white-space: nowrap; }
+  .counter { display: flex; align-items: center; gap: 2px; }
+  .counter button { width: 40px; height: 40px; border: 1px solid var(--night-line); border-radius: 50%; background: none; cursor: pointer; font-size: 1.25rem; line-height: 1; transition: background-color .2s, opacity .2s, border-color .2s; }
+  .counter button:hover { background: rgba(255, 255, 255, .08); }
+  .counter button:disabled { opacity: .3; cursor: default; background: none; }
+  .counter output { min-width: 30px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stem-row.has .counter .plus { background: var(--peony); border-color: var(--peony); color: var(--ink); }
+  .note-limit { margin: 12px 0 0; font-size: .875rem; color: var(--peony); min-height: 1.4em; }
+
+  .stage { position: relative; display: flex; flex-direction: column; min-height: 100%; }
+  .papers { display: flex; gap: 6px; align-self: flex-end; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .06); }
+  .papers button { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 14px 0 10px; border: 0; border-radius: 999px; background: none; cursor: pointer; font-size: .875rem; color: var(--on-night-soft); transition: background-color .25s, color .25s; }
+  .papers button i { width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15); }
+  .papers button[aria-pressed="true"] { background: var(--on-night); color: var(--ink); }
+  .bouquet { display: block; width: 100%; height: auto; max-height: 72vh; margin: 4px auto 0; overflow: visible; -webkit-tap-highlight-color: transparent; }
+  .bouquet .stem { transition: transform .8s var(--ease); }
+  .bouquet .s-up { transition: transform .7s var(--ease); }
+  .bouquet .head { transition: transform .7s var(--ease); cursor: pointer; }
+  .bouquet .bloom { transition: transform .55s var(--spring) .28s, filter .2s; }
+  @media (hover: hover) { .bouquet .head:hover .bloom { filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 255, 255, .35)); } }
+  .bouquet .paper-back, .bouquet .paper-front { transition: transform .8s var(--ease), fill .5s; }
+  .bouquet .paper-front path, .bouquet .paper-back path { transition: fill .5s; }
+  .stage-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: -8px; }
+  .total small { display: block; color: var(--on-night-soft); font-size: .9375rem; }
+  .total output { display: block; font: 500 clamp(2.4rem, 1.6rem + 2vw, 3.4rem)/1 var(--serif); font-variant-numeric: tabular-nums lining-nums; letter-spacing: -0.02em; }
+  .hint { margin: 14px 0 0; color: var(--on-night-soft); font-size: .875rem; }
+  .empty { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); margin: 0; width: min(80%, 300px); text-align: center; font: italic 500 1.6rem/1.15 var(--serif); color: var(--on-night-soft); pointer-events: none; transition: opacity .4s; }
+
+  /* ---------- Разделы ---------- */
+  .section { padding-block: clamp(72px, 10vw, 128px); }
+  .section-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
+  .section-head h2 { font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.6rem); line-height: .95; }
+  .section-head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+
+  /* Готовые букеты */
+  .ready { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); }
+  .ready article:nth-child(1) { grid-column: span 7; }
+  .ready article:nth-child(2) { grid-column: span 5; }
+  .ready article:nth-child(3) { grid-column: span 5; }
+  .ready article:nth-child(4) { grid-column: span 7; }
+  .ready figure { margin: 0 0 18px; overflow: hidden; border-radius: 4px; background: var(--night); }
+  .ready img { display: block; width: 100%; height: auto; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .ready article:nth-child(1) img, .ready article:nth-child(4) img { aspect-ratio: 7 / 6; }
+  .ready article:nth-child(2) img, .ready article:nth-child(3) img { aspect-ratio: 5 / 6; }
+  @media (hover: hover) { .ready article:hover img { transform: scale(1.035); } }
+  .ready-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .ready h3 { font-size: clamp(1.8rem, 1.3rem + 1.2vw, 2.4rem); }
+  .ready .cost { font: 500 1.5rem var(--serif); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+  .ready p { margin: 6px 0 16px; color: var(--ink-soft); max-width: 46ch; }
+  .again { min-height: 46px; padding: 0 20px; border: 1.5px solid var(--ink); background: none; color: var(--ink); }
+  .again:hover { background: var(--ink); color: var(--tissue); }
+
+  /* Мастерская */
+  .workshop { position: relative; color: var(--on-night); background: var(--night); }
+  .workshop img { display: block; width: 100%; height: clamp(520px, 80vh, 820px); object-fit: cover; object-position: 50% 40%; }
+  .workshop-text { position: absolute; inset: 0; display: flex; align-items: flex-end; background: linear-gradient(to top, rgba(22, 9, 20, .96) 0%, rgba(22, 9, 20, .78) 38%, rgba(22, 9, 20, 0) 72%); }
+  .workshop-text .wrap { width: 100%; padding-bottom: clamp(32px, 5vw, 64px); }
+  .workshop h2 { font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.6rem); max-width: 14ch; margin-bottom: clamp(24px, 3vw, 40px); }
+  .promises { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px clamp(20px, 3vw, 48px); margin: 0; padding: 0; list-style: none; }
+  .promises li { border-top: 1px solid rgba(255, 236, 240, .3); padding-top: 14px; color: var(--on-night-soft); font-size: 1rem; }
+  .promises b { display: block; color: var(--on-night); font: 500 1.5rem/1.15 var(--serif); margin-bottom: 6px; }
+
+  /* Оформление */
+  .order-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px clamp(24px, 4vw, 64px); align-items: start; }
+  .card-side { position: sticky; top: 96px; }
+  .postcard { position: relative; aspect-ratio: 3 / 2; padding: clamp(20px, 3vw, 32px); border-radius: 3px; background: #fffaf7; box-shadow: 0 1px 0 rgba(43, 20, 40, .06), 0 30px 60px -36px rgba(43, 20, 40, .55); transform: rotate(-2deg); transition: transform .5s var(--spring); display: flex; flex-direction: column; overflow: hidden; }
+  .postcard::after { content: ""; position: absolute; right: 18px; top: 18px; width: 44px; height: 54px; border: 1.5px dashed var(--line); border-radius: 3px; }
+  .postcard:focus-within { transform: rotate(0); }
+  .postcard p { margin: 0; flex: 1; font: 500 clamp(1.5rem, 1.1rem + 1.2vw, 2.1rem)/1.15 var(--hand); color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; padding-right: 56px; }
+  .postcard p.placeholder { color: #937d8a; }
+  .postcard footer { font: 500 1.3rem var(--hand); color: var(--ink-soft); text-align: right; }
+  .card-field { margin-top: 28px; }
+  .card-field textarea { min-height: 96px; resize: vertical; padding: 12px 14px; line-height: 1.5; }
+  .chars { display: block; text-align: right; font-size: .8125rem; color: var(--ink-soft); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  .form { background: #fffaf7; border-radius: 6px; padding: clamp(20px, 3vw, 36px); box-shadow: 0 30px 60px -44px rgba(43, 20, 40, .5); }
+  .form h3 { font-size: 1.9rem; margin-bottom: 14px; }
+  .form h3 ~ h3 { margin-top: 28px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { min-height: 44px; padding: 0 16px; border: 1.5px solid var(--line); border-radius: 999px; background: none; cursor: pointer; font-size: .9375rem; font-variant-numeric: tabular-nums; transition: background-color .2s, border-color .2s, color .2s; }
+  .chip:hover:not(:disabled) { border-color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--tissue); }
+  .chip:disabled { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
+  .slots { margin-top: 10px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .field { display: block; }
+  .field.wide { grid-column: 1 / -1; }
+  .field span { display: block; margin-bottom: 6px; font-size: .875rem; font-weight: 500; color: var(--ink-soft); }
+  .field input, .field textarea { width: 100%; min-height: 50px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; font: inherit; color: var(--ink); caret-color: var(--peony-deep); transition: border-color .2s, box-shadow .2s; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(255, 111, 145, .25); }
+  .field [aria-invalid="true"] { border-color: var(--error); }
+  .check { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 8px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; accent-color: var(--ink); }
+  .summary { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .summary-top { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
+  .summary svg { width: 96px; height: 110px; background: var(--night); border-radius: 4px; }
+  .summary ul { list-style: none; margin: 0; padding: 0; font-size: .9375rem; color: var(--ink-soft); }
+  .summary dl { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; margin: 18px 0 0; font-variant-numeric: tabular-nums; }
+  .summary dt { color: var(--ink-soft); }
+  .summary dd { margin: 0; text-align: right; }
+  .summary .sum dt, .summary .sum dd { color: var(--ink); font: 600 1.375rem var(--serif); font-variant-numeric: tabular-nums lining-nums; padding-top: 8px; }
+  .err { margin: 14px 0 0; color: var(--error); font-size: .9375rem; }
+  .err:empty { display: none; }
+  .form .btn { width: 100%; margin-top: 18px; }
+  .done { text-align: center; padding-block: 12px; }
+  .done svg { width: 180px; height: 210px; background: var(--night); border-radius: 6px; margin-bottom: 16px; }
+  .done h3 { font-size: 2.4rem; margin-bottom: 10px; }
+  .done p { margin: 0 auto 10px; max-width: 42ch; color: var(--ink-soft); }
+
+  /* Контакты */
+  .contacts { border-top: 1px solid var(--line); padding-block: 48px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .facts dt { font-size: .875rem; color: var(--ink-soft); }
+  .facts dd { margin: 4px 0 0; font: 500 1.375rem/1.2 var(--serif); }
+  .facts small { display: block; font: 400 .8125rem var(--sans); color: var(--ink-soft); }
+  .page-foot { padding-block: 0 32px; color: var(--ink-soft); font-size: .875rem; }
+
+  /* Липкая панель на телефоне */
+  .mobile-bar { display: none; }
+
+  @media (max-width: 960px) {
+    .studio .wrap, .order-grid, .section-head { grid-template-columns: minmax(0, 1fr); }
+    .studio .wrap { padding-top: 24px; }
+    .stage { order: -1; }
+    .intro { display: contents; }
+    .intro-text { order: -2; }
+    .bouquet { max-height: 52vh; }
+    .stage-foot .btn { display: none; }
+    .ready article:nth-child(n) { grid-column: span 12; }
+    .ready article:nth-child(n) img { aspect-ratio: 4 / 3; }
+    .promises, .facts { grid-template-columns: minmax(0, 1fr); }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card-side { position: static; }
+    .mobile-bar { position: sticky; bottom: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 calc(-1 * max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px))); padding: 12px max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(30, 15, 28, .9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--night-line); grid-column: 1 / -1; }
+    .mobile-bar b { display: block; font: 500 1.6rem/1 var(--serif); font-variant-numeric: tabular-nums lining-nums; }
+    .mobile-bar small { color: var(--on-night-soft); font-size: .8125rem; }
+    .mobile-bar .btn { min-height: 48px; padding: 0 20px; }
+  }
+  @media (max-width: 680px) {
+    .site-header nav { display: none; }
+    .site-header .wrap { justify-content: space-between; }
+    .grid2 { grid-template-columns: minmax(0, 1fr); }
+    .papers { align-self: center; }
+    .total output { font-size: 2.2rem; }
+    .facts { grid-template-columns: minmax(0, 1fr); }
+    .demo-bar { font-size: .75rem; padding: 4px 12px; }
+    .studio h1 { font-size: 3rem; margin-bottom: 12px; }
+    .lead { font-size: 1rem; margin-bottom: 4px; }
+    .bouquet { max-height: 44vh; margin-top: -8px; }
+    .papers { order: 1; margin-top: 4px; }
+    .stage-foot { display: none; }
+    .hint { order: 2; text-align: center; }
+    .papers button { padding: 0 12px 0 8px; }
+    .papers button span { display: none; }
+    .stem-add { grid-template-columns: 44px minmax(0, 1fr); gap: 12px; }
+    .ico { width: 44px; height: 44px; }
+    .stem-add .price { display: none; }
+    .stem-add b em { display: inline; }
+    .stem-add small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .counter button { width: 38px; height: 38px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="demo-bar">Демо-проект для портфолио: мастерская и цены вымышлены, заказ никуда не отправляется.</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#build" aria-label="Стебель — к сборке букета">
+      <svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><path d="M13 29V12" stroke="#8fb3a0" stroke-width="2.2" stroke-linecap="round"/><path d="M13 20c-5 0-8-3-8-7 4 0 8 2 8 7z" fill="#8fb3a0"/><circle cx="13" cy="8" r="7" fill="#ff6f91"/><circle cx="13" cy="8" r="3" fill="#ffd2dc"/></svg>
+      Стебель
+    </a>
+    <nav aria-label="Разделы"><a href="#build">Собрать</a><a href="#ready">Готовые</a><a href="#workshop">Мастерская</a><a href="#order">Доставка</a></nav>
+    <a class="bag" href="#order"><i aria-hidden="true"></i><span id="bag-text">Букет</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="studio" id="build" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="intro">
+        <div class="intro-text">
+          <h1 id="hero-title">Соберите букет сами</h1>
+          <p class="lead">Нажимайте на&nbsp;цветы&nbsp;— букет растёт прямо на&nbsp;экране. Флорист повторит его стебель в&nbsp;стебель и&nbsp;привезёт по&nbsp;Петербургу за&nbsp;два часа.</p>
+        </div>
+        <div>
+          <ul class="stems" id="stems" aria-label="Цветы в мастерской"></ul>
+          <p class="note-limit" id="limit" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="papers" role="group" aria-label="Упаковка" id="papers"></div>
+        <svg class="bouquet" id="bouquet" viewBox="40 150 520 500" role="img" aria-label="Ваш букет">
+          <defs>
+            <radialGradient id="floor" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+          </defs>
+          <ellipse cx="300" cy="628" rx="150" ry="16" fill="url(#floor)"/>
+          <g class="paper-back" id="paper-back" style="transform-origin: 300px 640px">
+            <path d="M246 606 L124 322 Q146 262 204 274 Q238 214 300 232 Q362 214 396 274 Q454 262 476 322 L354 606 Z"/>
+            <path d="M246 606 L124 322 Q146 262 204 274 L300 610 Z" opacity=".55"/>
+          </g>
+          <g id="layers"></g>
+          <g class="paper-front" id="paper-front">
+            <path d="M246 604 L164 436 Q232 474 300 454 Q368 474 436 436 L354 604 Q300 618 246 604 Z"/>
+            <path d="M246 604 L164 436 Q232 474 300 454 L300 612 Q270 612 246 604 Z" opacity=".6"/>
+            <g id="ribbon">
+              <path d="M226 494 Q300 512 374 494 L372 510 Q300 528 228 510 Z"/>
+              <path d="M300 502 C 270 470, 236 476, 250 500 C 262 520, 290 512, 300 502 Z"/>
+              <path d="M300 502 C 330 470, 364 476, 350 500 C 338 520, 310 512, 300 502 Z"/>
+              <path d="M298 506 L282 560 L292 556 L300 566 Z"/>
+              <path d="M302 506 L320 556 L310 554 L304 564 Z"/>
+              <circle cx="300" cy="503" r="7"/>
+            </g>
+          </g>
+        </svg>
+        <p class="empty" id="empty" style="opacity:0">Букет пока пустой. Нажмите на&nbsp;любой цветок слева</p>
+        <div class="stage-foot">
+          <div class="total"><small id="total-note">Собираем букет…</small><output id="total" aria-live="polite">0&nbsp;₽</output></div>
+          <a class="btn btn-peony" href="#order">Оформить букет</a>
+        </div>
+        <p class="hint">Нажмите на&nbsp;цветок в&nbsp;букете, чтобы убрать его.</p>
+      </div>
+
+      <div class="mobile-bar" aria-hidden="true">
+        <div><b id="m-total">0&nbsp;₽</b><small id="m-note"></small></div>
+        <a class="btn btn-peony" href="#order" tabindex="-1">Оформить</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ready" aria-labelledby="ready-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="ready-title">Или начните с&nbsp;готового</h2>
+        <p>Букеты, которые чаще всего заказывают. Нажмите «Собрать такой же»&nbsp;— он&nbsp;появится наверху, и&nbsp;его можно поменять: добавить пион, убрать зелень, сменить бумагу.</p>
+      </div>
+      <div class="ready" id="ready-list"></div>
+    </div>
+  </section>
+
+  <section class="workshop" id="workshop" aria-labelledby="workshop-title">
+    <img src="https://images.unsplash.com/photo-1531058240690-006c446962d8?auto=format&fit=crop&w=2000&h=1200&q=70" alt="Флорист за рабочим столом в мастерской среди цветов" width="2000" height="1200" loading="lazy">
+    <div class="workshop-text">
+      <div class="wrap">
+        <h2 id="workshop-title">Мастерская на&nbsp;Петроградской, пять флористов</h2>
+        <ul class="promises">
+          <li><b>Свежие поставки</b>Цветы приходят во&nbsp;вторник и&nbsp;пятницу от&nbsp;трёх хозяйств, которые мы&nbsp;знаем лично.</li>
+          <li><b>Стоит неделю</b>Если букет начнёт вянуть раньше&nbsp;— пришлите фото, бесплатно соберём новый.</li>
+          <li><b>Фото до&nbsp;курьера</b>Покажем готовый букет в&nbsp;Telegram, пока его не&nbsp;увезли. Можно попросить поправить.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="order" aria-labelledby="order-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="order-title">Открытка и&nbsp;доставка</h2>
+        <p>Напишите пару слов&nbsp;— флорист перепишет их от&nbsp;руки на&nbsp;плотную карточку. Доставим в&nbsp;двухчасовое окно, бесплатно при заказе от&nbsp;6&nbsp;000&nbsp;₽.</p>
+      </div>
+      <div class="order-grid">
+        <div class="card-side">
+          <div class="postcard">
+            <p id="card-preview" class="placeholder">Здесь появится ваш текст</p>
+            <footer id="card-sign">с любовью</footer>
+          </div>
+          <label class="field card-field"><span>Текст открытки</span><textarea id="card-text" maxlength="160" placeholder="С днём рождения! Пусть весна начнётся сегодня"></textarea><small class="chars" id="card-chars">0 из 160</small></label>
+        </div>
+
+        <form class="form" id="form" novalidate>
+          <div id="form-body">
+            <h3>Когда привезти</h3>
+            <div class="chips" id="days" role="group" aria-label="День доставки"></div>
+            <div class="chips slots" id="slots" role="group" aria-label="Время доставки"></div>
+
+            <h3>Кому</h3>
+            <div class="grid2">
+              <label class="field"><span>Имя получателя</span><input id="f-to" autocomplete="off" placeholder="Анна"></label>
+              <label class="field"><span>Телефон получателя</span><input id="f-to-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="+7 900 123-45-67"></label>
+              <label class="field wide"><span>Адрес</span><input id="f-address" autocomplete="street-address" placeholder="Улица, дом, квартира, подъезд"></label>
+              <label class="field wide"><span>Ваш телефон, чтобы прислать фото букета</span><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67"></label>
+            </div>
+            <label class="check"><input type="checkbox" id="f-secret"> Не говорить получателю, от&nbsp;кого букет</label>
+
+            <div class="summary">
+              <div class="summary-top"><svg id="mini" viewBox="40 150 520 500" aria-hidden="true"></svg><ul id="sum-list"></ul></div>
+              <dl id="sum"></dl>
+            </div>
+            <p class="err" id="f-err" aria-live="polite"></p>
+            <button class="btn btn-ink" type="submit" id="f-submit">Заказать букет</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap contacts" aria-label="Контакты">
+    <dl class="facts">
+      <div><dt>Мастерская</dt><dd>Большая Пушкарская, 00<small>адрес вымышлен</small></dd></div>
+      <div><dt>Открыто</dt><dd>Каждый день 9:00–22:00</dd></div>
+      <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+      <div><dt>Доставка</dt><dd>390&nbsp;₽, от&nbsp;6&nbsp;000&nbsp;₽ бесплатно<small>по&nbsp;Петербургу за&nbsp;2 часа</small></dd></div>
+    </dl>
+  </section>
+</main>
+<footer class="wrap page-foot">«Стебель»&nbsp;— демо-проект для портфолио. Мастерская и&nbsp;цены вымышлены. Фото: Unsplash.</footer>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
+  const plural = (n, a, b, c) => { const t = n % 10, h = n % 100; return t === 1 && h !== 11 ? a : t >= 2 && t <= 4 && (h < 12 || h > 14) ? b : c; };
+  const stemsWord = (n) => `${n} ${plural(n, 'стебель', 'стебля', 'стеблей')}`;
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // детерминированный «случай» по номеру стебля: букет не дёргается при перерисовке
+  const rnd = (i, k = 1) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
+
+  /* ---------- Рисунки цветов: вырезанная бумага, центр головки в 0,0 ---------- */
+  const ring = (n, dist, rx, ry, fill, rot = 0) => Array.from({ length: n }, (_, i) =>
+    `<ellipse cx="0" cy="${-dist}" rx="${rx}" ry="${ry}" fill="${fill}" transform="rotate(${rot + i * 360 / n})"/>`).join('');
+  const leaf = (y, side, len = 34, fill = '#5f8a6b') =>
+    `<path d="M0 ${y} q ${side * len * .5} ${-len * .55} ${side * len} ${-len * .2} q ${-side * len * .45} ${len * .45} ${-side * len} ${len * .2}z" fill="${fill}"/>`;
+
+  const DRAW = {
+    peony: (i) => {
+      const tint = ['#f7a1b6', '#f3b2c2', '#f592ac'][Math.floor(rnd(i, 3) * 3)];
+      return leaf(96, rnd(i, 4) > .5 ? 1 : -1) + ring(9, 24, 21, 26, tint) + ring(9, 22, 16, 20, '#f58aa5', 20) + ring(7, 13, 14, 17, '#f9b4c6', 8) + ring(6, 6, 9, 12, '#ffd0db', 30) + '<circle r="6" fill="#ffe3ea"/>';
+    },
+    rose: (i) => {
+      const c = rnd(i, 3) > .5 ? ['#d6264f', '#e8466c', '#b8173f'] : ['#ee5a6f', '#f57a8a', '#d23f58'];
+      return leaf(70, rnd(i, 4) > .5 ? 1 : -1, 28) + `<circle r="27" fill="${c[0]}"/><circle cx="2" cy="-2" r="21" fill="${c[1]}"/><circle cx="-2" cy="1" r="15" fill="${c[0]}"/><circle cx="1" cy="-1" r="9" fill="${c[2]}"/>
+        <path d="M-20 -6 a21 21 0 0 1 30 -14 M14 -16 a18 18 0 0 1 4 26 M-12 14 a16 16 0 0 1 -4 -18 M-6 -6 a8 8 0 0 1 12 2" fill="none" stroke="rgba(60,0,20,.28)" stroke-width="2" stroke-linecap="round"/>`;
+    },
+    ranunculus: (i) => {
+      const [a, b] = rnd(i, 3) > .4 ? ['#ff9a6c', '#f47b4f'] : ['#ffb38a', '#f39062'];
+      return [27, 23, 19, 15, 11, 7].map((r, k) => `<circle cx="${k % 2 ? .8 : -.8}" cy="${k * .4}" r="${r}" fill="${k % 2 ? b : a}" stroke="rgba(120,40,10,.18)" stroke-width="1"/>`).join('') + '<circle r="3.5" fill="#6d7f32"/>';
+    },
+    tulip: (i) => {
+      const [a, b] = rnd(i, 3) > .5 ? ['#ff6f91', '#e64b72'] : ['#ff8fa8', '#f0607f'];
+      return `<path d="M0 30 q -40 -6 -36 -82 q 10 4 14 10 q 4 -16 22 -26 q 18 10 22 26 q 4 -6 14 -10 q 4 76 -36 82z" fill="#5f8a6b" transform="translate(0 70) scale(.36)"/>
+        <path d="M-16 6 C -22 -14 -14 -32 -4 -34 C 2 -22 2 -6 -16 6 Z" fill="${b}"/><path d="M16 6 C 22 -14 14 -32 4 -34 C -2 -22 -2 -6 16 6 Z" fill="${b}"/>
+        <path d="M-14 8 C -16 -10 -8 -30 0 -36 C 8 -30 16 -10 14 8 Q 0 16 -14 8 Z" fill="${a}"/>`;
+    },
+    chamomile: () => {
+      const head = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${ring(11, 8, 3.4, 7, '#fbf6ee')}<circle r="4.6" fill="#f2c14e"/></g>`;
+      return `<path d="M0 0 L0 60 M-20 14 Q-12 40 0 60 M18 18 Q10 42 0 60 M-6 -14 L0 0" stroke="#5f8a6b" stroke-width="2" fill="none"/>` + head(0, 0, 1) + head(-20, 14, .82) + head(18, 18, .9) + head(-6, -16, .7);
+    },
+    hydrangea: (i) => {
+      const cols = rnd(i, 3) > .5 ? ['#a9bdf0', '#c3b3ee', '#93aee6'] : ['#c9b4ec', '#b0c4f2', '#dcc6f2'];
+      let s = '<circle r="44" fill="#8ea6db"/>';
+      for (let k = 0; k < 34; k++) {
+        const r = 40 * Math.sqrt((k + .5) / 34), a = k * 2.39996;
+        const x = r * Math.cos(a), y = r * Math.sin(a), c = cols[k % 3];
+        s += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(k * 37) % 90})"><rect x="-6" y="-6" width="12" height="12" rx="5" fill="${c}"/><circle r="1.6" fill="#f4f1ff"/></g>`;
+      }
+      return leaf(84, 1, 40) + leaf(92, -1, 36) + s;
+    },
+    eucalyptus: (i) => {
+      let s = '';
+      for (let k = 0; k < 9; k++) {
+        const y = k * 15, side = k % 2 ? 1 : -1, r = 10.5 - k * .5;
+        s += `<circle cx="${side * (r + 2)}" cy="${y}" r="${r}" fill="${k % 3 ? '#8fb3a0' : '#a6c4b4'}"/>`;
+      }
+      return `<path d="M0 -10 L0 140" stroke="#6e8f7c" stroke-width="2"/>${s}<circle cy="-12" r="7" fill="#a6c4b4"/>`;
+    },
+  };
+
+  const TYPES = {
+    peony: { name: 'Пион', note: 'Сара Бернар, пышный и душистый', price: 450, rank: 1, len: 0, scale: 1.45 },
+    hydrangea: { name: 'Гортензия', note: 'Одна шапка — полбукета', price: 590, rank: 0, len: 22, scale: 1.3 },
+    rose: { name: 'Роза кустовая', note: 'Несколько бутонов на стебле', price: 320, rank: 2, len: 10, scale: 1.5 },
+    ranunculus: { name: 'Ранункулюс', note: 'Коралловый, как маленький пион', price: 280, rank: 3, len: 4, scale: 1.45 },
+    tulip: { name: 'Тюльпан', note: 'Пионовидный, нежно-розовый', price: 190, rank: 4, len: 20, scale: 1.4 },
+    chamomile: { name: 'Матрикария', note: 'Мелкие ромашки для лёгкости', price: 150, rank: 5, len: 26, scale: 1.45 },
+    eucalyptus: { name: 'Эвкалипт', note: 'Серебристая зелень, пахнет мятой', price: 220, rank: 6, len: 34, scale: 1.15 },
+  };
+  // от дальнего слоя к ближнему: зелень сзади, мелкие ромашки поверх всего
+  const LAYERS = ['eucalyptus', 'peony', 'hydrangea', 'tulip', 'rose', 'ranunculus', 'chamomile'];
+  const ICON_BOX = { chamomile: '-34 -34 68 68', eucalyptus: '-30 -20 60 120', hydrangea: '-48 -48 96 96', peony: '-48 -48 96 96', default: '-34 -40 68 68' };
+  const PAPERS = {
+    kraft: { name: 'Крафт', price: 0, fill: '#c99b68', shade: '#a77a49', ribbon: '#2b1428' },
+    calque: { name: 'Калька', price: 150, fill: '#efe6e1', shade: '#cdbdb4', ribbon: '#ff6f91' },
+    powder: { name: 'Пудра', price: 150, fill: '#f2bccb', shade: '#d994a8', ribbon: '#2b1428' },
+  };
+  const MAX = 35, DELIVERY = 390, FREE_FROM = 6000;
+  const DAY = { peony: 3, rose: 3, ranunculus: 3, eucalyptus: 2, chamomile: 2 };
+  const READY = [
+    { name: 'Персиковый вечер', photo: '1494336850228-54adc1dd87ad', alt: 'Букет из белых и персиковых роз с папоротником', text: 'Кустовые розы и коралловые ранункулюсы с эвкалиптом. Тёплый, как свет лампы вечером.', mix: { rose: 5, ranunculus: 4, eucalyptus: 3 }, paper: 'calque' },
+    { name: 'Сад после дождя', photo: '1780892057871-a58ab617718f', alt: 'Яркий букет из пионов, ранункулюсов и гортензии в руке', text: 'Всего понемногу, как будто нарвали в саду: пионы, гортензия, тюльпаны и ромашки.', mix: { hydrangea: 1, peony: 2, ranunculus: 3, tulip: 3, chamomile: 3 }, paper: 'kraft' },
+    { name: 'Пионовая ночь', photo: '1511201173873-c327e63eb6c4', alt: 'Бледно-розовые пионы на чёрном фоне', text: 'Девять пионов Сара Бернар и облако матрикарии. Когда нужно без слов.', mix: { peony: 9, chamomile: 2 }, paper: 'powder' },
+    { name: 'Красный разговор', photo: '1457089328109-e5d9bd499191', alt: 'Тёмно-красные цветы в букете на тёмном фоне', text: 'Глубокие красные розы, ранункулюсы и немного зелени. Для важного свидания или извинения.', mix: { rose: 7, ranunculus: 4, eucalyptus: 2 }, paper: 'kraft' },
+  ];
+  const priceOf = (mix, paper = 'kraft') => Object.entries(mix).reduce((s, [t, n]) => s + TYPES[t].price * n, 0) + PAPERS[paper].price;
+
+  let stems = [];      // [{ id, type, el }]
+  let nextId = 1;
+  let paper = 'kraft';
+
+  /* ---------- Витрина стеблей ---------- */
+  $('#stems').innerHTML = Object.entries(TYPES).map(([t, f]) => `
+    <li class="stem-row" data-t="${t}">
+      <button type="button" class="stem-add" data-add="${t}" aria-label="Добавить: ${f.name}, ${rub(f.price)} за стебель">
+        <svg class="ico" viewBox="${ICON_BOX[t] || ICON_BOX.default}" aria-hidden="true">${DRAW[t](3)}</svg>
+        <span><b>${f.name}<em>${rub(f.price)}</em></b><small>${f.note}</small></span>
+        <span class="price">${rub(f.price)}</span>
+      </button>
+      <div class="counter">
+        <button type="button" class="minus" data-del="${t}" aria-label="Убрать: ${f.name}">−</button>
+        <output aria-label="${f.name}, стеблей в букете">0</output>
+        <button type="button" class="plus" data-add="${t}" aria-label="Добавить ещё: ${f.name}" tabindex="-1">+</button>
+      </div>
+    </li>`).join('');
+  $('#stems').addEventListener('click', (e) => {
+    const add = e.target.closest('[data-add]'), del = e.target.closest('[data-del]');
+    if (add) addStem(add.dataset.add);
+    if (del) removeType(del.dataset.del);
+  });
+
+  $('#papers').innerHTML = Object.entries(PAPERS).map(([k, p]) =>
+    `<button type="button" data-p="${k}" aria-pressed="${k === paper}"><i style="background:${p.fill}"></i>${p.name}${p.price ? `<span> +${rub(p.price)}</span>` : ''}</button>`).join('');
+  $('#papers').addEventListener('click', (e) => { const b = e.target.closest('[data-p]'); if (b) setPaper(b.dataset.p); });
+
+  /* ---------- Букет ---------- */
+  const layers = {};
+  LAYERS.forEach((t) => { const g = document.createElementNS(NS, 'g'); g.dataset.layer = t; $('#layers').appendChild(g); layers[t] = g; });
+
+  function makeStem(type, id) {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'stem');
+    g.dataset.id = id;
+    g.innerHTML = `<line x1="0" y1="0" x2="0" y2="150" stroke="#4f7a5a" stroke-width="3.2" stroke-linecap="round"/>
+      <line class="s-up" x1="0" y1="0" x2="0" y2="-1" stroke="#4f7a5a" stroke-width="3.2" vector-effect="non-scaling-stroke"/>
+      <g class="head"><g class="bloom"><g transform="scale(${TYPES[type].scale})">${DRAW[type](id)}</g></g></g>`;
+    return g;
+  }
+
+  // раскладка: подсолнечная спираль в полукупол; крупные цветы в центре, зелень по краю
+  function layout() {
+    const n = stems.length;
+    const spread = Math.min(58, 16 + n * 2.5);
+    const base = 196 + Math.min(n, 24) * 1.1;
+    const slots = Array.from({ length: n }, (_, k) => {
+      const r = Math.sqrt((k + .5) / Math.max(n, 1)), a = k * 2.39996;
+      return { x: r * Math.cos(a), y: r * Math.sin(a), r };
+    }).sort((a, b) => a.r - b.r);
+    const order = [...stems].sort((a, b) => TYPES[a.type].rank - TYPES[b.type].rank || a.id - b.id);
+    order.forEach((s, k) => {
+      const slot = slots[k];
+      s.angle = slot.x * spread + (rnd(s.id, 7) - .5) * 4;
+      s.len = base - Math.abs(slot.x) * 46 + slot.y * 30 + TYPES[s.type].len * (1 - slot.r) + (rnd(s.id, 9) - .5) * 14;
+      place(s);
+    });
+    const scale = Math.min(1.18, .82 + n * .014);
+    $('#paper-back').style.transform = `scale(${n ? scale : .82})`;
+  }
+
+  function place(s) {
+    s.el.style.transform = `translate(300px, 470px) rotate(${s.angle.toFixed(2)}deg)`;
+    s.el.querySelector('.s-up').style.transform = `scaleY(${s.len.toFixed(1)})`;
+    s.el.querySelector('.head').style.transform = `translateY(${(-s.len).toFixed(1)}px) rotate(${(-s.angle * .55).toFixed(2)}deg)`;
+  }
+
+  function addStem(type, quiet) {
+    if (stems.length >= MAX) { $('#limit').textContent = `В одну упаковку помещается ${stemsWord(MAX)}. Для большого букета позвоните нам — соберём в коробке.`; return; }
+    const s = { id: nextId++, type };
+    s.el = makeStem(type, s.id);
+    layers[type].appendChild(s.el);
+    stems.push(s);
+    layout();
+    // рост: стебель вытягивается из связки, головка раскрывается с отскоком
+    const up = s.el.querySelector('.s-up'), head = s.el.querySelector('.head'), bloom = s.el.querySelector('.bloom');
+    const end = [up.style.transform, head.style.transform];
+    up.style.transition = head.style.transition = bloom.style.transition = 'none';
+    up.style.transform = 'scaleY(0)';
+    head.style.transform = `translateY(0px) rotate(0deg)`;
+    bloom.style.transform = 'scale(0)';
+    s.el.getBoundingClientRect();
+    up.style.transition = head.style.transition = bloom.style.transition = '';
+    up.style.transform = end[0]; head.style.transform = end[1]; bloom.style.transform = 'scale(1)';
+    if (!quiet) update();
+  }
+
+  function removeStem(s) {
+    stems = stems.filter((x) => x !== s);
+    const up = s.el.querySelector('.s-up'), head = s.el.querySelector('.head'), bloom = s.el.querySelector('.bloom');
+    bloom.style.transition = 'transform .3s var(--ease)';
+    bloom.style.transform = 'scale(0)';
+    up.style.transform = 'scaleY(0)';
+    head.style.transform = 'translateY(0px)';
+    setTimeout(() => s.el.remove(), reduced ? 0 : 700);
+    $('#limit').textContent = '';
+    layout(); update();
+  }
+  const removeType = (t) => { const s = [...stems].reverse().find((x) => x.type === t); if (s) removeStem(s); };
+  $('#bouquet').addEventListener('click', (e) => {
+    const g = e.target.closest('.stem');
+    if (g) removeStem(stems.find((s) => s.id === Number(g.dataset.id)));
+  });
+
+  function setPaper(k) {
+    paper = k;
+    const p = PAPERS[k];
+    document.querySelectorAll('#papers button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === k)));
+    const [back, backShade] = $('#paper-back').children, [front, frontShade] = $('#paper-front').children;
+    back.style.fill = p.fill; backShade.style.fill = p.shade; front.style.fill = p.fill; frontShade.style.fill = p.shade;
+    $('#ribbon').style.fill = p.ribbon;
+    update();
+  }
+
+  function setMix(mix, paperKey) {
+    [...stems].forEach((s) => { s.el.remove(); });
+    stems = [];
+    $('#limit').textContent = '';
+    const list = Object.entries(mix).flatMap(([t, n]) => Array(n).fill(t));
+    // перемешиваем, чтобы цветы вырастали вперемешку, а не по сортам
+    list.sort((a, b) => rnd(a.length * 7 + list.indexOf(a)) - rnd(b.length * 7 + list.indexOf(b)));
+    setPaper(paperKey || paper);
+    if (reduced) { list.forEach((t) => addStem(t, true)); update(); return; }
+    list.forEach((t, i) => setTimeout(() => { addStem(t, true); update(); }, 160 + i * 110));
+  }
+
+  /* ---------- Цена и сводка ---------- */
+  let shownTotal = 0, raf;
+  function rollTo(to) {
+    cancelAnimationFrame(raf);
+    const from = shownTotal, t0 = performance.now(), dur = reduced ? 0 : 450;
+    const step = (now) => {
+      const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+      shownTotal = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+      $('#total').textContent = $('#m-total').textContent = rub(shownTotal);
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  }
+
+  const counts = () => stems.reduce((m, s) => (m[s.type] = (m[s.type] || 0) + 1, m), {});
+  const bouquetPrice = () => priceOf(counts(), paper) * (stems.length ? 1 : 0);
+
+  function update() {
+    const c = counts(), n = stems.length, price = bouquetPrice();
+    document.querySelectorAll('.stem-row').forEach((row) => {
+      const k = c[row.dataset.t] || 0;
+      row.querySelector('output').textContent = k;
+      row.querySelector('.minus').disabled = !k;
+      row.classList.toggle('has', k > 0);
+    });
+    rollTo(price);
+    const note = n ? `${stemsWord(n)} · ${PAPERS[paper].name.toLowerCase()}` : 'Букет пустой';
+    $('#total-note').textContent = $('#m-note').textContent = note;
+    $('#bag-text').textContent = n ? `Букет · ${rub(price)}` : 'Букет';
+    $('#empty').style.opacity = n ? 0 : 1;
+    $('#bouquet').setAttribute('aria-label', n ? `Ваш букет: ${describe(c)}` : 'Букет пустой');
+    summary();
+  }
+  // копия букета для сводки: без id, чтобы не было двойников в документе
+  const art = () => $('#bouquet').innerHTML.replace(/ id="(?!floor)[^"]*"/g, '').replace(/<radialGradient[\s\S]*?<\/radialGradient>/, '');
+  const describe = (c) => Object.entries(c).map(([t, k]) => `${TYPES[t].name.toLowerCase()} × ${k}`).join(', ');
+
+  /* ---------- Готовые букеты ---------- */
+  $('#ready-list').innerHTML = READY.map((r, i) => `
+    <article>
+      <figure><img src="https://images.unsplash.com/photo-${r.photo}?auto=format&fit=crop&w=${i % 3 ? 760 : 1060}&h=${i % 3 ? 912 : 908}&q=72" alt="${r.alt}" width="${i % 3 ? 760 : 1060}" height="${i % 3 ? 912 : 908}" loading="lazy"></figure>
+      <div class="ready-row"><h3>${r.name}</h3><span class="cost">${rub(priceOf(r.mix, r.paper))}</span></div>
+      <p>${r.text}</p>
+      <button type="button" class="btn again" data-r="${i}">Собрать такой же</button>
+    </article>`).join('');
+  $('#ready-list').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-r]'); if (!b) return;
+    const r = READY[b.dataset.r];
+    $('#build').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    setTimeout(() => setMix(r.mix, r.paper), reduced ? 0 : 450);
+  });
+
+  /* ---------- Открытка ---------- */
+  $('#card-text').addEventListener('input', (e) => {
+    const v = e.target.value;
+    $('#card-preview').textContent = v || 'Здесь появится ваш текст';
+    $('#card-preview').classList.toggle('placeholder', !v);
+    $('#card-chars').textContent = `${v.length} из 160`;
+  });
+  $('#f-secret').addEventListener('change', (e) => { $('#card-sign').textContent = e.target.checked ? 'угадай, от кого' : 'с любовью'; });
+
+  /* ---------- Доставка ---------- */
+  const SLOTS = [10, 12, 14, 16, 18, 20];
+  const WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+  const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const dayAt = (i) => { const d = new Date(today); d.setDate(d.getDate() + i); return d; };
+  // нужно два часа на сборку и дорогу
+  const slotOk = (day, h) => day > 0 || h * 60 >= new Date().getHours() * 60 + new Date().getMinutes() + 120;
+  let day = SLOTS.some((h) => slotOk(0, h)) ? 0 : 1;
+  let slot = SLOTS.find((h) => slotOk(day, h));
+
+  function renderDelivery() {
+    $('#days').innerHTML = [0, 1, 2, 3, 4].map((i) => {
+      const d = dayAt(i), label = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : `${WD[d.getDay()]}, ${d.getDate()}`;
+      const off = !SLOTS.some((h) => slotOk(i, h));
+      return `<button type="button" class="chip" data-day="${i}" aria-pressed="${i === day}" ${off ? 'disabled' : ''}>${label}</button>`;
+    }).join('');
+    $('#slots').innerHTML = SLOTS.map((h) => `<button type="button" class="chip" data-slot="${h}" aria-pressed="${h === slot}" ${slotOk(day, h) ? '' : 'disabled'}>${h}:00–${h + 2}:00</button>`).join('');
+  }
+  $('#days').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-day]'); if (!b || b.disabled) return;
+    day = Number(b.dataset.day);
+    if (!slotOk(day, slot)) slot = SLOTS.find((h) => slotOk(day, h));
+    renderDelivery(); summary();
+  });
+  $('#slots').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-slot]'); if (!b || b.disabled) return;
+    slot = Number(b.dataset.slot); renderDelivery(); summary();
+  });
+  const whenText = () => { const d = dayAt(day); return `${day === 0 ? 'сегодня' : day === 1 ? 'завтра' : ''} ${d.getDate()} ${MONTHS[d.getMonth()]}, ${slot}:00–${slot + 2}:00`.trim(); };
+
+  function summary() {
+    const c = counts(), price = bouquetPrice(), ship = !stems.length || price >= FREE_FROM ? 0 : DELIVERY;
+    $('#mini').innerHTML = art();
+    $('#sum-list').innerHTML = stems.length
+      ? Object.entries(c).sort((a, b) => TYPES[a[0]].rank - TYPES[b[0]].rank).map(([t, k]) => `<li>${TYPES[t].name} × ${k}</li>`).join('') + `<li>Упаковка: ${PAPERS[paper].name.toLowerCase()}</li>`
+      : '<li>Букет пока пустой&nbsp;— соберите его наверху страницы</li>';
+    $('#sum').innerHTML = `<dt>Букет</dt><dd>${rub(price)}</dd><dt>Доставка, ${whenText()}</dt><dd>${ship ? rub(ship) : 'бесплатно'}</dd>
+      <div class="sum" style="display:contents"><dt>Итого</dt><dd>${rub(price + ship)}</dd></div>`;
+  }
+
+  /* ---------- Заказ ---------- */
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fields = [
+      ['#f-to', (v) => v.trim().length >= 2, 'Напишите имя получателя — курьер спросит его у двери.'],
+      ['#f-to-phone', (v) => /^\d{10,11}$/.test(v.replace(/\D/g, '')), 'Телефон получателя нужен из 10–11 цифр, например +7 900 123-45-67.'],
+      ['#f-address', (v) => v.trim().length >= 6, 'Укажите адрес: улицу, дом и квартиру.'],
+      ['#f-phone', (v) => /^\d{10,11}$/.test(v.replace(/\D/g, '')), 'Оставьте свой телефон — пришлём фото букета до отправки.'],
+    ];
+    let first = null;
+    fields.forEach(([sel, ok, msg]) => { const bad = !ok($(sel).value); $(sel).setAttribute('aria-invalid', String(bad)); if (bad && !first) first = [sel, msg]; });
+    if (!stems.length) { $('#f-err').textContent = 'Букет пустой — добавьте наверху хотя бы один цветок.'; return; }
+    if (first) { $('#f-err').textContent = first[1]; $(first[0]).focus(); return; }
+    $('#f-err').textContent = '';
+    const btn = $('#f-submit'); btn.disabled = true; btn.textContent = 'Отправляем флористу…';
+    const pic = art(), to = esc($('#f-to').value.trim()), when = whenText();
+    setTimeout(() => {
+      $('#form-body').innerHTML = `<div class="done"><svg viewBox="40 150 520 500" aria-hidden="true">${pic}</svg>
+        <h3>Букет уже собирают</h3>
+        <p>${to} получит его ${when}. Флорист пришлёт фото в&nbsp;Telegram перед тем, как отдать курьеру.</p>
+        <p style="font-size:.875rem">Это демо: заказ никуда не&nbsp;ушёл. В&nbsp;рабочей версии он&nbsp;пришёл&nbsp;бы флористу в&nbsp;Telegram, а&nbsp;оплата&nbsp;— через ЮKassa.</p></div>`;
+    }, 700);
+  });
+
+  /* ---------- Старт: букет дня вырастает стебель за стеблем ---------- */
+  renderDelivery();
+  setPaper('kraft');
+  setMix(DAY);
+})();
+</script>
+</body>
+</html>
