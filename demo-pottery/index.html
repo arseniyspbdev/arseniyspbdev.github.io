@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Гончарная мастерская «Круг»</title>
+<meta name="description" content="Демо-лендинг гончарной мастерской: слепите вазу в 3D на крутящемся круге, проведите её через обжиг и глазурь и запишитесь на мастер-класс.">
+<meta name="theme-color" content="#d3cec6">
+<meta property="og:title" content="Гончарная мастерская «Круг»">
+<meta property="og:description" content="Слепите вазу прямо на экране — а в субботу повторите руками.">
+<meta property="og:image" content="https://arseniyspbdev.github.io/img/pottery.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237a2418'/%3E%3Cpath d='M24 14h16c0 6-6 8-6 14 0 7 10 9 10 19 0 3-2 5-5 5H25c-3 0-5-2-5-5 0-10 10-12 10-19 0-6-6-8-6-14z' fill='%23d3cec6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js" crossorigin>
+<style>
+  /* Камень и глазурь: серый шамот, тёмные чернила, глазурь «бычья кровь». Главное — ваза в 3D, которую лепят пальцем,
+     а прокрутка проводит её через сушку, обжиг и глазурь; фон меняется вместе с её состоянием */
+  :root {
+    --stone: #d3cec6;
+    --stone-2: #c4beb4;
+    --ink: #1c1b19;
+    --ink-soft: #57524b;
+    --oxblood: #7a2418;
+    --oxblood-hi: #93301f;
+    --line: #b5aea3;
+    --paper: #ece9e3;
+    --kiln: #1a0f0b;
+    --bg: var(--stone);
+    --display: 'Dela Gothic One', 'Arial Black', sans-serif;
+    --body: 'Wix Madefor Text', system-ui, sans-serif;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--bg); transition: background-color .25s linear; overflow-x: clip; }
+  body { overflow-x: clip; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  body { margin: 0; color: var(--ink); font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--oxblood); color: var(--paper); }
+  :focus-visible { outline: 3px solid var(--oxblood); outline-offset: 3px; border-radius: 6px; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; line-height: 1; letter-spacing: -0.02em; text-wrap: balance; font-variant-numeric: lining-nums; }
+  p { text-wrap: pretty; }
+  button { font: inherit; color: inherit; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  section[id] { scroll-margin-top: 64px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px; font: 600 1rem var(--body); text-decoration: none; cursor: pointer; transition: transform .3s var(--ease), background-color .2s, color .2s; }
+  .btn:active { transform: scale(.97); }
+  .btn-ox { background: var(--oxblood); color: var(--paper); }
+  .btn-ink { background: var(--ink); color: var(--paper); }
+  .btn-line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  @media (hover: hover) {
+    .btn-ox:hover { background: var(--oxblood-hi); }
+    .btn-ink:hover { background: #34312d; }
+    .btn-line:hover { background: var(--ink); color: var(--paper); }
+  }
+  .btn:disabled { opacity: .7; cursor: progress; }
+
+  .demo-bar { position: relative; z-index: 5; background: var(--ink); color: #cfc9bf; text-align: center; font-size: .8125rem; padding: 6px 16px; }
+
+  /* ---------- Шапка ---------- */
+  .site-header { position: sticky; top: 0; z-index: 20; transition: background-color .3s; }
+  .scrolled .site-header { background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .site-header .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 400 1.5rem/1 var(--display); color: var(--ink); text-decoration: none; }
+  .site-header nav { display: flex; gap: 26px; margin-left: auto; padding: 8px 18px; border-radius: 999px; background: rgba(236, 233, 227, .6); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .site-header nav a { color: var(--ink-soft); text-decoration: none; font-size: .9375rem; font-weight: 500; transition: color .2s; }
+  .site-header nav a:hover { color: var(--ink); }
+  .site-header .btn { min-height: 44px; padding: 0 20px; }
+
+  /* ---------- 3D-сцена: холст под контентом ---------- */
+  #stage { position: fixed; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s var(--ease); touch-action: pan-y; }
+  #stage.ready { opacity: 1; }
+  #stage.off { visibility: hidden; }
+  body:not(.in-hero) #stage { pointer-events: none; }
+  .giant { position: absolute; left: 0; right: 0; top: 0; height: 100svh; z-index: 0; display: grid; place-items: center; overflow: hidden; pointer-events: none; }
+  .giant span { font: 400 clamp(9rem, 34vw, 34rem)/.8 var(--display); letter-spacing: -0.05em; color: #c3bcb1; white-space: nowrap; transform: translateY(-2vh); }
+  main, footer { position: relative; z-index: 2; }
+  /* сквозь первый экран и путь вазы касания проходят к холсту */
+  main { pointer-events: none; }
+  main > :not(.hero):not(.journey) { pointer-events: auto; }
+
+  /* ---------- Первый экран ---------- */
+  .hero { position: relative; min-height: calc(100svh - 64px - 31px); display: flex; flex-direction: column; justify-content: flex-end; pointer-events: none; }
+  .hero .wrap { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px 48px; padding-bottom: clamp(24px, 4vw, 48px); }
+  .hero h1 { font-size: clamp(2.1rem, 1rem + 2.4vw, 3.3rem); line-height: 1.02; max-width: 12ch; margin-bottom: 16px; }
+  .hero p { margin: 0; max-width: 40ch; color: var(--ink-soft); }
+  .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; pointer-events: auto; }
+  .tools { pointer-events: auto; display: grid; gap: 10px; justify-items: end; }
+  .tools small { color: var(--ink-soft); font-size: .8125rem; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip { min-height: 42px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(236, 233, 227, .7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); cursor: pointer; font-size: .9375rem; font-weight: 500; transition: background-color .2s, color .2s; }
+  .chip:hover { background: var(--paper); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .chip.icon { width: 42px; padding: 0; font-size: 1.1rem; }
+  .measure { font-variant-numeric: tabular-nums; font-size: .875rem; color: var(--ink-soft); }
+  .hint { position: fixed; z-index: 6; left: 0; top: 0; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .8125rem; font-weight: 500; pointer-events: none; opacity: 0; transform: translate(-50%, -150%); transition: opacity .25s; white-space: nowrap; }
+  .hint.on { opacity: 1; }
+  .loading { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); z-index: 1; font-size: .875rem; color: var(--ink-soft); transition: opacity .6s; }
+  .fallback { display: none; }
+  .no-webgl .fallback { display: block; position: absolute; left: 68%; top: 46%; transform: translate(-50%, -50%); width: min(28vw, 340px); height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 200px 200px 24px 24px; z-index: 1; }
+  @media (max-width: 960px) { .no-webgl .fallback { left: 50%; top: 26svh; width: 52vw; } }
+  .no-webgl .tools, .no-webgl .loading, .no-webgl .progress, .no-webgl .temp { display: none; }
+  .no-webgl .journey { height: auto; padding-block: 64px; }
+  .no-webgl .journey-pin { position: static; height: auto; overflow: visible; }
+  .no-webgl .step { position: static; width: auto; max-width: 640px; transform: none; opacity: 1; visibility: visible; margin-bottom: 72px; padding: 0; background: none; }
+  .no-webgl .glazes { display: none; }
+
+  /* ---------- Путь вазы: закреплённая сцена ---------- */
+  .journey { position: relative; height: 560vh; }
+  .journey-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; pointer-events: none; }
+  .journey-pin .wrap { position: relative; height: 100%; }
+  .step { position: absolute; left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); top: 50%; width: min(42%, 520px); transform: translateY(-50%); opacity: 0; visibility: hidden; }
+  .step .day { display: inline-block; margin-bottom: 18px; padding: 6px 12px; border-radius: 999px; background: rgba(28, 27, 25, .08); font-size: .875rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .step h2 { font-size: clamp(2.6rem, 1.4rem + 3.8vw, 5rem); margin-bottom: 18px; }
+  .step p { margin: 0 0 18px; max-width: 42ch; color: var(--ink-soft); }
+  .step figure { margin: 22px 0 0; display: flex; gap: 14px; align-items: center; }
+  .step figure img { width: 88px; height: 88px; object-fit: cover; border-radius: 50%; }
+  .step figcaption { font-size: .875rem; color: var(--ink-soft); max-width: 30ch; }
+  .glazes { display: flex; gap: 8px; flex-wrap: wrap; pointer-events: auto; }
+  .glaze { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px 0 8px; border: 0; border-radius: 999px; background: rgba(236, 233, 227, .75); cursor: pointer; font-size: .9375rem; font-weight: 500; transition: background-color .2s, color .2s; }
+  .glaze i { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .25), inset 0 2px 3px rgba(255, 255, 255, .35); }
+  .glaze[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .progress { position: absolute; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); bottom: 32px; display: flex; gap: 6px; }
+  .progress i { width: 28px; height: 3px; border-radius: 2px; background: rgba(28, 27, 25, .2); overflow: hidden; }
+  .progress i b { display: block; height: 100%; width: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+  .temp { position: absolute; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); top: 96px; font: 400 clamp(2rem, 1rem + 3vw, 4rem)/1 var(--display); font-variant-numeric: tabular-nums; color: #ffb37a; opacity: 0; }
+  .journey.hot .step, .journey.hot .progress i { color: var(--paper); }
+  .journey.hot .step p, .journey.hot .step figcaption { color: #d9cfc4; }
+  .journey.hot .step .day { background: rgba(255, 236, 220, .14); }
+  .kiln .logo { color: var(--paper); }
+  .logo { transition: color .3s; }
+
+  /* ---------- Разделы на сплошном фоне ---------- */
+  .solid { background: var(--stone); }
+  .section { padding-block: clamp(80px, 11vw, 144px); }
+  .section-head { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
+  .section-head h2 { font-size: clamp(2.6rem, 1.4rem + 3.6vw, 4.8rem); }
+  .section-head p { margin: 0; max-width: 48ch; color: var(--ink-soft); }
+
+  /* Форматы: строки, фото появляется за курсором */
+  .formats { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--ink); }
+  .format { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) auto auto; align-items: center; gap: 12px 32px; padding: 26px 0; border-bottom: 1px solid var(--line); cursor: default; transition: padding .5s var(--ease); }
+  .format h3 { font-size: clamp(1.7rem, 1.1rem + 1.6vw, 2.7rem); transition: transform .5s var(--ease), color .3s; }
+  .format p { margin: 0; color: var(--ink-soft); }
+  .format .price { font: 400 clamp(1.4rem, 1rem + .8vw, 1.9rem) var(--display); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+  .format .btn { min-height: 46px; padding: 0 20px; }
+  .format img.thumb { display: none; }
+  @media (hover: hover) {
+    .format:hover h3 { transform: translateX(14px); color: var(--oxblood); }
+  }
+  .peek { position: fixed; left: 0; top: 0; z-index: 3; width: 300px; height: 380px; border-radius: 160px 160px 18px 18px; overflow: hidden; pointer-events: none; opacity: 0; transform: translate(-50%, -50%) scale(.8); transition: opacity .35s, transform .5s var(--ease); }
+  .peek.on { opacity: 1; }
+  .peek img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .35s; }
+  .peek img.on { opacity: 1; }
+
+  /* Мастерская */
+  .studio { position: relative; color: var(--paper); background: var(--ink); }
+  .studio img { display: block; width: 100%; height: clamp(520px, 86vh, 860px); object-fit: cover; }
+  .studio-text { position: absolute; inset: 0; display: flex; align-items: flex-end; background: linear-gradient(to top, rgba(20, 16, 12, .94), rgba(20, 16, 12, .55) 45%, rgba(20, 16, 12, 0) 75%); }
+  .studio-text .wrap { width: 100%; padding-bottom: clamp(32px, 5vw, 64px); }
+  .numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .numbers div { border-top: 1px solid rgba(236, 233, 227, .35); padding-top: 14px; }
+  .numbers dt { font: 400 clamp(2.4rem, 1.4rem + 3vw, 4.4rem)/1 var(--display); font-variant-numeric: tabular-nums lining-nums; }
+  .numbers dd { margin: 8px 0 0; color: #d6cfc4; max-width: 24ch; }
+
+  /* Запись */
+  .book-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(24px, 4vw, 64px); align-items: start; }
+  .your-piece { position: sticky; top: 96px; }
+  .piece { position: relative; aspect-ratio: 4 / 5; border-radius: 220px 220px 24px 24px; overflow: hidden; background: radial-gradient(70% 60% at 50% 38%, #e6e2db, #c9c3b9); }
+  .piece img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .piece p { position: absolute; left: 0; right: 0; bottom: 18px; margin: 0; text-align: center; font-size: .875rem; color: var(--ink-soft); }
+  .piece-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: .9375rem; color: var(--ink-soft); }
+  .piece-meta b { color: var(--ink); font-weight: 600; }
+  .form { background: var(--paper); border-radius: 24px; padding: clamp(20px, 3vw, 36px); }
+  .form h3 { font-size: 1.5rem; margin-bottom: 14px; }
+  .form h3 ~ h3 { margin-top: 28px; }
+  .opts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .opt { min-height: 44px; padding: 0 16px; border: 1.5px solid var(--line); border-radius: 999px; background: none; cursor: pointer; font-size: .9375rem; font-variant-numeric: tabular-nums; transition: background-color .2s, border-color .2s, color .2s; }
+  .opt:hover:not(:disabled) { border-color: var(--ink); }
+  .opt[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .opt:disabled { opacity: .4; cursor: not-allowed; }
+  .opt small { opacity: .7; margin-left: 6px; }
+  .slots { margin-top: 10px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 4px; }
+  .field span { display: block; margin-bottom: 6px; font-size: .875rem; font-weight: 500; color: var(--ink-soft); }
+  .field input { width: 100%; min-height: 50px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font: inherit; color: var(--ink); caret-color: var(--oxblood); transition: border-color .2s, box-shadow .2s; }
+  .field input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(122, 36, 24, .18); }
+  .field input[aria-invalid="true"] { border-color: #b3261e; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .total b { font: 400 1.9rem var(--display); font-variant-numeric: tabular-nums lining-nums; }
+  .total span { color: var(--ink-soft); font-size: .9375rem; }
+  .err { margin: 14px 0 0; color: #b3261e; font-size: .9375rem; }
+  .err:empty { display: none; }
+  .form .btn { width: 100%; margin-top: 18px; }
+  .done { text-align: center; padding-block: 8px; }
+  .done h3 { font-size: 2.2rem; margin-bottom: 10px; }
+  .done p { margin: 0 auto 10px; max-width: 44ch; color: var(--ink-soft); }
+
+  .contacts { border-top: 1px solid var(--line); padding-block: 48px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+  .facts dt { font-size: .875rem; color: var(--ink-soft); }
+  .facts dd { margin: 4px 0 0; font-weight: 600; font-size: 1.0625rem; }
+  .facts small { display: block; font-weight: 400; font-size: .8125rem; color: var(--ink-soft); }
+  .page-foot { background: var(--stone); padding-block: 0 32px; color: var(--ink-soft); font-size: .875rem; }
+
+  @media (max-width: 960px) {
+    .hero .wrap, .section-head, .book-grid { grid-template-columns: minmax(0, 1fr); }
+    .tools { justify-items: start; }
+    .chips { justify-content: flex-start; }
+    .step { width: auto; right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px)); top: auto; bottom: 28px; transform: none; padding: 18px; border-radius: 20px; background: rgba(236, 233, 227, .82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+    .journey.hot .step { color: var(--ink); }
+    .journey.hot .step p { color: var(--ink-soft); }
+    .journey.hot .step .day { background: rgba(28, 27, 25, .08); }
+    /* телефон: ваза сверху, под ней лепка, текст наезжает листом */
+    .hero { min-height: 0; padding-top: 50svh; }
+    .hero .wrap { padding-top: 18px; background: linear-gradient(to bottom, rgba(211, 206, 198, 0), var(--stone) 64px); }
+    .tools { order: -1; }
+    .hero h1 { margin-top: 8px; }
+    .step h2 { font-size: 2.2rem; margin-bottom: 10px; }
+    .step .day { margin-bottom: 10px; }
+    .step p { margin-bottom: 10px; font-size: .9375rem; }
+    .step figure { display: none; }
+    .progress { top: 84px; bottom: auto; left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px)); right: auto; }
+    .temp { top: 100px; }
+    .format { grid-template-columns: 72px minmax(0, 1fr) auto; padding: 18px 0; }
+    .format img.thumb { display: block; width: 72px; height: 88px; object-fit: cover; border-radius: 40px 40px 10px 10px; grid-row: span 2; }
+    .format p { grid-column: 2 / 4; font-size: .9375rem; }
+    .format .btn { grid-column: 2 / 4; justify-self: start; }
+    .numbers, .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .your-piece { position: static; max-width: 420px; }
+  }
+  @media (max-width: 680px) {
+    .site-header nav { display: none; }
+    .site-header .wrap { justify-content: space-between; }
+    .giant span { font-size: 42vw; transform: translateY(-14vh); }
+    .hero h1 { font-size: 2rem; }
+    .grid2, .facts { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body class="in-hero">
+<div class="demo-bar">Демо-проект для портфолио: мастерская и цены вымышлены, запись никуда не отправляется.</div>
+
+<div class="giant" aria-hidden="true"><span>КРУГ</span></div>
+<canvas id="stage" aria-label="3D-ваза на гончарном круге. Потяните её влево или вправо, чтобы изменить форму."></canvas>
+<div class="hint" id="hint" aria-hidden="true">Тяните влево-вправо</div>
+<div class="peek" id="peek" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Круг — наверх">
+      <svg width="26" height="30" viewBox="0 0 26 30" aria-hidden="true"><path d="M8 2h10c0 4-4 5-4 9 0 4 7 6 7 12 0 3-2 5-5 5H10c-3 0-5-2-5-5 0-6 7-8 7-12 0-4-4-5-4-9z" fill="#7a2418"/></svg>
+      Круг
+    </a>
+    <nav aria-label="Разделы"><a href="#journey">Путь вазы</a><a href="#formats">Мастер-классы</a><a href="#studio">Мастерская</a><a href="#book">Запись</a></nav>
+    <a class="btn btn-ink" href="#book">Записаться</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title">
+    <p class="loading" id="loading">Разогреваем круг…</p>
+    <img class="fallback" src="https://images.unsplash.com/photo-1507022787381-b30170b5ebf4?auto=format&fit=crop&w=700&h=930&q=72" alt="Руки гончара центрируют глину на круге" width="700" height="930">
+    <div class="wrap">
+      <div>
+        <h1 id="hero-title">Слепите вазу прямо здесь. А&nbsp;в&nbsp;субботу&nbsp;— руками</h1>
+        <p>Круг уже крутится: потяните глину пальцем&nbsp;— шире, уже, выше. Мастер на&nbsp;занятии поможет повторить вашу форму из&nbsp;настоящей глины.</p>
+        <div class="hero-cta"><a class="btn btn-ox" href="#book">Записаться на&nbsp;мастер-класс</a><a class="btn btn-line" href="#journey">Что будет дальше</a></div>
+      </div>
+      <div class="tools" role="group" aria-label="Форма вазы">
+        <div class="chips" id="shapes"></div>
+        <div class="chips">
+          <button type="button" class="chip icon" id="lower" aria-label="Осадить ниже">↓</button>
+          <button type="button" class="chip icon" id="taller" aria-label="Вытянуть выше">↑</button>
+          <button type="button" class="chip" id="reset">Сначала</button>
+        </div>
+        <small class="measure" id="measure">ваза · 24 см</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey" id="journey" aria-label="Путь вазы от глины до глазури">
+    <div class="journey-pin">
+      <div class="temp" id="temp" aria-hidden="true">900°</div>
+      <div class="wrap">
+        <article class="step" data-step="0">
+          <span class="day">День 1 · 2 часа</span>
+          <h2>Лепка</h2>
+          <p>Центруем глину, вскрываем, тянем стенки. Первую форму почти никто не&nbsp;доводит с&nbsp;первого раза&nbsp;— и&nbsp;это нормально: мастер стоит рядом.</p>
+          <figure><img src="https://images.unsplash.com/photo-1589051088132-06f36a22012a?auto=format&fit=crop&w=200&h=200&q=70" alt="Руки в глине выравнивают край чаши" width="88" height="88" loading="lazy"><figcaption>Глина&nbsp;— шамотная масса из&nbsp;Гжели, прощает ошибки</figcaption></figure>
+        </article>
+        <article class="step" data-step="1">
+          <span class="day">Неделя на&nbsp;полке</span>
+          <h2>Сушка</h2>
+          <p>Ваза светлеет и&nbsp;твердеет. Через пару дней мастер подрежет ножку на&nbsp;круге, чтобы она стояла ровно.</p>
+          <figure><img src="https://images.unsplash.com/photo-1610206349499-c932c3b3aacb?auto=format&fit=crop&w=200&h=200&q=70" alt="Полки с сохнущей посудой" width="88" height="88" loading="lazy"><figcaption>На&nbsp;полках сохнут работы&nbsp;— каждую подписываем</figcaption></figure>
+        </article>
+        <article class="step" data-step="2">
+          <span class="day">Утильный обжиг · 900°</span>
+          <h2>Первый огонь</h2>
+          <p>Девять часов в&nbsp;печи. Глина становится керамикой: звенит, если постучать, и&nbsp;больше не&nbsp;размокает.</p>
+          <figure><img src="https://images.unsplash.com/photo-1501917018566-8186ec861d99?auto=format&fit=crop&w=200&h=200&q=70" alt="Изделия в раскалённой печи" width="88" height="88" loading="lazy"><figcaption>Печь открываем только остывшей, на&nbsp;следующий день</figcaption></figure>
+        </article>
+        <article class="step" data-step="3">
+          <span class="day">День 2 · 1,5 часа</span>
+          <h2>Глазурь</h2>
+          <p>Выберите цвет&nbsp;— сырая глазурь всегда выглядит блёкло, настоящий цвет проявит огонь.</p>
+          <div class="glazes" id="glazes" role="group" aria-label="Глазурь"></div>
+        </article>
+        <article class="step" data-step="4">
+          <span class="day">Политой обжиг · 1240°</span>
+          <h2>Готово</h2>
+          <p>Глазурь плавится в&nbsp;стекло. Через две недели после лепки забираете вазу&nbsp;— её можно мыть, ставить цветы и&nbsp;пить из&nbsp;неё чай, если это пиала.</p>
+          <a class="btn btn-ox" href="#book" style="pointer-events:auto">Хочу такую</a>
+        </article>
+      </div>
+      <div class="progress" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    </div>
+  </section>
+
+  <div class="solid">
+    <section class="section" id="formats" aria-labelledby="formats-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="formats-title">Мастер-классы</h2>
+          <p>Глина, фартук, обжиг и&nbsp;глазурь входят в&nbsp;цену. Группы до&nbsp;шести человек: у&nbsp;каждого свой круг.</p>
+        </div>
+        <ul class="formats" id="format-list"></ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="studio" id="studio" aria-labelledby="studio-title">
+    <img src="https://images.unsplash.com/photo-1783134532783-13c634240e80?auto=format&fit=crop&w=2000&h=1200&q=70" alt="Гончары работают в полутёмной мастерской" width="2000" height="1200" loading="lazy">
+    <div class="studio-text">
+      <div class="wrap">
+        <h2 id="studio-title" style="font-size:clamp(2.4rem,1.4rem + 3vw,4.4rem);max-width:16ch;margin-bottom:clamp(24px,3vw,40px)">Подвал на&nbsp;Васильевском, где пахнет мокрой глиной</h2>
+        <dl class="numbers">
+          <div><dt>6</dt><dd>гончарных кругов&nbsp;— не&nbsp;придётся ждать очереди</dd></div>
+          <div><dt>2</dt><dd>печи: обжигаем каждую неделю, а&nbsp;не&nbsp;раз в&nbsp;месяц</dd></div>
+          <div><dt>14</dt><dd>глазурей собственного замеса</dd></div>
+          <div><dt>2&nbsp;400</dt><dd>ваз, пиал и&nbsp;кружек уже ушли домой с&nbsp;учениками</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <div class="solid">
+    <section class="section" id="book" aria-labelledby="book-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="book-title">Запись</h2>
+          <p>Мастер увидит форму и&nbsp;глазурь, которые вы&nbsp;выбрали наверху, и&nbsp;подготовит нужную глину.</p>
+        </div>
+        <div class="book-grid">
+          <div class="your-piece">
+            <div class="piece"><img id="piece-img" alt="" hidden><p id="piece-note">Слепите форму на&nbsp;первом экране&nbsp;— она появится здесь</p></div>
+            <div class="piece-meta"><span>Ваша форма: <b id="piece-shape">ваза, 24&nbsp;см</b></span><span>Глазурь: <b id="piece-glaze">селадон</b></span></div>
+          </div>
+
+          <form class="form" id="form" novalidate>
+            <div id="form-body">
+              <h3>Формат</h3>
+              <div class="opts" id="f-formats" role="group" aria-label="Формат"></div>
+              <h3>Когда</h3>
+              <div class="opts" id="f-days" role="group" aria-label="День"></div>
+              <div class="opts slots" id="f-slots" role="group" aria-label="Время"></div>
+              <h3>Контакты</h3>
+              <div class="grid2">
+                <label class="field"><span>Имя</span><input id="f-name" autocomplete="given-name" placeholder="Как к вам обращаться"></label>
+                <label class="field"><span>Телефон</span><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67"></label>
+              </div>
+              <div class="total"><span id="f-summary"></span><b id="f-total"></b></div>
+              <p class="err" id="f-err" aria-live="polite"></p>
+              <button class="btn btn-ox" type="submit" id="f-submit">Записаться</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap contacts" aria-label="Контакты">
+      <dl class="facts">
+        <div><dt>Адрес</dt><dd>14-я линия В.О., 00<small>адрес вымышлен</small></dd></div>
+        <div><dt>Открыто</dt><dd>Вт–Вс 11:00–22:00</dd></div>
+        <div><dt>Телефон</dt><dd>+7 (000) 000-00-00<small>номер-заглушка</small></dd></div>
+        <div><dt>Подарок</dt><dd>Сертификат на&nbsp;любой формат<small>действует полгода</small></dd></div>
+      </dl>
+    </section>
+  </div>
+</main>
+<footer class="page-foot"><div class="wrap">«Круг»&nbsp;— демо-проект для портфолио. Мастерская и&nbsp;цены вымышлены. Фото: Unsplash. 3D: Three.js.</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+
+<script>
+/* ---------- Общие данные и всё, что работает без 3D ---------- */
+window.KRUG = (() => {
+  const $ = (s) => document.querySelector(s);
+  const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
+  const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const SHAPES = {
+    vase: { name: 'ваза', h: 3.0, r: [.62, .78, .92, .9, .7, .46, .36, .42, .56] },
+    bowl: { name: 'пиала', h: 1.35, r: [.5, .7, .88, 1.02, 1.12, 1.2, 1.26, 1.3, 1.32] },
+    jug: { name: 'кувшин', h: 2.7, r: [.66, .9, 1.02, .98, .8, .56, .44, .5, .64] },
+    cup: { name: 'стакан', h: 1.9, r: [.62, .66, .7, .72, .74, .76, .78, .79, .8] },
+  };
+  const GLAZES = {
+    celadon: { name: 'селадон', color: '#7fa392', rough: .12 },
+    cobalt: { name: 'кобальт', color: '#1f3f8f', rough: .1 },
+    oxblood: { name: 'бычья кровь', color: '#7a1c14', rough: .1 },
+    milk: { name: 'молочная', color: '#efeae0', rough: .16 },
+    graphite: { name: 'графит', color: '#2a2a2c', rough: .55 },
+  };
+  const FORMATS = [
+    { id: 'first', name: 'Первое касание', text: 'Два часа за кругом: центровка, первая пиала или ваза. Подойдёт тем, кто никогда не держал глину.', dur: '2 часа', price: 3500, photo: '1507022787381-b30170b5ebf4', alt: 'Руки центрируют глину на круге' },
+    { id: 'course', name: 'Курс: четыре субботы', text: 'От центровки до кувшина с носиком. Каждую неделю — новая форма и обжиг всех работ.', dur: '4 × 3 часа', price: 12800, photo: '1764507768733-667e135d8cb9', alt: 'Девушка лепит на гончарном круге' },
+    { id: 'date', name: 'Свидание за кругом', text: 'Один круг на двоих, чай и пластинка на проигрывателе. Две работы уходят в печь.', dur: '2,5 часа', price: 6900, photo: '1609881583302-61548332039c', alt: 'Двое лепят горшок на одном круге' },
+    { id: 'glaze', name: 'Роспись и глазурь', text: 'Без лепки: берёте готовую чашку из нашего обжига и расписываете под себя.', dur: '1,5 часа', price: 2400, photo: '1673436765950-a563ed3c2a0d', alt: 'Мастер глазирует высокую вазу' },
+  ];
+  const state = { shape: 'vase', heightCm: 24, glaze: 'celadon', format: 'first', snapshot: null };
+  const listeners = [];
+  const emit = () => listeners.forEach((f) => f(state));
+
+  /* Форматы со всплывающим фото за курсором */
+  $('#format-list').innerHTML = FORMATS.map((f) => `
+    <li class="format" data-photo="${f.photo}">
+      <img class="thumb" src="https://images.unsplash.com/photo-${f.photo}?auto=format&fit=crop&w=160&h=200&q=70" alt="" width="72" height="88" loading="lazy">
+      <h3>${f.name}</h3>
+      <p>${f.text}</p>
+      <span class="price">${rub(f.price)}<small style="display:block;font:500 .875rem var(--body);color:var(--ink-soft)">${f.dur}</small></span>
+      <a class="btn btn-line" href="#book" data-format="${f.id}">Выбрать</a>
+    </li>`).join('');
+  $('#peek').innerHTML = FORMATS.map((f) => `<img src="https://images.unsplash.com/photo-${f.photo}?auto=format&fit=crop&w=600&h=760&q=72" alt="${f.alt}" data-photo="${f.photo}" loading="lazy">`).join('');
+  if (matchMedia('(hover: hover)').matches) {
+    const peek = $('#peek');
+    let x = 0, y = 0, px = 0, py = 0, raf = 0, on = false;
+    const loop = () => {
+      // фото догоняет курсор с инерцией и чуть наклоняется по скорости
+      px += (x - px) * .14; py += (y - py) * .14;
+      const tilt = Math.max(-12, Math.min(12, (x - px) * .08));
+      peek.style.transform = `translate(${px - 150}px, ${py - 190}px) rotate(${tilt}deg) scale(${on ? 1 : .8})`;
+      raf = on || Math.abs(x - px) > .5 ? requestAnimationFrame(loop) : 0;
+    };
+    document.querySelectorAll('.format').forEach((row) => {
+      row.addEventListener('pointerenter', (e) => {
+        if (!on) { px = e.clientX; py = e.clientY; }
+        on = true; peek.classList.add('on');
+        peek.querySelectorAll('img').forEach((im) => im.classList.toggle('on', im.dataset.photo === row.dataset.photo));
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+      row.addEventListener('pointerleave', () => { on = false; peek.classList.remove('on'); });
+      row.addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; });
+    });
+  }
+  $('#format-list').addEventListener('click', (e) => { const b = e.target.closest('[data-format]'); if (b) { state.format = b.dataset.format; renderForm(); } });
+
+  /* Глазури */
+  $('#glazes').innerHTML = Object.entries(GLAZES).map(([k, g]) => `<button type="button" class="glaze" data-glaze="${k}" aria-pressed="${k === state.glaze}"><i style="background:${g.color}"></i>${g.name[0].toUpperCase() + g.name.slice(1)}</button>`).join('');
+  $('#glazes').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-glaze]'); if (!b) return;
+    state.glaze = b.dataset.glaze;
+    document.querySelectorAll('.glaze').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    emit(); renderPiece();
+  });
+
+  /* Запись */
+  const DAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = [];
+  for (let i = 1; days.length < 6 && i < 20; i++) {
+    const d = new Date(today); d.setDate(d.getDate() + i);
+    if (d.getDay() !== 1) days.push(d);
+  }
+  const slotsFor = (d) => (d.getDay() === 0 || d.getDay() === 6 ? ['11:00', '14:00', '17:00'] : ['19:00']);
+  const seatsLeft = (d, t) => (d.getDate() * 7 + t.length * 3 + parseInt(t, 10)) % 6;
+  let day = 0, slot = null;
+  function renderForm() {
+    $('#f-formats').innerHTML = FORMATS.map((f) => `<button type="button" class="opt" data-f="${f.id}" aria-pressed="${f.id === state.format}">${f.name}</button>`).join('');
+    $('#f-days').innerHTML = days.map((d, i) => `<button type="button" class="opt" data-d="${i}" aria-pressed="${i === day}">${DAYS[d.getDay()]}, ${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')}</button>`).join('');
+    const ts = slotsFor(days[day]);
+    if (!ts.includes(slot) || !seatsLeft(days[day], slot)) slot = ts.find((t) => seatsLeft(days[day], t)) || null;
+    $('#f-slots').innerHTML = ts.map((t) => { const s = seatsLeft(days[day], t); return `<button type="button" class="opt" data-t="${t}" aria-pressed="${t === slot}" ${s ? '' : 'disabled'}>${t}<small>${s ? `мест: ${s}` : 'мест нет'}</small></button>`; }).join('');
+    const f = FORMATS.find((x) => x.id === state.format);
+    $('#f-total').textContent = rub(f.price);
+    $('#f-summary').textContent = `${f.name}, ${f.dur}`;
+  }
+  $('#form').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-f], [data-d], [data-t]'); if (!b || b.disabled) return;
+    if (b.dataset.f) state.format = b.dataset.f;
+    if (b.dataset.d) day = Number(b.dataset.d);
+    if (b.dataset.t) slot = b.dataset.t;
+    renderForm();
+  });
+  function renderPiece() {
+    $('#piece-shape').textContent = `${SHAPES[state.shape] ? SHAPES[state.shape].name : 'своя форма'}, ${state.heightCm} см`;
+    $('#piece-glaze').textContent = GLAZES[state.glaze].name;
+    if (state.snapshot) { $('#piece-img').src = state.snapshot; $('#piece-img').alt = `Ваша ${$('#piece-shape').textContent} в глазури «${GLAZES[state.glaze].name}»`; $('#piece-img').hidden = false; $('#piece-note').hidden = true; }
+  }
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = $('#f-name').value.trim(), digits = $('#f-phone').value.replace(/\D/g, '');
+    const badName = name.length < 2, badPhone = digits.length < 10 || digits.length > 11;
+    $('#f-name').setAttribute('aria-invalid', String(badName));
+    $('#f-phone').setAttribute('aria-invalid', String(badPhone));
+    if (!slot) { $('#f-err').textContent = 'На этот день мест нет — выберите другой.'; return; }
+    if (badName || badPhone) {
+      $('#f-err').textContent = badName ? 'Напишите имя — мастер подпишет им вашу работу.' : 'Нужен телефон из 10–11 цифр, например +7 900 123-45-67.';
+      (badName ? $('#f-name') : $('#f-phone')).focus(); return;
+    }
+    const f = FORMATS.find((x) => x.id === state.format), d = days[day];
+    const btn = $('#f-submit'); btn.disabled = true; btn.textContent = 'Записываем…';
+    setTimeout(() => {
+      $('#form-body').innerHTML = `<div class="done"><h3>До встречи за кругом</h3>
+        <p>${esc(name)}, вы записаны: «${f.name}», ${DAYS[d.getDay()]} ${d.getDate()}.${String(d.getMonth() + 1).padStart(2, '0')} в ${slot}. Мастер подготовит глину под вашу форму (${$('#piece-shape').textContent}) и глазурь «${GLAZES[state.glaze].name}».</p>
+        <p style="font-size:.875rem">Это демо: запись никуда не ушла. В рабочей версии она пришла бы мастеру в Telegram, а вам — напоминание за день.</p></div>`;
+    }, 650);
+  });
+  renderForm(); renderPiece();
+
+  return { state, SHAPES, GLAZES, reduced, onChange: (f) => listeners.push(f), emit, renderPiece };
+})();
+</script>
+
+<script type="module">
+/* ---------- 3D: гончарный круг и ваза ---------- */
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const K = window.KRUG;
+const $ = (s) => document.querySelector(s);
+const canvas = $('#stage');
+const mobile = matchMedia('(max-width: 960px)').matches;
+
+// без WebGL сайт остаётся обычной страницей: путь вазы — текстом с фото, на первом экране — снимок
+const probe = document.createElement('canvas');
+if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) {
+  document.documentElement.classList.add('no-webgl');
+  $('#loading').remove();
+  await new Promise(() => {}); // дальше модуль не выполняем
+}
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.75));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .55;
+
+const camera = new THREE.PerspectiveCamera(30, 1, .1, 100);
+const key = new THREE.DirectionalLight(0xfff1e0, 2.4);
+key.position.set(-3, 6, 4);
+scene.add(key, new THREE.HemisphereLight(0xf4efe8, 0x2a2420, .7));
+const fire = new THREE.PointLight(0xff6a1a, 0, 9, 1.6);
+fire.position.set(0, .3, 1.6);
+scene.add(fire);
+
+/* Фактура мокрой глины: кольца от пальцев по высоте + мелкий шум */
+function clayTexture() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 1024;
+  const g = c.getContext('2d');
+  const img = g.createImageData(256, 1024);
+  for (let y = 0; y < 1024; y++) {
+    const ring = .5 + .5 * Math.sin(y * .32) * Math.sin(y * .047 + 1.3);
+    for (let x = 0; x < 256; x++) {
+      const n = Math.random() * .25 + Math.sin((x + y * .7) * .11) * .05;
+      const v = Math.max(0, Math.min(255, (ring * .7 + n) * 255));
+      const i = (y * 256 + x) * 4;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+const bump = clayTexture();
+
+const clay = new THREE.MeshPhysicalMaterial({ color: 0x6f655c, roughness: .32, clearcoat: .5, clearcoatRoughness: .35, bumpMap: bump, bumpScale: 1.4, side: THREE.DoubleSide });
+
+/* Гончарный круг: голова круга и поддон */
+const wheel = new THREE.Group();
+const pan = new THREE.Mesh(
+  new THREE.LatheGeometry([new THREE.Vector2(0, -.42), new THREE.Vector2(2.35, -.42), new THREE.Vector2(2.5, -.3), new THREE.Vector2(2.48, .08), new THREE.Vector2(2.36, .1), new THREE.Vector2(2.3, -.3), new THREE.Vector2(0, -.3)], 96),
+  new THREE.MeshPhysicalMaterial({ color: 0x2b2a28, roughness: .45, clearcoat: .3 })
+);
+const head = new THREE.Mesh(new THREE.CylinderGeometry(1.55, 1.55, .14, 96), new THREE.MeshPhysicalMaterial({ color: 0x8d8780, metalness: .6, roughness: .38 }));
+head.position.y = -.07;
+const slurry = new THREE.Mesh(new THREE.CircleGeometry(1.5, 96), new THREE.MeshPhysicalMaterial({ color: 0x7b7067, roughness: .3, clearcoat: .6, transparent: true, opacity: .8 }));
+slurry.rotation.x = -Math.PI / 2; slurry.position.y = .002;
+wheel.add(pan, head, slurry);
+
+/* Ваза: профиль из 9 радиусов по высоте → сплайн → тело вращения со стенкой и дном */
+const piece = new THREE.Group();
+const vase = new THREE.Mesh(new THREE.BufferGeometry(), clay);
+piece.add(vase);
+const ring = new THREE.Mesh(new THREE.TorusGeometry(1, .012, 8, 96), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 }));
+ring.rotation.x = Math.PI / 2;
+piece.add(ring);
+const world = new THREE.Group();
+wheel.scale.setScalar(.78);
+world.add(wheel, piece);
+scene.add(world);
+
+const prof = { r: [...K.SHAPES.vase.r], h: K.SHAPES.vase.h };
+const WALL = .075;
+const radiusAt = (t) => {
+  const f = t * (prof.r.length - 1), i = Math.min(prof.r.length - 2, Math.floor(f)), k = f - i;
+  return prof.r[i] * (1 - k) + prof.r[i + 1] * k;
+};
+function rebuild() {
+  const pts = prof.r.map((r, i) => new THREE.Vector3(r, (i / (prof.r.length - 1)) * prof.h, 0));
+  const outer = new THREE.CatmullRomCurve3(pts, false, 'centripetal').getPoints(72).map((p) => new THREE.Vector2(Math.max(.12, p.x), p.y));
+  const top = outer[outer.length - 1];
+  const P = [new THREE.Vector2(0, 0), new THREE.Vector2(outer[0].x - .05, 0), new THREE.Vector2(outer[0].x, .05), ...outer.slice(1),
+    new THREE.Vector2(top.x - WALL * .25, top.y + WALL * .45), new THREE.Vector2(top.x - WALL * .75, top.y + WALL * .45), new THREE.Vector2(top.x - WALL, top.y)];
+  for (let i = outer.length - 2; i > 2; i--) { const p = outer[i]; if (p.y < WALL * 1.6) break; P.push(new THREE.Vector2(Math.max(.05, p.x - WALL), p.y)); }
+  P.push(new THREE.Vector2(Math.max(.05, outer[2].x - WALL), WALL * 1.6), new THREE.Vector2(0, WALL * 1.6));
+  vase.geometry.dispose();
+  vase.geometry = new THREE.LatheGeometry(P, 128);
+  K.state.heightCm = Math.round(prof.h * 8);
+  $('#measure').textContent = `${K.SHAPES[K.state.shape] ? K.SHAPES[K.state.shape].name : 'своя форма'} · ${K.state.heightCm} см`;
+}
+rebuild();
+
+/* Плавный переход между формами */
+function morphTo(key) {
+  const to = K.SHAPES[key];
+  K.state.shape = key;
+  document.querySelectorAll('#shapes .chip').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shape === key)));
+  const from = { r: [...prof.r], h: prof.h }, o = { k: 0 };
+  window.gsap.to(o, { k: 1, duration: K.reduced ? 0 : .9, ease: 'power3.inOut', onUpdate: () => {
+    prof.r = from.r.map((r, i) => r + (to.r[i] - r) * o.k); prof.h = from.h + (to.h - from.h) * o.k; rebuild();
+  }, onComplete: () => { K.renderPiece(); snap(); } });
+}
+$('#shapes').innerHTML = Object.entries(K.SHAPES).map(([k, s]) => `<button type="button" class="chip" data-shape="${k}" aria-pressed="${k === 'vase'}">${s.name[0].toUpperCase() + s.name.slice(1)}</button>`).join('');
+$('#shapes').addEventListener('click', (e) => { const b = e.target.closest('[data-shape]'); if (b) morphTo(b.dataset.shape); });
+$('#reset').addEventListener('click', () => morphTo(K.SHAPES[K.state.shape] ? K.state.shape : 'vase'));
+const stretch = (d) => { prof.h = Math.min(3.4, Math.max(1.1, prof.h + d)); markCustom(); rebuild(); K.renderPiece(); snap(); };
+$('#taller').addEventListener('click', () => stretch(.2));
+$('#lower').addEventListener('click', () => stretch(-.2));
+function markCustom() { if (K.SHAPES[K.state.shape]) { K.state.shape = 'custom'; document.querySelectorAll('#shapes .chip').forEach((b) => b.setAttribute('aria-pressed', 'false')); } }
+
+/* Лепка пальцем: где коснулись — там и меняем радиус, с мягким спадом по высоте */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+let drag = null, hoverT = -1;
+const hint = $('#hint');
+function hitAt(e) {
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const h = ray.intersectObject(vase)[0];
+  return h ? piece.worldToLocal(h.point.clone()).y / prof.h : -1;
+}
+function vaseScreenX() { const v = new THREE.Vector3(); piece.getWorldPosition(v); v.project(camera); return (v.x + 1) / 2 * canvas.clientWidth; }
+canvas.addEventListener('pointerdown', (e) => {
+  const t = hitAt(e); if (t < 0) return;
+  drag = { t: Math.min(1, Math.max(0, t)), x: e.clientX, y: e.clientY, side: e.clientX >= vaseScreenX() ? 1 : -1, id: e.pointerId, moved: false };
+  canvas.setPointerCapture(e.pointerId);
+  hint.classList.remove('on');
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!drag) {
+    hoverT = hitAt(e);
+    canvas.style.cursor = hoverT >= 0 ? 'grab' : '';
+    if (hoverT >= 0 && !sessionStorageSafe('hinted')) { hint.style.left = e.clientX + 'px'; hint.style.top = e.clientY + 'px'; hint.classList.add('on'); }
+    else hint.classList.remove('on');
+    return;
+  }
+  canvas.style.cursor = 'grabbing';
+  const dx = (e.clientX - drag.x) * drag.side, dy = e.clientY - drag.y;
+  drag.x = e.clientX; drag.y = e.clientY;
+  // сдвиг по горизонтали — толщина в этом месте; по вертикали — палец скользит вдоль стенки
+  const dr = dx * .0042;
+  prof.r = prof.r.map((r, i) => {
+    const w = Math.exp(-((i / (prof.r.length - 1) - drag.t) ** 2) / (2 * .14 * .14));
+    const min = i === 0 ? .4 : .22;
+    return Math.min(1.45, Math.max(min, r + dr * w));
+  });
+  // тянем край вверх или осаживаем
+  if (drag.t > .88 && Math.abs(dy) > Math.abs(dx)) prof.h = Math.min(3.4, Math.max(1.1, prof.h - dy * .006));
+  else drag.t = Math.min(1, Math.max(0, drag.t - dy * .002));
+  hoverT = drag.t;
+  if (!drag.moved) { drag.moved = true; markCustom(); sessionStorageSafe('hinted', 1); }
+  rebuild();
+});
+const endDrag = () => { if (drag) { drag = null; canvas.style.cursor = ''; K.renderPiece(); snap(); } };
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+canvas.addEventListener('pointerleave', () => { if (!drag) { hoverT = -1; hint.classList.remove('on'); } });
+function sessionStorageSafe(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch { return null; } }
+
+/* Этапы: материал, фон, жар печи, — всё интерполируется по числу stage 0…4 */
+const C = (h) => new THREE.Color(h);
+const glazeOf = () => K.GLAZES[K.state.glaze];
+const STAGES = () => {
+  const gz = C(glazeOf().color);
+  const raw = gz.clone().lerp(C('#e8e2d8'), .55);
+  return [
+    { color: C('#6f655c'), rough: .32, coat: .5, bump: 1.4, bg: C('#d3cec6') },
+    { color: C('#b5aa9c'), rough: .95, coat: 0, bump: .7, bg: C('#dcd8d0') },
+    { color: C('#c99479'), rough: .9, coat: 0, bump: .5, bg: C('#e3d4c6') },
+    { color: raw, rough: .98, coat: 0, bump: .9, bg: gz.clone().lerp(C('#e4e1dc'), .72) },
+    { color: gz, rough: glazeOf().rough, coat: 1, bump: .15, bg: gz.clone().lerp(C('#efece6'), .82) },
+  ];
+};
+let stages = STAGES();
+K.onChange(() => { stages = STAGES(); });
+const look = { stage: 0, x: mobile ? 0 : 2.2, y: 0, zoom: 0, spin: 1 };
+const smooth = (t) => t * t * (3 - 2 * t);
+// жар печи: пики на переходах к обжигам, широкие — чтобы «кадр печи» успели увидеть
+const heat = (s) => Math.max(Math.exp(-((s - 1.5) ** 2) / .07), Math.exp(-((s - 3.5) ** 2) / .07));
+const KILN = C('#1a0f0b'), tmpC = new THREE.Color(), bgC = new THREE.Color();
+const tempEl = $('#temp'), journey = $('#journey');
+function applyStage() {
+  const s = Math.max(0, Math.min(4, look.stage)), i = Math.min(3, Math.floor(s)), k = smooth(s - i);
+  const a = stages[i], b = stages[i + 1];
+  clay.color.copy(a.color).lerp(b.color, k);
+  clay.roughness = a.rough + (b.rough - a.rough) * k;
+  clay.clearcoat = a.coat + (b.coat - a.coat) * k;
+  clay.bumpScale = a.bump + (b.bump - a.bump) * k;
+  const hot = heat(s);
+  clay.emissive.setRGB(1, .28, .05).multiplyScalar(hot * .95);
+  fire.intensity = hot * 9;
+  embers.material.opacity = hot;
+  bgC.copy(a.bg).lerp(b.bg, k).lerp(KILN, Math.min(1, hot * 1.15));
+  document.documentElement.style.setProperty('--bg', '#' + bgC.getHexString());
+  slurry.material.opacity = .8 * (1 - Math.min(1, s));
+  journey.classList.toggle('hot', hot > .45);
+  document.documentElement.classList.toggle('kiln', hot > .45);
+  tempEl.style.opacity = hot > .08 ? hot : 0;
+  tempEl.textContent = (s < 2.5 ? Math.round(20 + 880 * hot) : Math.round(20 + 1220 * hot)) + '°';
+}
+
+/* Искры в печи */
+const N = mobile ? 120 : 260;
+const eg = new THREE.BufferGeometry(), ep = new Float32Array(N * 3), seeds = new Float32Array(N);
+for (let i = 0; i < N; i++) { ep[i * 3] = (Math.random() - .5) * 4; ep[i * 3 + 1] = Math.random() * 4; ep[i * 3 + 2] = (Math.random() - .5) * 3; seeds[i] = Math.random(); }
+eg.setAttribute('position', new THREE.BufferAttribute(ep, 3));
+const embers = new THREE.Points(eg, new THREE.PointsMaterial({ color: 0xffa04a, size: .05, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+world.add(embers);
+
+/* Размер и кадр */
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+resize();
+
+/* Снимок вазы для записи: готовое изделие в выбранной глазури, с прозрачным фоном.
+   Делается внутри кадра перед обычной отрисовкой, поэтому на экране не мелькает */
+let snapPending = false;
+const snap = () => { snapPending = true; };
+function doSnap() {
+  snapPending = false;
+  const keep = { c: clay.color.clone(), r: clay.roughness, cc: clay.clearcoat, b: clay.bumpScale, e: clay.emissive.clone(), f: fire.intensity, ring: ring.material.opacity, emb: embers.material.opacity, x: world.position.x };
+  const g = stages[4];
+  clay.color.copy(g.color); clay.roughness = g.rough; clay.clearcoat = g.coat; clay.bumpScale = g.bump; clay.emissive.setRGB(0, 0, 0); fire.intensity = 0;
+  ring.material.opacity = 0; embers.material.opacity = 0; wheel.visible = false; world.position.x = 0;
+  const size = new THREE.Vector2(); renderer.getSize(size);
+  const cam = new THREE.PerspectiveCamera(30, 4 / 5, .1, 100);
+  cam.position.set(0, prof.h * .62 + 1.6, 10.5); cam.lookAt(0, prof.h * .46, 0);
+  renderer.setSize(480, 600, false);
+  renderer.render(scene, cam);
+  K.state.snapshot = canvas.toDataURL('image/png');
+  renderer.setSize(size.x, size.y, false);
+  clay.color.copy(keep.c); clay.roughness = keep.r; clay.clearcoat = keep.cc; clay.bumpScale = keep.b; clay.emissive.copy(keep.e); fire.intensity = keep.f;
+  ring.material.opacity = keep.ring; embers.material.opacity = keep.emb; wheel.visible = true; world.position.x = keep.x;
+  K.renderPiece();
+}
+K.onChange(() => { applyStage(); snap(); });
+
+/* Цикл: вращение с инерцией, лёгкий параллакс за курсором */
+let mx = 0, my = 0, visible = true, last = performance.now(), spin = 0;
+addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (snapPending) doSnap();
+  if (visible) {
+    const target = (drag ? 4.2 : 2.6) * look.spin;
+    spin += (target - spin) * Math.min(1, dt * 2.5);
+    piece.rotation.y += spin * dt * (K.reduced ? .4 : 1);
+    head.rotation.y = piece.rotation.y;
+    // кольцо-подсказка там, где палец касается стенки
+    const t = hoverT;
+    ring.material.opacity += ((t >= 0 && look.stage < .3 ? .55 : 0) - ring.material.opacity) * Math.min(1, dt * 10);
+    if (t >= 0) { const r = radiusAt(t) + .03; ring.scale.set(r, r, 1); ring.position.y = t * prof.h; }
+    const pos = eg.attributes.position;
+    if (embers.material.opacity > .01) {
+      for (let i = 0; i < N; i++) { let y = pos.array[i * 3 + 1] + dt * (.6 + seeds[i]); if (y > 4.2) y = 0; pos.array[i * 3 + 1] = y; pos.array[i * 3] += Math.sin(now * .001 + seeds[i] * 9) * dt * .1; }
+      pos.needsUpdate = true;
+    }
+    const cx = mobile ? 0 : look.x;
+    world.position.x += (cx - world.position.x) * Math.min(1, dt * 4);
+    const camY = 2.3 + prof.h * .25 - look.y, dist = (mobile ? 17 : 12.8) - look.zoom;
+    camera.position.set(mx * .6, camY - my * .4, dist);
+    camera.lookAt(world.position.x * .3, prof.h * .36 + (mobile ? -.35 : .3) - look.y * .3, 0);
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(frame);
+}
+// для автотестов: где на экране середина вазы
+window.__vaseAt = () => { const v = new THREE.Vector3(0, prof.h * .5, 0); piece.localToWorld(v); v.project(camera); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; };
+canvas.classList.add('ready');
+$('#loading').style.opacity = 0;
+requestAnimationFrame(frame);
+setTimeout(snap, 300);
+
+/* Сцены на прокрутке */
+function scroll() {
+  const { gsap, ScrollTrigger, Lenis } = window;
+  gsap.registerPlugin(ScrollTrigger);
+  if (!K.reduced && Lenis) {
+    const lenis = new Lenis({ lerp: .1, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => { const id = a.getAttribute('href'); if (id.length > 1 && document.querySelector(id)) { e.preventDefault(); lenis.scrollTo(id, { offset: id === '#journey' ? 0 : -64 }); } }));
+  }
+  ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom 40%', onToggle: (st) => document.body.classList.toggle('in-hero', st.isActive) });
+  // за пределами пути вазы холст не нужен — перестаём рисовать
+  ScrollTrigger.create({ trigger: '#journey', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#d3cec6'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyStage(); } });
+  ScrollTrigger.create({ start: 80, onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
+
+  // каждый этап: вход, удержание, выход; ваза едет вправо, камера подходит ближе
+  const steps = gsap.utils.toArray('.step'), bars = gsap.utils.toArray('.progress b');
+  const tl = gsap.timeline({ scrollTrigger: { trigger: '#journey', start: 'top top', end: 'bottom bottom', scrub: .6 } });
+  tl.to(look, { x: 1.9, zoom: 1.4, y: -.2, spin: .25, duration: 1, ease: 'power2.inOut', onUpdate: applyStage }, 0);
+  steps.forEach((el, i) => {
+    const at = .6 + i * 2;
+    tl.fromTo(el, { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: .5, ease: 'power3.out' }, at);
+    tl.to(bars[i], { scaleX: 1, duration: 2, ease: 'none' }, at - .3);
+    if (i < steps.length - 1) {
+      tl.to(el, { autoAlpha: 0, y: -60, duration: .45, ease: 'power2.in' }, at + 1.45);
+      tl.to(look, { stage: i + 1, duration: i === 1 || i === 3 ? 1.3 : .9, ease: 'none', onUpdate: applyStage }, at + 1.5);
+    }
+  });
+  tl.to({}, { duration: .6 });
+  // форма на первом экране сохраняется для записи, когда ваза уезжает со сцены
+  ScrollTrigger.create({ trigger: '#formats', start: 'top bottom', onEnter: snap });
+}
+if (window.gsap && window.ScrollTrigger) scroll(); else addEventListener('load', scroll);
+applyStage();
+</script>
+</body>
+</html>
