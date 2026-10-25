@@ -4,14 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Арсений — сайты и Telegram-приложения</title>
-<meta name="description" content="Делаю лендинги, сайты и Telegram Mini Apps для малого бизнеса. Работаю вместе с ИИ. Живые демо-проекты на странице.">
+<meta name="description" content="Делаю лендинги, Telegram Mini Apps и 3D-витрины для малого бизнеса: клиенты сами собирают, бронируют и записываются. Восемь живых демо на странице.">
+<meta name="theme-color" content="#15171a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2315171a'/%3E%3Cpath d='M18 50 30 14h4l12 36h-7l-3-9H24l-3 9zm8-15h10l-5-15z' fill='%23e8ad3c'/%3E%3C/svg%3E">
 <meta property="og:title" content="Арсений — сайты и Telegram-приложения">
-<meta property="og:description" content="Лендинги, сайты и Telegram Mini Apps для малого бизнеса. Живые демо на странице.">
+<meta property="og:description" content="Лендинги, Telegram Mini Apps и 3D-витрины для малого бизнеса. Восемь живых демо.">
+<meta property="og:image" content="https://arseniyspbdev.github.io/img/og.jpg">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* Графит и охра: тёмный сайт, охра — акцент; работы показаны живыми прямо на первом экране */
+  /* Графит и охра: тёмный сайт, охра — акцент; работы показаны живыми роликами — на первом экране шоурил трёх лучших */
   :root {
     --ochre: #e8ad3c;
     --ochre-deep: #b9811a;
@@ -67,9 +71,6 @@
   .btn-ochre:hover { background: #f0bd58; border-color: #f0bd58; }
   .btn svg { flex: none; }
 
-  /* ---------- Первый экран ---------- */
-  .hero { border-bottom: 1px solid var(--line); }
-  .intro h1 em { font-style: normal; color: var(--ochre); }
   .site-header { position: sticky; top: 0; z-index: 50; padding-block: 12px; }
   .site-header .bar { position: relative; display: flex; align-items: center; gap: 20px; padding: 6px; border-radius: 999px; }
   .name { padding: 8px 16px; border-radius: 999px; font: 800 1.25rem var(--display); letter-spacing: -0.03em; text-decoration: none; }
@@ -93,34 +94,25 @@
   .lens.is-dragging { cursor: grabbing; transition: width .3s, height .3s, opacity .3s; background-color: rgba(255, 255, 255, .06); }
   .site-header .btn { min-height: 44px; padding: 0 18px; }
 
-  .intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(20px, 3.5vw, 48px) clamp(28px, 3.5vw, 44px); }
-  .intro h1 { font-size: clamp(2.2rem, 1rem + 3.2vw, 4rem); font-weight: 800; }
-  .intro p { margin: 0; max-width: 46ch; font-size: 1.125rem; }
+  /* ---------- Первый экран: шоурил лучших работ ---------- */
+  .intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(28px, 4vw, 56px) clamp(24px, 3vw, 36px); }
+  .intro h1 { font-size: clamp(2.4rem, 1rem + 3.6vw, 4.4rem); font-weight: 800; max-width: 14ch; }
+  .intro p { margin: 0; max-width: 46ch; font-size: 1.125rem; color: var(--text-soft); }
   .intro .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
 
-  /* Стол с живыми работами */
-  .desk { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(20px, 3vw, 40px); align-items: end; padding-bottom: clamp(40px, 6vw, 80px); }
-  .exhibit figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-  .exhibit figcaption b { font: 700 1.125rem var(--display); letter-spacing: -0.02em; }
-  .exhibit figcaption span { color: var(--text-soft); font-size: .9375rem; }
-  .exhibit figcaption a { font-weight: 600; }
-  .exhibit { margin: 0; min-width: 0; }
-
-  .browser {
-    border-radius: 14px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong);
-    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
-  }
-  .browser-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--text-soft); font-size: .8125rem; }
-  .browser-bar .addr { flex: 1; min-width: 0; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .06); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .screen { position: relative; overflow: hidden; background: var(--raised); }
-  .screen iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: #fff; }
-  .browser .screen { aspect-ratio: 16 / 10; }
-
-  .phone {
-    width: clamp(240px, 22vw, 300px); padding: 10px; border-radius: 42px; background: var(--raised); border: 1px solid var(--line-strong);
-    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
-  }
-  .phone .screen { aspect-ratio: 390 / 800; border-radius: 32px; }
+  .reel { padding-bottom: clamp(40px, 6vw, 80px); }
+  .reel-stage { position: relative; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong); box-shadow: 0 50px 100px -50px rgba(0, 0, 0, .9); }
+  .reel-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
+  .reel-stage video.on { opacity: 1; }
+  .reel-open { position: absolute; right: 16px; bottom: 16px; z-index: 2; }
+  .reel-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); margin-top: 18px; }
+  .reel-tab { position: relative; display: block; padding: 14px 0 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--text-soft); transition: color .3s; }
+  .reel-tab::before, .reel-tab i { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; border-radius: 2px; background: var(--line-strong); }
+  .reel-tab i { right: auto; width: 100%; background: var(--ochre); transform-origin: left; transform: scaleX(0); }
+  .reel-tab b { display: block; font: 700 1.125rem var(--display); letter-spacing: -0.02em; color: var(--text); }
+  .reel-tab[aria-selected="true"] { color: var(--text); }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: clamp(28px, 4vw, 44px) 0 0; padding: 0; list-style: none; color: var(--text-soft); font-size: .9375rem; }
+  .facts b { color: var(--text); font: 800 1.5rem/1 var(--display); margin-right: 6px; font-variant-numeric: tabular-nums; }
 
   /* ---------- Разделы ---------- */
   .section { padding-block: clamp(64px, 9vw, 120px); }
@@ -128,32 +120,37 @@
   .section-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
   .section-head p { margin: 0; max-width: 56ch; color: var(--text-soft); }
 
-  /* Работы подробно */
-  .case { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px clamp(24px, 4vw, 64px); padding-block: 36px; border-top: 1px solid var(--line-strong); }
-  .case:last-child { border-bottom: 1px solid var(--line-strong); }
-  .case h3 { font-size: clamp(1.5rem, 1rem + 1.6vw, 2.2rem); font-weight: 700; }
-  .case .kind { margin: 10px 0 0; color: var(--ochre); }
-  .case p { margin: 0 0 16px; max-width: 60ch; }
-  .case ul { margin: 0 0 20px; padding: 0; list-style: none; display: grid; gap: 8px; }
-  .case li { position: relative; padding-left: 22px; max-width: 60ch; }
-  .case li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 10px; border-radius: 2px; background: var(--ochre); }
-  .case .stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 22px; padding: 0; list-style: none; }
-  .stack li { padding: 4px 12px; border-radius: 999px; background: var(--raised); color: var(--text-soft); font-size: .875rem; font-weight: 500; }
-  .stack li::before { display: none; }
-  .links { display: flex; flex-wrap: wrap; gap: 10px; }
+  /* Работы: сетка карточек с живыми роликами */
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .work { grid-column: span 6; display: flex; flex-direction: column; min-width: 0; }
+  .work.w7 { grid-column: span 7; }
+  .work.w5 { grid-column: span 5; }
+  .work.w4 { grid-column: span 4; }
+  .media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 18px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong); }
+  .media video, .media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+  .work:hover .media video, .work:hover .media img { transform: scale(1.025); }
+  .media.phone-shot { background: radial-gradient(60% 70% at 50% 40%, #2b3036, var(--raised)); }
+  .media.phone-shot video { inset: 6% auto 6% 50%; width: auto; height: 88%; aspect-ratio: 390 / 760; transform: translateX(-50%); border-radius: 26px; box-shadow: 0 0 0 8px #0d0f11, 0 30px 60px -20px rgba(0, 0, 0, .8); }
+  .work:hover .media.phone-shot video { transform: translateX(-50%) scale(1.02); }
+  .badge { position: absolute; left: 12px; top: 12px; z-index: 1; padding: 5px 11px; border-radius: 999px; background: rgba(17, 19, 21, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--text); font-size: .8125rem; font-weight: 600; }
+  .work .kind { margin: 18px 0 4px; color: var(--ochre); font-size: .9375rem; font-weight: 500; }
+  .work h3 { font-size: clamp(1.35rem, 1rem + 1vw, 1.9rem); font-weight: 700; }
+  .work > p { margin: 10px 0 0; color: var(--text-soft); max-width: 52ch; }
+  .work details { margin-top: 12px; }
+  .work summary { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; cursor: pointer; color: var(--text); font-weight: 600; font-size: .9375rem; list-style: none; }
+  .work summary::-webkit-details-marker { display: none; }
+  .work summary::after { content: "+"; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-strong); font-weight: 500; transition: transform .3s var(--ease); }
+  .work details[open] summary::after { transform: rotate(45deg); }
+  .work details ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .work details li { position: relative; padding-left: 18px; color: var(--text-soft); font-size: .9375rem; }
+  .work details li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 2px; background: var(--ochre); }
+  .stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .stack li { padding: 3px 11px; border-radius: 999px; background: var(--raised); color: var(--text-soft); font-size: .8125rem; font-weight: 500; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
   .links .btn { min-height: 44px; padding: 0 18px; font-size: .9375rem; }
-  .note { margin-top: 14px; color: var(--text-soft); font-size: .875rem; }
-
-  /* Ещё лендинги */
-  .more-title { margin: clamp(48px, 6vw, 72px) 0 24px; font-size: clamp(1.5rem, 1rem + 1.6vw, 2.2rem); font-weight: 700; }
-  .more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 32px); }
-  .mini-case { min-width: 0; display: flex; flex-direction: column; }
-  .shot { display: block; border-radius: 12px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong); box-shadow: 0 20px 40px -28px rgba(0, 0, 0, .8); }
-  .shot img { display: block; width: 100%; height: auto; transition: transform .5s var(--ease); }
-  .shot:hover img { transform: scale(1.03); }
-  .mini-case h4 { margin: 18px 0 6px; font: 700 1.25rem var(--display); letter-spacing: -0.02em; }
-  .mini-case p { margin: 0 0 16px; color: var(--text-soft); flex: 1; }
-  .mini-case .links .btn { min-height: 42px; padding: 0 16px; font-size: .9375rem; }
+  .next { grid-column: span 6; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding: clamp(24px, 3vw, 40px); border-radius: 18px; border: 1px dashed var(--line-strong); background: var(--surface); }
+  .next h3 { font-size: clamp(1.6rem, 1rem + 1.6vw, 2.4rem); font-weight: 800; max-width: 14ch; }
+  .next p { margin: 12px 0 0; color: var(--text-soft); max-width: 40ch; }
 
   /* Услуги */
   .services { background: var(--surface); border-block: 1px solid var(--line); }
@@ -163,6 +160,8 @@
   .svc h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 12px; }
   .svc p { margin: 0 0 10px; color: var(--text-soft); }
   .svc .fit { color: var(--text); font-weight: 500; }
+  .svc .eg { font-size: .9375rem; }
+  .svc .eg a { color: var(--ochre); }
   .price-line { margin: 40px 0 0; font: 600 1.125rem var(--body); }
 
   /* Как работаю */
@@ -178,13 +177,12 @@
     display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px clamp(24px, 4vw, 64px);
     margin-top: clamp(48px, 6vw, 80px); padding-top: 32px; border-top: 1px solid var(--line-strong);
   }
-  .ai p { color: var(--text-soft); }
   .ai h3 { font-size: clamp(1.5rem, 1rem + 1.4vw, 2rem); font-weight: 700; }
-  .ai p { margin: 0 0 12px; max-width: 60ch; }
+  .ai p { margin: 0 0 12px; max-width: 60ch; color: var(--text-soft); }
 
   /* Контакт */
   .contact { background: var(--surface); border-top: 1px solid var(--line); }
-  .contact h2 { max-width: 14ch; }
+  .contact h2 { max-width: 14ch; font-size: clamp(2.4rem, 1.2rem + 4vw, 4.6rem); }
   .contact-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px clamp(24px, 4vw, 64px); align-items: end; }
   .contact p { margin: 18px 0 0; max-width: 46ch; color: var(--text-soft); font-size: 1.125rem; }
   .contact-links { display: grid; gap: 12px; justify-items: start; }
@@ -193,28 +191,29 @@
   .site-footer .wrap { padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .site-footer p { margin: 0; }
 
-  /* Световое пятно за курсором по всему сайту: лежит под содержимым, фоны блоков полупрозрачные */
+  /* Пятно за курсором: отдельный слой, двигается через transform — без пересчёта стилей всей страницы */
   body { position: relative; isolation: isolate; }
-  body::before {
-    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .4s;
-    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(232, 173, 60, .12), transparent 70%);
-  }
-  body.is-lit::before { opacity: 1; }
+  .glow { position: fixed; left: -300px; top: -300px; z-index: -1; width: 600px; height: 600px; border-radius: 50%; pointer-events: none; opacity: 0; background: radial-gradient(closest-side, rgba(232, 173, 60, .12), transparent); transition: opacity .4s; will-change: transform; }
+  .glow.on { opacity: 1; }
 
   /* ---------- Адаптив ---------- */
   @media (max-width: 960px) {
-    .intro, .section-head, .case, .ai, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+    .intro, .section-head, .ai, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+    .work, .work.w7, .work.w5, .work.w4, .next { grid-column: span 12; }
     .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .svc-list, .more { grid-template-columns: minmax(0, 1fr); }
+    .svc-list { grid-template-columns: minmax(0, 1fr); }
     .svc, .svc + .svc { padding: 24px 0 8px; border-left: 0; }
     .svc + .svc { border-top: 1px solid var(--line); }
   }
   @media (max-width: 720px) {
     .site-header nav { display: none; }
     .site-header .bar { justify-content: space-between; }
-    .desk { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-    .desk .exhibit:first-child { width: 100%; }
-    .phone { width: min(300px, 78vw); }
+    .reel-stage { border-radius: 14px; }
+    .reel-tab { min-height: 48px; }
+    .reel-tab { font-size: .8125rem; }
+    .reel-tab b { font-size: .9375rem; }
+    .reel-tab span { display: none; }
+    .reel-open { right: 8px; bottom: 8px; min-height: 36px; padding: 0 12px; font-size: .8125rem; }
     .steps { grid-template-columns: minmax(0, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -222,8 +221,10 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
 </style>
+
 </head>
 <body>
+<div class="glow" aria-hidden="true"></div>
 
 <svg width="0" height="0" style="position: absolute" aria-hidden="true">
   <filter id="liquid" x="0" y="0" width="100%" height="100%">
@@ -246,40 +247,36 @@
 </header>
 
 <div class="hero" id="top">
-
   <section class="wrap intro" aria-labelledby="hero-title">
-    <h1 id="hero-title">Сайты и Telegram-приложения <em>для малого бизнеса</em></h1>
+    <h1 id="hero-title">Сайты для малого бизнеса, которые хочется потрогать</h1>
     <div>
-      <p>Делаю лендинги и мини-приложения, через которые клиенты записываются и бронируют сами. Работаю вместе с ИИ, поэтому первую версию показываю быстро. Две работы ниже можно попробовать прямо здесь, ещё три — в разделе «Работы».</p>
+      <p>Делаю лендинги, Telegram-приложения и 3D-витрины. Клиент сам собирает торт, лепит вазу или бронирует стол — и сразу оставляет заявку. Работаю вместе с ИИ, поэтому первую версию показываю быстро.</p>
       <div class="actions">
-        <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.3M21 4l-3.5 16-8.5-6.7M21 4 9 13.3m0 0V19l3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          Обсудить задачу в Telegram
-        </a>
-        <a class="btn btn-ghost" href="#works">Подробнее о работах</a>
+        <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.3M21 4l-3.5 16-8.5-6.7M21 4 9 13.3m0 0V19l3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Обсудить задачу в Telegram</a>
+        <a class="btn btn-ghost" href="#works">Все работы</a>
       </div>
     </div>
   </section>
 
-  <div class="wrap desk">
-    <figure class="exhibit">
-      <div class="browser">
-        <div class="browser-bar" aria-hidden="true"><span class="addr">arseniyspbdev.github.io/demo-coffee</span></div>
-        <div class="screen" data-w="1280" data-h="800">
-          <iframe src="demo-coffee/" title="Живое демо: лендинг кофейни «Кафель»" width="1280" height="800"></iframe>
-        </div>
-      </div>
-      <figcaption><b>Лендинг кофейни</b><span>бронь столика на плане зала</span><a href="demo-coffee/" target="_blank" rel="noopener">Открыть целиком</a></figcaption>
-    </figure>
-    <figure class="exhibit">
-      <div class="phone">
-        <div class="screen" data-w="390" data-h="800">
-          <iframe src="demo-barber/" title="Живое демо: Telegram Mini App барбершопа «Чуб»" width="390" height="800"></iframe>
-        </div>
-      </div>
-      <figcaption><b>Mini App барбершопа</b><a href="https://t.me/chub_barber_demo_bot" target="_blank" rel="noopener">В Telegram</a></figcaption>
-    </figure>
-  </div>
+  <section class="wrap reel" aria-label="Три работы в движении">
+    <div class="reel-stage">
+      <video muted playsinline preload="auto" poster="reels/cake.jpg" data-reel="cake" class="on" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
+      <video muted playsinline preload="none" poster="reels/pottery.jpg" data-reel="pottery" class="" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
+      <video muted playsinline preload="none" poster="reels/flowers.jpg" data-reel="flowers" class="" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
+      <a class="btn btn-ochre reel-open" id="reel-open" href="demo-cake/" target="_blank" rel="noopener">Открыть «Корж»</a>
+    </div>
+    <div class="reel-tabs" role="tablist" aria-label="Работы в шоуриле">
+      <button type="button" class="reel-tab" role="tab" aria-selected="true" data-reel="cake" data-name="Корж"><i></i><b>Корж</b><span>3D-конструктор торта</span></button>
+      <button type="button" class="reel-tab" role="tab" aria-selected="false" data-reel="pottery" data-name="Круг"><i></i><b>Круг</b><span>Лепка вазы в 3D</span></button>
+      <button type="button" class="reel-tab" role="tab" aria-selected="false" data-reel="flowers" data-name="Стебель"><i></i><b>Стебель</b><span>Букет из фото</span></button>
+    </div>
+    <ul class="facts">
+      <li><b>8</b>живых демо</li>
+      <li><b>3</b>с 3D и анимацией</li>
+      <li><b>1</b>Telegram Mini App</li>
+      <li><b>100%</b>кода открыто на GitHub</li>
+    </ul>
+  </section>
 </div>
 
 <main>
@@ -289,134 +286,102 @@
         <h2 id="works-title">Работы</h2>
         <p>Это демо-проекты: заведения вымышленные, но всё остальное работает по-настоящему. По ним видно, как я думаю о клиентах вашего бизнеса и что получите вы.</p>
       </div>
-
-      <article class="case">
-        <div>
-          <h3>Кофейня «Кафель»</h3>
-          <p class="kind">Лендинг с онлайн-бронью</p>
-        </div>
-        <div>
-          <p>Главное, что посетитель хочет сделать на сайте кофейни, — занять стол. Поэтому бронь стоит на первом экране, и стол выбирают прямо на плане зала: видно, у окна он или у бара.</p>
-          <ul>
-            <li>План зала показывает свободные и занятые столы на выбранные день и час.</li>
-            <li>Учитывается, сколько гостей: маленькие столы для большой компании недоступны.</li>
-            <li>Форма проверяет имя и телефон и понятно подсказывает, что исправить.</li>
-            <li>Меню, история места и контакты, удобно на телефоне и на компьютере.</li>
-          </ul>
-          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>GitHub Pages</li></ul>
-          <div class="links">
-            <a class="btn btn-ink" href="demo-coffee/" target="_blank" rel="noopener">Открыть сайт</a>
-            <a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-coffee" target="_blank" rel="noopener">Код на GitHub</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="case">
-        <div>
-          <h3>Барбершоп «Чуб»</h3>
-          <p class="kind">Telegram Mini App для записи</p>
-        </div>
-        <div>
-          <p>Клиент записывается, не выходя из Telegram: выбирает услугу, мастера и время за минуту. Приложение подстраивается под тему Telegram и пользуется его родными кнопками.</p>
-          <ul>
-            <li>У каждого мастера видно ближайшее свободное время.</li>
-            <li>Свободные окна считаются по длительности услуги: на часовую стрижку не предложат 20 минут.</li>
-            <li>«Мои записи» с отменой и отдельный экран для мастера с расписанием дня.</li>
-            <li>Открывается из бота кнопкой «Записаться», имя клиента подставляется из Telegram.</li>
-          </ul>
-          <ul class="stack" aria-label="Технологии"><li>Telegram Mini Apps</li><li>JavaScript</li><li>CSS</li><li>GitHub Pages</li></ul>
-          <div class="links">
-            <a class="btn btn-ink" href="https://t.me/chub_barber_demo_bot" target="_blank" rel="noopener">Открыть в Telegram</a>
-            <a class="btn btn-ghost" href="demo-barber/" target="_blank" rel="noopener">Открыть в браузере</a>
-            <a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-barber" target="_blank" rel="noopener">Код на GitHub</a>
-          </div>
-          <p class="note">В демо записи сохраняются на устройстве. В рабочей версии они уходили бы мастеру, а бот напоминал бы клиенту о визите.</p>
-        </div>
-      </article>
-
-      <article class="case">
-        <div>
+      <div class="grid">
+        <article class="work w7">
+          <a class="media" href="demo-cake/" target="_blank" rel="noopener" aria-label="Открыть сайт: Кондитерская «Корж»">
+            <span class="badge">3D</span><video muted loop playsinline preload="none" poster="reels/cake.jpg" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">3D-конструктор торта</p>
           <h3>Кондитерская «Корж»</h3>
-          <p class="kind">Лендинг с 3D-конструктором торта</p>
-        </div>
-        <div>
-          <p>Торт собирается на&nbsp;экране по&nbsp;слоям: каждый ярус, ягода и&nbsp;свеча падают сверху, а&nbsp;цена, вес и&nbsp;порции пересчитываются сразу. Прокрутка разрезает торт, гасит свет и&nbsp;зажигает свечи.</p>
-          <ul>
-            <li>Ярусы, бисквит, начинка, покрытие, украшения и&nbsp;надпись на&nbsp;топпере&nbsp;— ганаш стекает подтёками.</li>
-            <li>Кусок выезжает из торта и&nbsp;показывает выбранные слои; список слоёв рядом.</li>
-            <li>Свечи можно задуть нажатием&nbsp;— с&nbsp;дымком; потом вокруг торта собирается коробка.</li>
-            <li>Снимок торта и&nbsp;состав попадают в&nbsp;заказ; без WebGL&nbsp;— обычная страница с&nbsp;фото.</li>
-          </ul>
-          <ul class="stack" aria-label="Технологии"><li>Three.js</li><li>GSAP</li><li>WebGL</li><li>JavaScript</li><li>GitHub Pages</li></ul>
-          <div class="links">
-            <a class="btn btn-ink" href="demo-cake/" target="_blank" rel="noopener">Открыть сайт</a>
-            <a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-cake" target="_blank" rel="noopener">Код на GitHub</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="case">
-        <div>
+          <p>Торт собирается на экране по слоям, каждая деталь падает сверху, цена и порции пересчитываются сразу. Прокрутка режет торт, зажигает свечи и складывает вокруг коробку.</p>
+          <details><summary>Что умеет</summary><ul><li>Ярусы, бисквит, начинка, покрытие, украшения и надпись на золотом топпере.</li><li>Кусок выезжает из торта и показывает выбранные слои.</li><li>Свечи можно задуть нажатием — с дымком.</li><li>Снимок торта и состав попадают в заказ; без WebGL — обычная страница с фото.</li></ul></details>
+          <ul class="stack" aria-label="Технологии"><li>Three.js</li><li>GSAP</li><li>WebGL</li></ul>
+          <div class="links"><a class="btn btn-ink" href="demo-cake/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-cake" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="work w5">
+          <a class="media" href="demo-pottery/" target="_blank" rel="noopener" aria-label="Открыть сайт: Гончарная мастерская «Круг»">
+            <span class="badge">3D</span><video muted loop playsinline preload="none" poster="reels/pottery.jpg" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">3D-лепка на гончарном круге</p>
           <h3>Гончарная мастерская «Круг»</h3>
-          <p class="kind">Лендинг с 3D-лепкой</p>
-        </div>
-        <div>
-          <p>На первом экране крутится гончарный круг, и вазу на нём можно слепить пальцем. Дальше прокрутка проводит её через сушку, обжиг и глазурь, а в записи мастер видит вашу форму.</p>
-          <ul>
-            <li>Ваза в 3D: тянешь стенку&nbsp;— она становится шире или уже, край можно вытянуть вверх. Четыре готовые формы для старта.</li>
-            <li>Путь вазы на прокрутке: глина сохнет, светлеет, в моменты обжига мастерская темнеет и летят искры.</li>
-            <li>Пять глазурей&nbsp;— цвет проявляется после «обжига», снимок готовой вазы попадает в запись.</li>
-            <li>Без WebGL сайт остаётся обычной страницей с фото, на телефоне лепка работает пальцем.</li>
-          </ul>
-          <ul class="stack" aria-label="Технологии"><li>Three.js</li><li>GSAP</li><li>WebGL</li><li>JavaScript</li><li>GitHub Pages</li></ul>
-          <div class="links">
-            <a class="btn btn-ink" href="demo-pottery/" target="_blank" rel="noopener">Открыть сайт</a>
-            <a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-pottery" target="_blank" rel="noopener">Код на GitHub</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="case">
-        <div>
+          <p>Вазу на крутящемся круге лепят пальцем, а прокрутка проводит её через сушку, обжиг и глазурь.</p>
+          <details><summary>Что умеет</summary><ul><li>Тянешь стенку — шире или уже, край вытягивается вверх; четыре готовые формы.</li><li>В моменты обжига мастерская темнеет, летят искры, растёт температура.</li><li>Пять глазурей; снимок готовой вазы попадает в запись.</li></ul></details>
+          <ul class="stack" aria-label="Технологии"><li>Three.js</li><li>GSAP</li><li>WebGL</li></ul>
+          <div class="links"><a class="btn btn-ink" href="demo-pottery/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-pottery" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="work w5">
+          <a class="media" href="demo-flowers/" target="_blank" rel="noopener" aria-label="Открыть сайт: Цветочная мастерская «Стебель»">
+            <video muted loop playsinline preload="none" poster="reels/flowers.jpg" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Конструктор букета из фото</p>
           <h3>Цветочная мастерская «Стебель»</h3>
-          <p class="kind">Лендинг с конструктором букета</p>
-        </div>
-        <div>
-          <p>Покупатель цветов хочет видеть, что получит. Поэтому букет собирается прямо на&nbsp;первом экране: нажимаешь на&nbsp;пион&nbsp;— он&nbsp;вырастает в&nbsp;букете, цена пересчитывается сразу.</p>
-          <ul>
-            <li>Семь видов цветов и&nbsp;три упаковки; любой цветок убирается нажатием прямо в&nbsp;букете.</li>
-            <li>Готовые букеты можно взять за&nbsp;основу и&nbsp;поменять под себя.</li>
-            <li>Открытка с&nbsp;живым предпросмотром почерка и&nbsp;доставка по&nbsp;двухчасовым окнам: на&nbsp;сегодня не&nbsp;предложит время, которое уже не&nbsp;успеть.</li>
-            <li>Готовый букет показывается в&nbsp;заказе и&nbsp;на&nbsp;экране «Готово»&nbsp;— таким, каким его собрали.</li>
-          </ul>
-          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>SVG</li><li>GitHub Pages</li></ul>
-          <div class="links">
-            <a class="btn btn-ink" href="demo-flowers/" target="_blank" rel="noopener">Открыть сайт</a>
-            <a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-flowers" target="_blank" rel="noopener">Код на GitHub</a>
-          </div>
-        </div>
-      </article>
-
-      <h3 class="more-title">Ещё лендинги</h3>
-      <div class="more">
-        <article class="mini-case">
-          <a class="shot" href="demo-nails/" target="_blank" rel="noopener"><img src="img/nails.jpg" alt="Лендинг студии маникюра «Палитра»" width="960" height="600" loading="lazy"></a>
-          <h4>Студия маникюра «Палитра»</h4>
-          <p>Клиентка выбирает оттенок лака на экране — глянец или мат — и записывается сразу с этим цветом.</p>
+          <p>Нажимаешь на пион — он вырастает в букете, цена пересчитывается. Букет собран из настоящих фото цветов на стеблях.</p>
+          <details><summary>Что умеет</summary><ul><li>Семь видов цветов и три упаковки; цветок убирается нажатием в букете.</li><li>Готовые букеты можно взять за основу и поменять.</li><li>Открытка с почерком и доставка по двухчасовым окнам.</li></ul></details>
+          <ul class="stack" aria-label="Технологии"><li>JavaScript</li><li>SVG</li><li>WebP</li></ul>
+          <div class="links"><a class="btn btn-ink" href="demo-flowers/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-flowers" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="work w7">
+          <a class="media" href="demo-coffee/" target="_blank" rel="noopener" aria-label="Открыть сайт: Кофейня «Кафель»">
+            <video muted loop playsinline preload="none" poster="reels/coffee.jpg" aria-hidden="true"><source src="reels/coffee.webm" type="video/webm"><source src="reels/coffee.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Лендинг с онлайн-бронью</p>
+          <h3>Кофейня «Кафель»</h3>
+          <p>Стол выбирают прямо на плане зала: видно, у окна он или у бара, свободен ли на нужный час.</p>
+          <details><summary>Что умеет</summary><ul><li>Учитывается, сколько гостей: маленькие столы для компании недоступны.</li><li>Форма проверяет имя и телефон и понятно подсказывает, что исправить.</li><li>Меню, история места и контакты.</li></ul></details>
+          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+          <div class="links"><a class="btn btn-ink" href="demo-coffee/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-coffee" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="work w4">
+          <a class="media phone-shot" href="demo-barber/" target="_blank" rel="noopener" aria-label="Открыть сайт: Барбершоп «Чуб»">
+            <video muted loop playsinline preload="none" poster="reels/barber.jpg" aria-hidden="true"><source src="reels/barber.webm" type="video/webm"><source src="reels/barber.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Telegram Mini App</p>
+          <h3>Барбершоп «Чуб»</h3>
+          <p>Запись без выхода из Telegram: услуга, мастер, время за минуту. Подстраивается под тему Telegram.</p>
+          <details><summary>Что умеет</summary><ul><li>Свободные окна считаются по длительности услуги.</li><li>«Мои записи» с отменой и экран мастера с расписанием дня.</li><li>Имя клиента подставляется из Telegram.</li></ul></details>
+          <ul class="stack" aria-label="Технологии"><li>Telegram Mini Apps</li><li>JavaScript</li></ul>
+          <div class="links"><a class="btn btn-ink" href="demo-barber/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://t.me/chub_barber_demo_bot" target="_blank" rel="noopener">Открыть в Telegram</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-barber" target="_blank" rel="noopener">Код</a></div>
+        </article>
+        <article class="work w4">
+          <a class="media" href="demo-nails/" target="_blank" rel="noopener" aria-label="Открыть сайт: Студия маникюра «Палитра»">
+            <video muted loop playsinline preload="none" poster="reels/nails.jpg" aria-hidden="true"><source src="reels/nails.webm" type="video/webm"><source src="reels/nails.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Подбор цвета и запись</p>
+          <h3>Студия маникюра «Палитра»</h3>
+          <p>Клиентка выбирает оттенок лака прямо на руке — глянец или мат — и записывается с этим цветом.</p>
+          
+          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
           <div class="links"><a class="btn btn-ink" href="demo-nails/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-nails" target="_blank" rel="noopener">Код</a></div>
         </article>
-        <article class="mini-case">
-          <a class="shot" href="demo-fitness/" target="_blank" rel="noopener"><img src="img/fitness.jpg" alt="Лендинг студии йоги и пилатеса «Поток»" width="960" height="600" loading="lazy"></a>
-          <h4>Студия йоги «Поток»</h4>
-          <p>Расписание на неделю с фильтрами и свободными местами. Нажал на занятие — и оно уже в записи на пробное.</p>
+        <article class="work w4">
+          <a class="media" href="demo-fitness/" target="_blank" rel="noopener" aria-label="Открыть сайт: Студия йоги «Поток»">
+            <video muted loop playsinline preload="none" poster="reels/fitness.jpg" aria-hidden="true"><source src="reels/fitness.webm" type="video/webm"><source src="reels/fitness.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Расписание и пробное занятие</p>
+          <h3>Студия йоги «Поток»</h3>
+          <p>Расписание недели с фильтрами и свободными местами. Нажал на занятие — оно уже в записи.</p>
+          
+          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
           <div class="links"><a class="btn btn-ink" href="demo-fitness/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-fitness" target="_blank" rel="noopener">Код</a></div>
         </article>
-        <article class="mini-case">
-          <a class="shot" href="demo-autoservice/" target="_blank" rel="noopener"><img src="img/autoservice.jpg" alt="Лендинг автосервиса «Гайка»" width="960" height="600" loading="lazy"></a>
-          <h4>Автосервис «Гайка»</h4>
+        <article class="work w6">
+          <a class="media" href="demo-autoservice/" target="_blank" rel="noopener" aria-label="Открыть сайт: Автосервис «Гайка»">
+            <video muted loop playsinline preload="none" poster="reels/autoservice.jpg" aria-hidden="true"><source src="reels/autoservice.webm" type="video/webm"><source src="reels/autoservice.mp4" type="video/mp4"></video>
+          </a>
+          <p class="kind">Калькулятор стоимости</p>
+          <h3>Автосервис «Гайка»</h3>
           <p>Калькулятор сразу называет цену по классу машины и нужным работам, а расчёт попадает в заявку.</p>
+          
+          <ul class="stack" aria-label="Технологии"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
           <div class="links"><a class="btn btn-ink" href="demo-autoservice/" target="_blank" rel="noopener">Открыть сайт</a><a class="btn btn-ghost" href="https://github.com/arseniyspbdev/arseniyspbdev.github.io/tree/main/demo-autoservice" target="_blank" rel="noopener">Код</a></div>
         </article>
+        <aside class="next" aria-label="Следующий проект">
+          <div>
+            <h3>Здесь может быть ваш бизнес</h3>
+            <p>Напишите, чем вы занимаетесь и что должен сделать клиент на сайте. Первую версию покажу через несколько дней.</p>
+          </div>
+          <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener" style="align-self:flex-start"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.3M21 4l-3.5 16-8.5-6.7M21 4 9 13.3m0 0V19l3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Написать в Telegram</a>
+        </aside>
       </div>
     </div>
   </section>
@@ -432,11 +397,13 @@
           <h3>Лендинг или сайт-визитка</h3>
           <p>Одна страница о вашем деле: услуги, цены, фото, контакты и форма заявки или брони.</p>
           <p class="fit">Когда нужно, чтобы вас находили и сразу понимали, что вы предлагаете.</p>
+          <p class="eg">Пример: <a href="demo-coffee/" target="_blank" rel="noopener">кофейня «Кафель»</a>, <a href="demo-cake/" target="_blank" rel="noopener">кондитерская «Корж»</a></p>
         </div>
         <div class="svc">
           <h3>Telegram Mini App</h3>
           <p>Приложение внутри Telegram: запись, каталог, заказ, бронь. Клиенту ничего не нужно скачивать.</p>
           <p class="fit">Когда ваши клиенты и так пишут вам в Telegram.</p>
+          <p class="eg">Пример: <a href="https://t.me/chub_barber_demo_bot" target="_blank" rel="noopener">барбершоп «Чуб»</a></p>
         </div>
         <div class="svc">
           <h3>Telegram-бот</h3>
@@ -465,7 +432,7 @@
         <h3>Почему с ИИ</h3>
         <div>
           <p>Я работаю вместе с ИИ: он быстро пишет код и берёт на себя рутину. Мне остаётся главное: понять вашу задачу, проверить, что всё работает на телефоне и компьютере, и довести результат до того вида, который нужен вашим клиентам.</p>
-          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и все работы выше сделаны так же.</p>
+          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и все работы выше сделаны так же — даже ролики-превью записаны автоматически.</p>
         </div>
       </div>
     </div>
@@ -497,19 +464,44 @@
 </footer>
 
 <script>
-  // Живые демо: страница в iframe рендерится в настоящем размере и уменьшается под рамку
-  const fit = () => document.querySelectorAll('.screen').forEach((s) => {
-    const f = s.querySelector('iframe');
-    const k = s.clientWidth / Number(s.dataset.w);
-    f.style.transform = `scale(${k})`;
-    f.style.height = `${s.clientHeight / k}px`;
+  // Шоурил: три ролика по очереди; полоска под названием показывает, сколько осталось
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reelVids = [...document.querySelectorAll('.reel-stage video')];
+  const reelTabs = [...document.querySelectorAll('.reel-tab')];
+  const reelOpen = document.getElementById('reel-open');
+  let cur = 0, reelOn = false;
+  const show = (i) => {
+    cur = i;
+    reelVids.forEach((v, k) => {
+      v.classList.toggle('on', k === i);
+      if (k === i) { v.preload = 'auto'; v.currentTime = 0; if (reelOn && !reduced) v.play().catch(() => {}); } else v.pause();
+    });
+    reelTabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.querySelector('i').style.transform = `scaleX(${k < i ? 1 : 0})`; });
+    reelOpen.href = `demo-${reelTabs[i].dataset.reel}/`;
+    reelOpen.textContent = `Открыть «${reelTabs[i].dataset.name}»`;
+    // следующий ролик подгружаем заранее
+    reelVids[(i + 1) % reelVids.length].preload = 'auto';
+  };
+  reelTabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+  reelVids.forEach((v, i) => {
+    v.addEventListener('timeupdate', () => { if (i === cur && v.duration) reelTabs[i].querySelector('i').style.transform = `scaleX(${v.currentTime / v.duration})`; });
+    v.addEventListener('ended', () => show((i + 1) % reelVids.length));
   });
-  fit();
-  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(document.body);
-  else addEventListener('resize', fit);
+
+  // Ролики играют, только пока их видно; при «меньше движения» — стоят на постере
+  const cardVids = [...document.querySelectorAll('.media video')];
+  if ('IntersectionObserver' in window && !reduced) {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      const v = e.target;
+      if (v.closest('.reel-stage')) { reelOn = e.isIntersecting; const c = reelVids[cur]; if (reelOn) c.play().catch(() => {}); else c.pause(); return; }
+      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: .35 });
+    cardVids.forEach((v) => io.observe(v));
+    io.observe(reelVids[0]);
+  }
+  show(0);
 
   // Якоря прокручиваем сами: так переходы работают и в превью, и во встроенных окнах
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
     const t = document.getElementById(a.getAttribute('href').slice(1));
     if (!t) return;
@@ -616,21 +608,14 @@
   lens.addEventListener('pointercancel', drop);
   lens.addEventListener('lostpointercapture', () => drop());
 
-  // Пятно за курсором по всему сайту, только где есть мышь
+  // Пятно за курсором по всему сайту, только где есть мышь. Двигаем слой через transform:
+  // менять CSS-переменные на каждое движение мыши — пересчитывать стили всей страницы
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const b = document.body;
+    const glow = document.querySelector('.glow');
     let x = 0, y = 0, queued = false;
-    const paint = () => {
-      queued = false;
-      b.style.setProperty('--mx', `${x}px`);
-      b.style.setProperty('--my', `${y}px`);
-      b.classList.add('is-lit');
-    };
-    addEventListener('pointermove', (e) => {
-      x = e.clientX; y = e.clientY;
-      if (!queued) { queued = true; requestAnimationFrame(paint); }
-    }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', () => b.classList.remove('is-lit'));
+    const paint = () => { queued = false; glow.style.transform = `translate(${x}px, ${y}px)`; glow.classList.add('on'); };
+    addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; if (!queued) { queued = true; requestAnimationFrame(paint); } }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => glow.classList.remove('on'));
   }
 </script>
 </body>
