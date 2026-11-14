@@ -221,9 +221,11 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
   }
 </style>
+<link rel="stylesheet" href="portfolio.css">
 
 </head>
 <body>
+<a class="skip-link" href="#works">Перейти к работам</a>
 <div class="glow" aria-hidden="true"></div>
 
 <svg width="0" height="0" style="position: absolute" aria-hidden="true">
@@ -248,27 +250,28 @@
 
 <div class="hero" id="top">
   <section class="wrap intro" aria-labelledby="hero-title">
-    <h1 id="hero-title">Сайты для малого бизнеса, которые хочется потрогать</h1>
+    <div><p class="eyebrow">Арсений · независимый разработчик</p><h1 id="hero-title">Ваш бизнес.<br>Сайт <em>с характером.</em></h1></div>
     <div>
-      <p>Делаю лендинги, Telegram-приложения и 3D-витрины. Клиент сам собирает торт, лепит вазу или бронирует стол — и сразу оставляет заявку. Работаю вместе с ИИ, поэтому первую версию показываю быстро.</p>
+      <p>Делаю сайты и Telegram-приложения для малого бизнеса. Чтобы клиент мог выбрать, собрать, записаться — и захотел вернуться.</p>
       <div class="actions">
-        <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.3M21 4l-3.5 16-8.5-6.7M21 4 9 13.3m0 0V19l3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Обсудить задачу в Telegram</a>
-        <a class="btn btn-ghost" href="#works">Все работы</a>
+        <a class="btn btn-ochre" href="#works">Посмотреть работы <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-ghost" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">Обсудить проект</a>
       </div>
     </div>
   </section>
 
   <section class="wrap reel" aria-label="Три работы в движении">
+    <div class="reel-caption"><span>Не картинки. Рабочие сайты.</span><button class="reel-pause" type="button" aria-pressed="false">Приостановить</button></div>
     <div class="reel-stage">
       <video muted playsinline preload="auto" poster="reels/cake.jpg" data-reel="cake" class="on" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
       <video muted playsinline preload="none" poster="reels/pottery.jpg" data-reel="pottery" class="" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
       <video muted playsinline preload="none" poster="reels/flowers.jpg" data-reel="flowers" class="" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
       <a class="btn btn-ochre reel-open" id="reel-open" href="demo-cake/" target="_blank" rel="noopener">Открыть «Корж»</a>
     </div>
-    <div class="reel-tabs" role="tablist" aria-label="Работы в шоуриле">
-      <button type="button" class="reel-tab" role="tab" aria-selected="true" data-reel="cake" data-name="Корж"><i></i><b>Корж</b><span>3D-конструктор торта</span></button>
-      <button type="button" class="reel-tab" role="tab" aria-selected="false" data-reel="pottery" data-name="Круг"><i></i><b>Круг</b><span>Лепка вазы в 3D</span></button>
-      <button type="button" class="reel-tab" role="tab" aria-selected="false" data-reel="flowers" data-name="Стебель"><i></i><b>Стебель</b><span>Букет из фото</span></button>
+    <div class="reel-tabs" role="group" aria-label="Работы в шоуриле">
+      <button type="button" class="reel-tab" aria-pressed="true" data-reel="cake" data-name="Корж"><i></i><b>Корж</b><span>3D-конструктор торта</span></button>
+      <button type="button" class="reel-tab" aria-pressed="false" data-reel="pottery" data-name="Круг"><i></i><b>Круг</b><span>Лепка вазы в 3D</span></button>
+      <button type="button" class="reel-tab" aria-pressed="false" data-reel="flowers" data-name="Стебель"><i></i><b>Стебель</b><span>Букет из фото</span></button>
     </div>
     <ul class="facts">
       <li><b>8</b>живых демо</li>
@@ -283,10 +286,17 @@
   <section class="section" id="works" aria-labelledby="works-title">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="works-title">Работы</h2>
+        <h2 id="works-title"><span class="eyebrow">01 / Портфолио</span>Можно попробовать</h2>
         <p>Это демо-проекты: заведения вымышленные, но всё остальное работает по-настоящему. По ним видно, как я думаю о клиентах вашего бизнеса и что получите вы.</p>
       </div>
-      <div class="grid">
+      <div class="work-filters" role="group" aria-label="Фильтр работ" hidden>
+        <button type="button" data-filter="all" aria-pressed="true">Все работы <span>8</span></button>
+        <button type="button" data-filter="interactive" aria-pressed="false">Конструкторы <span>3</span></button>
+        <button type="button" data-filter="booking" aria-pressed="false">Запись и услуги <span>4</span></button>
+        <button type="button" data-filter="telegram" aria-pressed="false">Telegram <span>1</span></button>
+      </div>
+      <p class="filter-status" role="status" aria-live="polite"></p>
+      <div class="grid" id="work-grid">
         <article class="work w7">
           <a class="media" href="demo-cake/" target="_blank" rel="noopener" aria-label="Открыть сайт: Кондитерская «Корж»">
             <span class="badge">3D</span><video muted loop playsinline preload="none" poster="reels/cake.jpg" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
@@ -469,20 +479,41 @@
   const reelVids = [...document.querySelectorAll('.reel-stage video')];
   const reelTabs = [...document.querySelectorAll('.reel-tab')];
   const reelOpen = document.getElementById('reel-open');
-  let cur = 0, reelOn = false;
+  let cur = 0, reelOn = false, reelPaused = reduced;
+  const pauseButton = document.querySelector('.reel-pause');
+  const updatePause = () => {
+    pauseButton.setAttribute('aria-pressed', String(reelPaused));
+    pauseButton.textContent = reelPaused ? 'Воспроизвести' : 'Приостановить';
+  };
+  updatePause();
+  pauseButton.addEventListener('click', () => {
+    reelPaused = !reelPaused;
+    if (reelPaused) reelVids[cur].pause();
+    else if (reelOn) reelVids[cur].play().catch(() => {});
+    updatePause();
+  });
   const show = (i) => {
     cur = i;
     reelVids.forEach((v, k) => {
       v.classList.toggle('on', k === i);
-      if (k === i) { v.preload = 'auto'; v.currentTime = 0; if (reelOn && !reduced) v.play().catch(() => {}); } else v.pause();
+      if (k === i) { v.preload = 'auto'; v.currentTime = 0; if (reelOn && !reelPaused) v.play().catch(() => {}); } else v.pause();
     });
-    reelTabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.querySelector('i').style.transform = `scaleX(${k < i ? 1 : 0})`; });
+    reelTabs.forEach((t, k) => { t.setAttribute('aria-pressed', String(k === i)); t.querySelector('i').style.transform = `scaleX(${k < i ? 1 : 0})`; });
     reelOpen.href = `demo-${reelTabs[i].dataset.reel}/`;
     reelOpen.textContent = `Открыть «${reelTabs[i].dataset.name}»`;
     // следующий ролик подгружаем заранее
     reelVids[(i + 1) % reelVids.length].preload = 'auto';
   };
   reelTabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+  reelTabs.forEach((t, i) => t.addEventListener('keydown', (event) => {
+    let next;
+    if (event.key === 'ArrowRight') next = (i + 1) % reelTabs.length;
+    if (event.key === 'ArrowLeft') next = (i + reelTabs.length - 1) % reelTabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = reelTabs.length - 1;
+    if (next === undefined) return;
+    event.preventDefault(); show(next); reelTabs[next].focus();
+  }));
   reelVids.forEach((v, i) => {
     v.addEventListener('timeupdate', () => { if (i === cur && v.duration) reelTabs[i].querySelector('i').style.transform = `scaleX(${v.currentTime / v.duration})`; });
     v.addEventListener('ended', () => show((i + 1) % reelVids.length));
@@ -490,16 +521,31 @@
 
   // Ролики играют, только пока их видно; при «меньше движения» — стоят на постере
   const cardVids = [...document.querySelectorAll('.media video')];
-  if ('IntersectionObserver' in window && !reduced) {
+  if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
       const v = e.target;
-      if (v.closest('.reel-stage')) { reelOn = e.isIntersecting; const c = reelVids[cur]; if (reelOn) c.play().catch(() => {}); else c.pause(); return; }
-      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+      if (v.closest('.reel-stage')) { reelOn = e.isIntersecting; const c = reelVids[cur]; if (reelOn && !reelPaused) c.play().catch(() => {}); else c.pause(); return; }
+      if (e.isIntersecting && !reduced) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
     }), { threshold: .35 });
     cardVids.forEach((v) => io.observe(v));
     io.observe(reelVids[0]);
   }
   show(0);
+
+  const filterBar = document.querySelector('.work-filters');
+  const workCards = [...document.querySelectorAll('#work-grid .work')];
+  const categories = ['interactive', 'interactive', 'interactive', 'booking', 'telegram', 'booking', 'booking', 'booking'];
+  const filterButtons = [...filterBar.querySelectorAll('button')];
+  filterBar.hidden = false;
+  filterButtons.forEach((button) => button.addEventListener('click', () => {
+    const filter = button.dataset.filter;
+    filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+    workCards.forEach((card, index) => {
+      card.hidden = filter !== 'all' && categories[index] !== filter;
+      if (card.hidden) card.querySelectorAll('video').forEach((video) => video.pause());
+    });
+    document.querySelector('.filter-status').textContent = `Показано проектов: ${workCards.filter((card) => !card.hidden).length} из ${workCards.length}`;
+  }));
 
   // Якоря прокручиваем сами: так переходы работают и в превью, и во встроенных окнах
   document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
