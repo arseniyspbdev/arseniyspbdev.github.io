@@ -1,0 +1,30 @@
+:root { --night:#f5f4e9; --night-2:#e9edde; --night-line:#30483724; --on-night:#304837; --on-night-soft:#68785f; --tissue:#faf8ef; --tissue-2:#ecebdc; --ink:#304837; --ink-soft:#68785f; --line:#d6dcc8; --peony:#e6b9a0; --peony-deep:#8e4c38; --kraft:#aa8253; --leaf:#66885e; --studio-paper:var(--tissue); --studio-ink:var(--ink); }
+.demo-bar { background:#e6ebdb; color:var(--ink-soft); font-size:.7rem; padding:9px 20px; }
+.site-header { background:#faf8efed; backdrop-filter:blur(16px); border-color:var(--line); }
+.site-header .wrap { min-height:76px; }
+.logo { font-size:2rem; font-style:italic; }
+.bag { background:#e6ebdb; border-radius:8px; font-size:.8rem; }
+.bag:hover { background:#dce4cf; }
+.bag i { background:var(--leaf); }
+.studio { background:linear-gradient(100deg,#f5f4e9,#edf0e2); }
+.studio::before { background:radial-gradient(ellipse at 75% 45%,#c9d7b944,transparent 65%); }
+.studio .wrap { padding-top:60px; padding-bottom:70px; gap:60px; }
+.studio h1 { font-size:clamp(4rem,6vw,6.5rem); line-height:.96; letter-spacing:-.05em; font-weight:500; }
+.lead { line-height:1.85; font-size:1rem; }
+.stem-row { padding-block:5px; }
+.stem-add { min-height:70px; }
+.stem-add b { font-size:1rem; }
+.stem-add .price { font-size:.85rem; }
+.counter button { border-color:#c7d0b9; }
+.stem-row.has .counter .plus { background:var(--ink); border-color:var(--ink); color:#fff; }
+.papers { background:#e3e8d8; border:1px solid #d2dbc5; }
+.papers button[aria-pressed=true] { background:var(--ink); color:#fff; }
+.papers button { font-size:.76rem; }
+#layers { filter:drop-shadow(0 12px 10px #30483726); }
+.stage { border-radius:200px 200px 14px 14px; background:#e5ead773; padding:20px; }
+.total output { font-size:3.2rem; }
+.btn { border-radius:8px; }
+.section-head h2 { letter-spacing:-.045em; }
+.card-side { border-left:1px solid var(--line); padding-left:28px; }
+@media(max-width:960px) { .studio .wrap { gap:30px; padding-block:30px 45px; } .stage { padding:16px; } }
+@media(max-width:600px) { .studio h1 { font-size:clamp(3.4rem,13vw,4.8rem); } .studio .wrap { grid-template-columns:minmax(0,1fr); } .stem-add { grid-template-columns:40px minmax(0,1fr) auto; gap:8px; } .stem-add .ico { width:40px;height:40px; } .stem-add b { font-size:.9rem; } .counter button { width:34px; height:38px; } .counter output { min-width:21px; } .stage { border-radius:150px 150px 12px 12px; } .card-side { padding-left:0; border:0; } .section-head h2 { font-size:2.8rem; } }

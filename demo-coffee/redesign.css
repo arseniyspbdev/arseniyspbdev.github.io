@@ -1,0 +1,25 @@
+:root { --tile:#f7f2e7; --grout:#dbd5c4; --ink:#293d32; --ink-soft:#607061; --cobalt:#38624a; --cobalt-deep:#274b36; --on-cobalt:#576b5a; --yolk:#edd46f; --yolk-soft:#f6edc8; --mint:#b3c3a1; --mint-ground:#e6eadd; --taken:#a3aea0; --studio-paper:var(--tile); --studio-ink:var(--ink); }
+.glaze:not(.contacts) { background-color:var(--tile); color:var(--ink); background-image:linear-gradient(#d6d2c52b 1px,transparent 1px),linear-gradient(90deg,#d6d2c52b 1px,transparent 1px); background-size:80px 80px; }
+.demo-bar { background:var(--cobalt); color:#f7f2e7; font-size:.7rem; padding:9px 20px; }
+.logo { color:var(--ink); font-size:1.3rem; }
+.logo svg rect { fill:var(--cobalt); }
+.logo svg rect:last-child { fill:#d1ae42; }
+.site-header { padding-block:25px; }
+.site-header nav a:hover { color:var(--cobalt); }
+.hero { padding-block:50px 85px; column-gap:55px; }
+.hero h1 { font-family:Georgia,'Times New Roman',serif; font-weight:400; letter-spacing:-.055em; font-size:clamp(3.8rem,6vw,6rem); line-height:1.02; }
+.lead { font-size:1rem; line-height:1.85; }
+.btn { border-radius:999px; min-height:48px; font-size:.88rem; }
+.panel { border:1px solid var(--grout); border-radius:18px; box-shadow:0 16px 40px #293d320c; padding:28px; }
+.plan-wrap { border-radius:22px; background:#e8ecdf; padding:18px; border:1px solid #d1dbc8; }
+.chip { border-radius:8px; }
+.plan-foot { font-size:.85rem; }
+.section h2 { font-family:Georgia,serif; font-weight:400; font-size:clamp(2.6rem,4.5vw,4.3rem); letter-spacing:-.04em; }
+.menu-item { border-bottom:1px solid var(--grout); }
+.hall { background:var(--mint-ground); }
+.mosaic { border-radius:16px; box-shadow:none; }
+.contacts.glaze { background:var(--cobalt); --on-cobalt:#d9e5d6; color:#fff; }
+.contacts .studio-kicker { color:#fff; }
+.site-footer { background:var(--ink); color:#d6e0d1; }
+@media(max-width:960px) { .hero { grid-template-columns:minmax(0,1fr); grid-template-areas:'text' 'panel' 'plan'; gap:26px; padding-block:30px 55px; } }
+@media(max-width:600px) { .hero h1 { font-size:clamp(3rem,12.5vw,4.5rem); } .panel { padding:19px; } .plan-wrap { padding:9px; border-radius:12px; } .logo { font-size:1rem; } .site-header { padding-block:18px; } }

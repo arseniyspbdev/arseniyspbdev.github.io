@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Гончарная мастерская «Круг»</title>
 <meta name="description" content="Демо-лендинг гончарной мастерской: слепите вазу в 3D на крутящемся круге, проведите её через обжиг и глазурь и запишитесь на мастер-класс.">
-<meta name="theme-color" content="#d3cec6">
+<meta name="theme-color" content="#f2eadd">
 <meta property="og:title" content="Гончарная мастерская «Круг»">
 <meta property="og:description" content="Слепите вазу прямо на экране — а в субботу повторите руками.">
 <meta property="og:image" content="https://arseniyspbdev.github.io/img/pottery.jpg">
@@ -243,6 +243,9 @@
     *, *::before, *::after { transition-duration: .01ms !important; }
   }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body class="in-hero">
 <div class="demo-bar">Демо-проект для портфолио: мастерская и цены вымышлены, запись никуда не отправляется.</div>
@@ -269,7 +272,7 @@
     <img class="fallback" src="https://images.unsplash.com/photo-1507022787381-b30170b5ebf4?auto=format&fit=crop&w=700&h=930&q=72" alt="Руки гончара центрируют глину на круге" width="700" height="930">
     <div class="wrap">
       <div>
-        <h1 id="hero-title">Слепите вазу прямо здесь. А&nbsp;в&nbsp;субботу&nbsp;— руками</h1>
+        <p class="studio-kicker">Круг / мастерская медленных вещей</p><h1 id="hero-title">Отпустите мысли.<br>Почувствуйте<br>глину.</h1>
         <p>Круг уже крутится: потяните глину пальцем&nbsp;— шире, уже, выше. Мастер на&nbsp;занятии поможет повторить вашу форму из&nbsp;настоящей глины.</p>
         <div class="hero-cta"><a class="btn btn-ox" href="#book">Записаться на&nbsp;мастер-класс</a><a class="btn btn-line" href="#journey">Что будет дальше</a></div>
       </div>
@@ -711,9 +714,9 @@ const STAGES = () => {
   const gz = C(glazeOf().color);
   const raw = gz.clone().lerp(C('#e8e2d8'), .55);
   return [
-    { color: C('#6f655c'), rough: .32, coat: .5, bump: 1.4, bg: C('#d3cec6') },
-    { color: C('#b5aa9c'), rough: .95, coat: 0, bump: .7, bg: C('#dcd8d0') },
-    { color: C('#c99479'), rough: .9, coat: 0, bump: .5, bg: C('#e3d4c6') },
+    { color: C('#6f655c'), rough: .32, coat: .5, bump: 1.4, bg: C('#f2eadd') },
+    { color: C('#b5aa9c'), rough: .95, coat: 0, bump: .7, bg: C('#f4ecdf') },
+    { color: C('#c99479'), rough: .9, coat: 0, bump: .5, bg: C('#f0dfca') },
     { color: raw, rough: .98, coat: 0, bump: .9, bg: gz.clone().lerp(C('#e4e1dc'), .72) },
     { color: gz, rough: glazeOf().rough, coat: 1, bump: .15, bg: gz.clone().lerp(C('#efece6'), .82) },
   ];
@@ -836,7 +839,7 @@ function scroll() {
   }
   ScrollTrigger.create({ trigger: '.hero', start: 'top top', end: 'bottom 40%', onToggle: (st) => document.body.classList.toggle('in-hero', st.isActive) });
   // за пределами пути вазы холст не нужен — перестаём рисовать
-  ScrollTrigger.create({ trigger: '#journey', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#d3cec6'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyStage(); } });
+  ScrollTrigger.create({ trigger: '#journey', start: 'top top', end: 'bottom bottom', onLeave: () => { visible = false; canvas.classList.add('off'); document.documentElement.style.setProperty('--bg', '#f2eadd'); }, onEnterBack: () => { visible = true; canvas.classList.remove('off'); applyStage(); } });
   ScrollTrigger.create({ start: 80, end: 'max', onToggle: (st) => document.documentElement.classList.toggle('scrolled', st.isActive) });
 
   // каждый этап: вход, удержание, выход; ваза едет вправо, камера подходит ближе
@@ -859,5 +862,6 @@ function scroll() {
 if (window.gsap && window.ScrollTrigger) scroll(); else addEventListener('load', scroll);
 applyStage();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

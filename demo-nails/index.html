@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Студия маникюра «Палитра»</title>
+<meta name="theme-color" content="#faf6f3">
 <meta name="description" content="Демо-лендинг студии маникюра: подбор цвета покрытия и онлайн-запись.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,6 +167,9 @@
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body>
 <div class="demo-bar" id="top">Демо-проект для портфолио: студия, мастера и цены вымышлены, запись никуда не отправляется.</div>
@@ -179,7 +183,7 @@
 
   <section class="wrap hero-grid" aria-labelledby="hero-title">
     <div>
-      <h1 id="hero-title">Маникюр в цвете вашего настроения</h1>
+      <p class="studio-kicker">Палитра / студия заботы и цвета</p><h1 id="hero-title">Маленькая деталь.<br>Ваше большое<br>настроение.</h1>
       <p class="lead">Студия маникюра и педикюра. Подберите оттенок прямо на сайте — мастер подготовит его к вашему визиту.</p>
       <div class="hero-actions"><a class="btn btn-light" href="#booking">Записаться онлайн</a><a class="btn btn-outline" href="#color">Подобрать цвет</a></div>
     </div>
@@ -437,5 +441,6 @@
   paint();
 })();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

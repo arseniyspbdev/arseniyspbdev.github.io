@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Барбершоп «Чуб»</title>
+<meta name="theme-color" content="#f1efe7">
 <meta name="description" content="Демо Telegram Mini App: онлайн-запись в барбершоп — услуга, мастер, время, мои записи и расписание мастера.">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -252,6 +253,9 @@
   @keyframes fade { from { opacity: .4; transform: translateY(4px); } }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body>
 <div class="app">
@@ -650,5 +654,6 @@
   render();
 })();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

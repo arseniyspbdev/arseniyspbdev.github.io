@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Кофейня «Кафель»</title>
+<meta name="theme-color" content="#f7f2e7">
 <meta name="description" content="Демо-лендинг кофейни «Кафель»: бронь столика прямо на плане зала.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -313,6 +314,9 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body>
 
@@ -340,7 +344,7 @@
   <main>
     <section class="hero wrap" id="booking" aria-labelledby="hero-title">
       <div class="hero-text">
-        <h1 id="hero-title">Кофе на&nbsp;старом кафеле</h1>
+        <p class="studio-kicker">Кафель / кофе и добрые привычки</p><h1 id="hero-title">Ваш столик.<br>Ваш маленький<br>ритуал.</h1>
         <p class="lead">Кофейня в бывшей молочной 1964 года. Выберите стол прямо на плане зала, и мы придержим его к вашему приходу.</p>
       </div>
 
@@ -813,5 +817,6 @@
   render();
 })();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

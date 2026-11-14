@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Студия «Поток»</title>
+<meta name="theme-color" content="#f4f5ed">
 <meta name="description" content="Демо-лендинг студии йоги и пилатеса: расписание с фильтрами и запись на пробное занятие.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,6 +147,9 @@
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body>
 <div class="demo-bar" id="top">Демо-проект для портфолио: студия, тренеры и цены вымышлены, запись никуда не отправляется.</div>
@@ -162,7 +166,7 @@
 <main>
   <section class="wrap hero" aria-labelledby="hero-title">
     <div>
-      <h1 id="hero-title">Йога и пилатес <em>рядом с домом</em></h1>
+      <p class="studio-kicker">Поток / пространство для себя</p><h1 id="hero-title">Меньше спешки.<br><em>Больше себя.</em></h1>
       <p>Небольшие группы до 10 человек. Выберите занятие в расписании — первое пробное за 500 ₽.</p>
       <div class="offer"><a class="btn btn-violet" href="#trial">Записаться на пробное</a><a class="btn btn-ghost" href="#schedule">Расписание</a></div>
     </div>
@@ -346,5 +350,6 @@
   render(); pickedBox();
 })();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

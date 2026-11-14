@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Автосервис «Гайка»</title>
+<meta name="theme-color" content="#f5f5ee">
 <meta name="description" content="Демо-лендинг автосервиса: калькулятор стоимости работ и заявка на ремонт.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,6 +148,9 @@
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
+<link rel="stylesheet" href="../demo-assets/studio.css?v=1">
+<link rel="stylesheet" href="redesign.css?v=1">
+<script src="../demo-assets/studio.js?v=1" defer></script>
 </head>
 <body>
 <div class="demo-bar" id="top">Демо-проект для портфолио: автосервис и цены вымышлены, заявка никуда не отправляется.</div>
@@ -183,7 +187,7 @@
 
   <section class="wrap hero" aria-labelledby="hero-title">
     <div>
-      <h1 id="hero-title">Ремонт без сюрпризов в <span>чеке</span></h1>
+      <p class="studio-kicker">Автосервис / всё по делу</p><h1 id="hero-title">Ремонт понятен.<br>Цена — тоже.</h1>
       <p>Посчитайте стоимость сами прямо на сайте. Если при осмотре найдём что-то ещё — сначала позвоним и согласуем.</p>
       <ul class="perks">
         <li>Гарантия на работы 6 месяцев</li>
@@ -369,5 +373,6 @@
   update();
 })();
 </script>
+<div class="studio-footer"><a href="../">← Все проекты Арсения</a><span aria-hidden="true">/</span>Интерактивный демо-проект</div>
 </body>
 </html>

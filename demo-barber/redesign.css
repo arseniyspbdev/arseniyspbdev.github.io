@@ -1,0 +1,34 @@
+/* Fallback identity changes only outside Telegram; in-app theme variables remain authoritative. */
+:root { --f-bg:#f1efe7; --f-section:#fffdf5; --f-text:#292e29; --f-hint:#727769; --f-accent:#4e6248; --f-accent-text:#fffdf5; --f-sep:#dedfd2; --radius:17px; --studio-paper:var(--bg); --studio-ink:var(--text); }
+html { color-scheme:light; }
+.app { max-width:520px; padding-top:24px; }
+.top { padding:5px 5px 25px; gap:15px; }
+.brand-mark { width:52px; height:52px; border-radius:15px 15px 4px 15px; }
+.brand b { font-size:25px; font-weight:750; letter-spacing:-.04em; }
+.brand span { font-size:12px; }
+.demo-note { font-size:12px; padding:13px 15px; border-radius:10px; border:1px solid var(--sep); background:var(--section); }
+.seg { background:transparent; border:1px solid var(--sep); padding:4px; gap:4px; border-radius:12px; margin-block:20px 26px; }
+.seg button { min-height:42px; font-size:13px; }
+.seg button[aria-selected=true] { background:var(--accent); color:var(--accent-text); box-shadow:none; }
+.stephead h1 { font-size:27px; letter-spacing:-.05em; font-weight:650; }
+.stephead { margin-bottom:8px; }
+.progress { gap:7px; margin-bottom:25px; }
+.progress i { height:4px; }
+.list { border:1px solid var(--sep); border-radius:15px; }
+.row { min-height:76px; padding:16px; gap:14px; }
+.row-title { font-weight:600; font-size:16px; }
+.row-sub { font-size:12px; line-height:1.5; margin-top:4px; }
+.row-side b { font-size:16px; }
+.row[aria-pressed=true] { background:var(--accent-soft); }
+.ava { border-radius:12px; width:45px; height:45px; }
+.caption { font-size:11px; letter-spacing:.11em; margin-block:24px 10px; }
+.day { flex-basis:58px; min-height:75px; border-radius:12px; border:1px solid var(--sep); }
+.slot { min-height:46px; border-radius:9px; border:1px solid var(--sep); }
+.card { border:1px solid var(--sep); padding:20px; }
+.btn { border-radius:12px; }
+.bottom { border-top:1px solid var(--sep); }
+.in-tg { color-scheme:normal; }
+.in-tg .app { padding-top:12px; }
+.studio-footer { padding-bottom:130px; }
+.in-tg .studio-footer { padding-bottom:25px; }
+@media(max-width:360px) { .row { gap:9px; padding:13px; } .row-side b { font-size:14px; } .seg button { font-size:12px; } .stephead h1 { font-size:24px; } }
