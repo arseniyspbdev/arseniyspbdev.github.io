@@ -1189,10 +1189,12 @@ section[id],.hero {
     font-size:.73rem;
   }
   .grid {
-    gap:42px;
+    grid-template-columns:minmax(0,1fr);
+    gap:42px 0;
   }
   .work,.next {
-    grid-column:span 12;
+    grid-column:auto;
+    min-width:0;
   }
   .work .kind {
     margin-top:18px;
