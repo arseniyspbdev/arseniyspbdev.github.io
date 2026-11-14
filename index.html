@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Арсений — сайты и Telegram-приложения</title>
 <meta name="description" content="Делаю лендинги, Telegram Mini Apps и 3D-витрины для малого бизнеса: клиенты сами собирают, бронируют и записываются. Восемь живых демо на странице.">
-<meta name="theme-color" content="#15171a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2315171a'/%3E%3Cpath d='M18 50 30 14h4l12 36h-7l-3-9H24l-3 9zm8-15h10l-5-15z' fill='%23e8ad3c'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f6f5f0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233049e8'/%3E%3Cpath d='M18 50 30 14h4l12 36h-7l-3-9H24l-3 9zm8-15h10l-5-15z' fill='%23fffefa'/%3E%3C/svg%3E">
 <meta property="og:title" content="Арсений — сайты и Telegram-приложения">
 <meta property="og:description" content="Лендинги, Telegram Mini Apps и 3D-витрины для малого бизнеса. Восемь живых демо.">
 <meta property="og:image" content="https://arseniyspbdev.github.io/img/og.jpg">
@@ -14,260 +14,48 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  /* Графит и охра: тёмный сайт, охра — акцент; работы показаны живыми роликами — на первом экране шоурил трёх лучших */
-  :root {
-    --ochre: #e8ad3c;
-    --ochre-deep: #b9811a;
-    --ink: #111315;
-    --bg: #15171a;
-    --surface: rgba(255, 255, 255, .035);
-    --raised: #24282d;
-    --text: #eceef0;
-    --text-soft: #a0a6af;
-    --line: #2d3137;
-    --line-strong: #3d424a;
-    --display: 'Geologica', 'Segoe UI', sans-serif;
-    --body: 'Onest', 'Segoe UI', system-ui, sans-serif;
-    --ease: cubic-bezier(.16, 1, .3, 1);
-    color-scheme: dark;
-  }
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scrollbar-color: var(--line-strong) var(--bg); background: var(--bg); }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
-  ::selection { background: var(--ochre); color: var(--ink); }
-  :focus-visible { outline: 3px solid var(--ochre); outline-offset: 3px; border-radius: 4px; }
-  h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; }
-  a { color: inherit; text-underline-offset: 4px; }
-  .wrap {
-    max-width: 1240px; margin: 0 auto;
-    padding-left: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left, 0px));
-    padding-right: max(clamp(16px, 4vw, 48px), env(safe-area-inset-right, 0px));
-  }
 
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 22px;
-    border-radius: 999px; border: 2px solid var(--line-strong); font: 600 1rem var(--body);
-    text-decoration: none; cursor: pointer; transition: transform .25s var(--ease), background-color .2s, color .2s, border-color .2s;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn-ink { background: var(--text); border-color: var(--text); color: var(--ink); }
-  .btn-ghost { color: var(--text); }
-  .btn-ghost:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .32); }
-
-  /* Жидкое стекло: размытие и блик; в Chromium фон под стеклом ещё и слегка преломляется (фильтр #liquid) */
-  .glass, .btn-ghost {
-    background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03));
-    border: 1px solid rgba(255, 255, 255, .16);
-    -webkit-backdrop-filter: blur(14px) saturate(170%);
-    backdrop-filter: blur(14px) saturate(170%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 0 rgba(255, 255, 255, .06), 0 12px 32px -14px rgba(0, 0, 0, .7);
-  }
-  /* Шапка темнее кнопок: текст меню должен читаться и над светлыми демо */
-  .glass { background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .02)), rgba(21, 23, 26, .55); }
-  .refract .glass { backdrop-filter: url(#liquid) blur(10px) saturate(170%); }
-  section[id], .hero { scroll-margin-top: 84px; }
-  .btn-ochre { background: var(--ochre); border-color: var(--ochre); color: var(--ink); }
-  .btn-ochre:hover { background: #f0bd58; border-color: #f0bd58; }
-  .btn svg { flex: none; }
-
-  .site-header { position: sticky; top: 0; z-index: 50; padding-block: 12px; }
-  .site-header .bar { position: relative; display: flex; align-items: center; gap: 20px; padding: 6px; border-radius: 999px; }
-  .name { padding: 8px 16px; border-radius: 999px; font: 800 1.25rem var(--display); letter-spacing: -0.03em; text-decoration: none; }
-  .site-header nav { display: flex; gap: 4px; margin-left: auto; }
-  .site-header nav a { padding: 10px 16px; border-radius: 999px; color: var(--text-soft); text-decoration: none; font-weight: 500; transition: color .3s; }
-  .site-header nav a:hover, .site-header nav a.is-current { color: var(--text); }
-
-  /* Линза из жидкого стекла: лежит поверх текущего пункта меню и перетекает к следующему разделу при прокрутке */
-  .lens {
-    position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 2; opacity: 0; cursor: grab; touch-action: none; user-select: none;
-    border-radius: 999px; border: 1px solid rgba(255, 255, 255, .24);
-    background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .03) 60%, rgba(255, 255, 255, .08));
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), inset 0 -1px 2px rgba(255, 255, 255, .12), inset 0 0 12px rgba(255, 255, 255, .06), 0 6px 16px -6px rgba(0, 0, 0, .7);
-    /* Без размытия и преломления: текст под линзой должен оставаться чётким и во время движения */
-    -webkit-backdrop-filter: saturate(180%) brightness(1.12);
-    backdrop-filter: saturate(180%) brightness(1.12);
-    transition: transform .6s cubic-bezier(.3, 1.35, .5, 1), width .6s cubic-bezier(.3, 1.35, .5, 1), height .6s, opacity .3s;
-  }
-  .lens.is-on { opacity: 1; }
-  /* Линзу можно схватить и перетащить: пока тянем, она чуть сплющивается, как капля */
-  .lens.is-dragging { cursor: grabbing; transition: width .3s, height .3s, opacity .3s; background-color: rgba(255, 255, 255, .06); }
-  .site-header .btn { min-height: 44px; padding: 0 18px; }
-
-  /* ---------- Первый экран: шоурил лучших работ ---------- */
-  .intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(28px, 4vw, 56px) clamp(24px, 3vw, 36px); }
-  .intro h1 { font-size: clamp(2.4rem, 1rem + 3.6vw, 4.4rem); font-weight: 800; max-width: 14ch; }
-  .intro p { margin: 0; max-width: 46ch; font-size: 1.125rem; color: var(--text-soft); }
-  .intro .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
-
-  .reel { padding-bottom: clamp(40px, 6vw, 80px); }
-  .reel-stage { position: relative; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong); box-shadow: 0 50px 100px -50px rgba(0, 0, 0, .9); }
-  .reel-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
-  .reel-stage video.on { opacity: 1; }
-  .reel-open { position: absolute; right: 16px; bottom: 16px; z-index: 2; }
-  .reel-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); margin-top: 18px; }
-  .reel-tab { position: relative; display: block; padding: 14px 0 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--text-soft); transition: color .3s; }
-  .reel-tab::before, .reel-tab i { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; border-radius: 2px; background: var(--line-strong); }
-  .reel-tab i { right: auto; width: 100%; background: var(--ochre); transform-origin: left; transform: scaleX(0); }
-  .reel-tab b { display: block; font: 700 1.125rem var(--display); letter-spacing: -0.02em; color: var(--text); }
-  .reel-tab[aria-selected="true"] { color: var(--text); }
-  .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: clamp(28px, 4vw, 44px) 0 0; padding: 0; list-style: none; color: var(--text-soft); font-size: .9375rem; }
-  .facts b { color: var(--text); font: 800 1.5rem/1 var(--display); margin-right: 6px; font-variant-numeric: tabular-nums; }
-
-  /* ---------- Разделы ---------- */
-  .section { padding-block: clamp(64px, 9vw, 120px); }
-  .section h2 { font-size: clamp(2rem, 1.1rem + 3vw, 3.4rem); font-weight: 800; }
-  .section-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px clamp(24px, 4vw, 64px); align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
-  .section-head p { margin: 0; max-width: 56ch; color: var(--text-soft); }
-
-  /* Работы: сетка карточек с живыми роликами */
-  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
-  .work { grid-column: span 6; display: flex; flex-direction: column; min-width: 0; }
-  .work.w7 { grid-column: span 7; }
-  .work.w5 { grid-column: span 5; }
-  .work.w4 { grid-column: span 4; }
-  .media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 18px; overflow: hidden; background: var(--raised); border: 1px solid var(--line-strong); }
-  .media video, .media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
-  .work:hover .media video, .work:hover .media img { transform: scale(1.025); }
-  .media.phone-shot { background: radial-gradient(60% 70% at 50% 40%, #2b3036, var(--raised)); }
-  .media.phone-shot video { inset: 6% auto 6% 50%; width: auto; height: 88%; aspect-ratio: 390 / 760; transform: translateX(-50%); border-radius: 26px; box-shadow: 0 0 0 8px #0d0f11, 0 30px 60px -20px rgba(0, 0, 0, .8); }
-  .work:hover .media.phone-shot video { transform: translateX(-50%) scale(1.02); }
-  .badge { position: absolute; left: 12px; top: 12px; z-index: 1; padding: 5px 11px; border-radius: 999px; background: rgba(17, 19, 21, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--text); font-size: .8125rem; font-weight: 600; }
-  .work .kind { margin: 18px 0 4px; color: var(--ochre); font-size: .9375rem; font-weight: 500; }
-  .work h3 { font-size: clamp(1.35rem, 1rem + 1vw, 1.9rem); font-weight: 700; }
-  .work > p { margin: 10px 0 0; color: var(--text-soft); max-width: 52ch; }
-  .work details { margin-top: 12px; }
-  .work summary { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; cursor: pointer; color: var(--text); font-weight: 600; font-size: .9375rem; list-style: none; }
-  .work summary::-webkit-details-marker { display: none; }
-  .work summary::after { content: "+"; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-strong); font-weight: 500; transition: transform .3s var(--ease); }
-  .work details[open] summary::after { transform: rotate(45deg); }
-  .work details ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-  .work details li { position: relative; padding-left: 18px; color: var(--text-soft); font-size: .9375rem; }
-  .work details li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 8px; border-radius: 2px; background: var(--ochre); }
-  .stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
-  .stack li { padding: 3px 11px; border-radius: 999px; background: var(--raised); color: var(--text-soft); font-size: .8125rem; font-weight: 500; }
-  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-  .links .btn { min-height: 44px; padding: 0 18px; font-size: .9375rem; }
-  .next { grid-column: span 6; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding: clamp(24px, 3vw, 40px); border-radius: 18px; border: 1px dashed var(--line-strong); background: var(--surface); }
-  .next h3 { font-size: clamp(1.6rem, 1rem + 1.6vw, 2.4rem); font-weight: 800; max-width: 14ch; }
-  .next p { margin: 12px 0 0; color: var(--text-soft); max-width: 40ch; }
-
-  /* Услуги */
-  .services { background: var(--surface); border-block: 1px solid var(--line); }
-  .svc-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line-strong); }
-  .svc { padding: 28px clamp(0px, 2vw, 28px) 8px 0; }
-  .svc + .svc { padding-left: clamp(16px, 2vw, 28px); border-left: 1px solid var(--line); }
-  .svc h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 12px; }
-  .svc p { margin: 0 0 10px; color: var(--text-soft); }
-  .svc .fit { color: var(--text); font-weight: 500; }
-  .svc .eg { font-size: .9375rem; }
-  .svc .eg a { color: var(--ochre); }
-  .price-line { margin: 40px 0 0; font: 600 1.125rem var(--body); }
-
-  /* Как работаю */
-  .steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; counter-reset: s; }
-  .steps li { counter-increment: s; }
-  .steps li::before {
-    content: counter(s); display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 16px;
-    border-radius: 50%; background: var(--ochre); color: var(--ink); font: 800 1.125rem var(--display);
-  }
-  .steps h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
-  .steps p { margin: 0; color: var(--text-soft); }
-  .ai {
-    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px clamp(24px, 4vw, 64px);
-    margin-top: clamp(48px, 6vw, 80px); padding-top: 32px; border-top: 1px solid var(--line-strong);
-  }
-  .ai h3 { font-size: clamp(1.5rem, 1rem + 1.4vw, 2rem); font-weight: 700; }
-  .ai p { margin: 0 0 12px; max-width: 60ch; color: var(--text-soft); }
-
-  /* Контакт */
-  .contact { background: var(--surface); border-top: 1px solid var(--line); }
-  .contact h2 { max-width: 14ch; font-size: clamp(2.4rem, 1.2rem + 4vw, 4.6rem); }
-  .contact-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px clamp(24px, 4vw, 64px); align-items: end; }
-  .contact p { margin: 18px 0 0; max-width: 46ch; color: var(--text-soft); font-size: 1.125rem; }
-  .contact-links { display: grid; gap: 12px; justify-items: start; }
-  .handle { color: var(--text-soft); font-size: .9375rem; }
-  .site-footer { background: var(--surface); color: var(--text-soft); font-size: .875rem; padding-block: 0 32px; }
-  .site-footer .wrap { padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .site-footer p { margin: 0; }
-
-  /* Пятно за курсором: отдельный слой, двигается через transform — без пересчёта стилей всей страницы */
-  body { position: relative; isolation: isolate; }
-  .glow { position: fixed; left: -300px; top: -300px; z-index: -1; width: 600px; height: 600px; border-radius: 50%; pointer-events: none; opacity: 0; background: radial-gradient(closest-side, rgba(232, 173, 60, .12), transparent); transition: opacity .4s; will-change: transform; }
-  .glow.on { opacity: 1; }
-
-  /* ---------- Адаптив ---------- */
-  @media (max-width: 960px) {
-    .intro, .section-head, .ai, .contact-grid { grid-template-columns: minmax(0, 1fr); }
-    .work, .work.w7, .work.w5, .work.w4, .next { grid-column: span 12; }
-    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .svc-list { grid-template-columns: minmax(0, 1fr); }
-    .svc, .svc + .svc { padding: 24px 0 8px; border-left: 0; }
-    .svc + .svc { border-top: 1px solid var(--line); }
-  }
-  @media (max-width: 720px) {
-    .site-header nav { display: none; }
-    .site-header .bar { justify-content: space-between; }
-    .reel-stage { border-radius: 14px; }
-    .reel-tab { min-height: 48px; }
-    .reel-tab { font-size: .8125rem; }
-    .reel-tab b { font-size: .9375rem; }
-    .reel-tab span { display: none; }
-    .reel-open { right: 8px; bottom: 8px; min-height: 36px; padding: 0 12px; font-size: .8125rem; }
-    .steps { grid-template-columns: minmax(0, 1fr); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { transition: none !important; animation: none !important; }
-  }
-</style>
-<link rel="stylesheet" href="portfolio.css">
+<link rel="stylesheet" href="portfolio.css?v=light-2">
 
 </head>
 <body>
 <a class="skip-link" href="#works">Перейти к работам</a>
-<div class="glow" aria-hidden="true"></div>
-
-<svg width="0" height="0" style="position: absolute" aria-hidden="true">
-  <filter id="liquid" x="0" y="0" width="100%" height="100%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="2" seed="7" result="noise"/>
-    <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
-    <feDisplacementMap in="SourceGraphic" in2="soft" scale="36" xChannelSelector="R" yChannelSelector="G"/>
-  </filter></svg>
-
 <header class="site-header wrap">
   <div class="bar glass">
-    <a class="name" href="#top" data-spy="top">Арсений</a>
+    <a class="name" href="#top" data-spy="top" aria-label="Арсений — на главную">a<span>r</span>s<span class="name-dot">.</span></a>
     <nav aria-label="Разделы">
       <a href="#works" data-spy="works">Работы</a>
       <a href="#services" data-spy="services">Чем помогу</a>
       <a href="#process" data-spy="process">Как работаю</a>
     </nav>
-    <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener" data-spy="contact">Написать</a>
+    <a class="btn btn-ochre" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener" data-spy="contact">Есть идея? <span aria-hidden="true">↗</span></a>
     <span class="lens" aria-hidden="true"></span>
   </div>
 </header>
 
 <div class="hero" id="top">
   <section class="wrap intro" aria-labelledby="hero-title">
-    <div><p class="eyebrow">Арсений · независимый разработчик</p><h1 id="hero-title">Ваш бизнес.<br>Сайт <em>с характером.</em></h1></div>
+    <div><p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Арсений / сайты и цифровые впечатления</p><h1 id="hero-title">Не просто<br>сайт.<br><em>Опыт<span class="title-dot">.</span></em></h1></div>
     <div>
-      <p>Делаю сайты и Telegram-приложения для малого бизнеса. Чтобы клиент мог выбрать, собрать, записаться — и захотел вернуться.</p>
+      <p>Превращаю «мне нужен сайт» в&nbsp;«ого, так тоже можно?». Лендинги, 3D-конструкторы и&nbsp;приложения в&nbsp;Telegram для вашего дела.</p>
       <div class="actions">
-        <a class="btn btn-ochre" href="#works">Посмотреть работы <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-ochre" href="#works">Смотреть работы <span aria-hidden="true">↘</span></a>
         <a class="btn btn-ghost" href="https://t.me/arseniyspbdev" target="_blank" rel="noopener">Обсудить проект</a>
       </div>
     </div>
   </section>
 
   <section class="wrap reel" aria-label="Три работы в движении">
-    <div class="reel-caption"><span>Не картинки. Рабочие сайты.</span><button class="reel-pause" type="button" aria-pressed="false">Приостановить</button></div>
+    <div class="reel-caption"><span>Selected experiments / 2026</span><button class="reel-pause" type="button" aria-pressed="false">Приостановить</button></div>
+    <div class="reel-window"><div class="window-bar" aria-hidden="true"><span class="window-dots">● ● ●</span><span>идея → можно потрогать</span><span>↗</span></div>
     <div class="reel-stage">
       <video muted playsinline preload="auto" poster="reels/cake.jpg" data-reel="cake" class="on" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
       <video muted playsinline preload="none" poster="reels/pottery.jpg" data-reel="pottery" class="" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
       <video muted playsinline preload="none" poster="reels/flowers.jpg" data-reel="flowers" class="" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
       <a class="btn btn-ochre reel-open" id="reel-open" href="demo-cake/" target="_blank" rel="noopener">Открыть «Корж»</a>
     </div>
+    </div>
+    <span class="orbit-note" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M50 2 56 34 80 12 66 40 98 43 69 55 91 79 61 66 54 98 43 69 17 90 33 61 2 53 34 43 12 18 42 34Z" fill="currentColor"/></svg><span>Нажмите.<br>Это работает.</span></span>
     <div class="reel-tabs" role="group" aria-label="Работы в шоуриле">
       <button type="button" class="reel-tab" aria-pressed="true" data-reel="cake" data-name="Корж"><i></i><b>Корж</b><span>3D-конструктор торта</span></button>
       <button type="button" class="reel-tab" aria-pressed="false" data-reel="pottery" data-name="Круг"><i></i><b>Круг</b><span>Лепка вазы в 3D</span></button>
@@ -281,12 +69,13 @@
     </ul>
   </section>
 </div>
+<div class="capability-strip" aria-label="Направления работы"><div class="wrap"><span>Дизайн, который замечают</span><span aria-hidden="true">✳</span><span>Код, который работает</span><span aria-hidden="true">✳</span><span>Детали, которые запоминают</span></div></div>
 
 <main>
   <section class="section" id="works" aria-labelledby="works-title">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="works-title"><span class="eyebrow">01 / Портфолио</span>Можно попробовать</h2>
+        <h2 id="works-title"><span class="eyebrow">01 / Сделано, чтобы взаимодействовать</span>Меньше слов.<br><em>Больше кликов.</em></h2>
         <p>Это демо-проекты: заведения вымышленные, но всё остальное работает по-настоящему. По ним видно, как я думаю о клиентах вашего бизнеса и что получите вы.</p>
       </div>
       <div class="work-filters" role="group" aria-label="Фильтр работ" hidden>
@@ -399,7 +188,7 @@
   <section class="section services" id="services" aria-labelledby="services-title">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="services-title">Чем помогу</h2>
+        <h2 id="services-title"><span class="eyebrow">02 / От идеи к запуску</span>Что создадим<br>для вашего дела?</h2>
         <p>Беру небольшие проекты для кафе, салонов, студий, мастеров и других местных бизнесов, где клиенту важно быстро записаться, забронировать или оставить заявку.</p>
       </div>
       <div class="svc-list">
@@ -428,7 +217,7 @@
   <section class="section" id="process" aria-labelledby="process-title">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="process-title">Как работаю</h2>
+        <h2 id="process-title"><span class="eyebrow">03 / Без чёрного ящика</span>Всегда понятно,<br>что дальше.</h2>
         <p>Вы видите результат с первых дней и на каждом шаге решаете, что поменять.</p>
       </div>
       <ol class="steps">
@@ -451,7 +240,7 @@
   <section class="section contact" id="contact" aria-labelledby="contact-title">
     <div class="wrap contact-grid">
       <div>
-        <h2 id="contact-title">Расскажите о своей задаче</h2>
+        <p class="eyebrow">04 / Следующий проект — ваш?</p><h2 id="contact-title">Хорошие вещи<br>начинаются<br>с <em>«привет».</em></h2>
         <p>Напишите пару строк о бизнесе и о том, что хотите получить. Отвечу и предложу, с чего начать.</p>
       </div>
       <div class="contact-links">
@@ -484,6 +273,7 @@
   const updatePause = () => {
     pauseButton.setAttribute('aria-pressed', String(reelPaused));
     pauseButton.textContent = reelPaused ? 'Воспроизвести' : 'Приостановить';
+    document.querySelector('.reel').classList.toggle('is-paused', reelPaused);
   };
   updatePause();
   pauseButton.addEventListener('click', () => {
@@ -556,8 +346,20 @@
     try { history.replaceState(null, '', a.getAttribute('href')); } catch (_) {}
   }));
 
-  // Преломление в стекле умеет только Chromium (Chrome, Edge, Opera); остальным — обычное размытие
-  if (navigator.userAgentData) document.documentElement.classList.add('refract');
+  // Одно появление на секцию: без постоянных обработчиков прокрутки.
+  if ('IntersectionObserver' in window && !reduced) {
+    const reveals = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-revealed');
+      reveals.unobserve(entry.target);
+    }), { threshold: 0.06 });
+    document.querySelectorAll('.section-head, .work, .next, .svc, .steps li, .ai, .contact-grid').forEach((element) => {
+      // Всё, что уже видно при загрузке, остаётся сразу читаемым.
+      if (element.getBoundingClientRect().top < innerHeight) return;
+      element.classList.add('will-reveal');
+      reveals.observe(element);
+    });
+  }
 
   // Линза в шапке: находим раздел, который сейчас на экране, и переносим линзу на его пункт меню.
   // Если пункт скрыт (на телефоне меню спрятано), линза встаёт на ближайший видимый пункт выше
@@ -654,15 +456,6 @@
   lens.addEventListener('pointercancel', drop);
   lens.addEventListener('lostpointercapture', () => drop());
 
-  // Пятно за курсором по всему сайту, только где есть мышь. Двигаем слой через transform:
-  // менять CSS-переменные на каждое движение мыши — пересчитывать стили всей страницы
-  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const glow = document.querySelector('.glow');
-    let x = 0, y = 0, queued = false;
-    const paint = () => { queued = false; glow.style.transform = `translate(${x}px, ${y}px)`; glow.classList.add('on'); };
-    addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; if (!queued) { queued = true; requestAnimationFrame(paint); } }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', () => glow.classList.remove('on'));
-  }
 </script>
 </body>
 </html>
