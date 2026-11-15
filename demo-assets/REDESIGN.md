@@ -14,6 +14,6 @@ Telegram theme variables remain authoritative in the barber application.
   schedule filter, cake tabs, barber service selection, pottery controls and coffee booking controls.
 - Mobile visual review of every demo, including rendered cake and pottery models.
 - Real Telegram host, real iPhone Safari and external submission backends were not tested.
-- Existing portfolio videos are archival interaction recordings; they were not re-recorded by this redesign.
+- The main portfolio now uses current WebP screenshots in `previews/`. Old interaction videos remain archived in `reels/` and are no longer loaded by the main page.
 
 Full before/after source archives are stored outside the repository under `site-backups/`.

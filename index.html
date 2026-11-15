@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;700;800&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="portfolio.css?v=light-mobile-3">
+<link rel="stylesheet" href="portfolio.css?v=previews-1">
 
 </head>
 <body>
@@ -45,13 +45,13 @@
     </div>
   </section>
 
-  <section class="wrap reel" aria-label="Три работы в движении">
-    <div class="reel-caption"><span>Selected experiments / 2026</span><button class="reel-pause" type="button" aria-pressed="false">Приостановить</button></div>
+  <section class="wrap reel" aria-label="Три избранные работы">
+    <div class="reel-caption"><span>Избранные работы / 2026</span><button class="reel-pause" type="button" aria-pressed="false">Приостановить</button></div>
     <div class="reel-window"><div class="window-bar" aria-hidden="true"><span class="window-dots">● ● ●</span><span>идея → можно потрогать</span><span>↗</span></div>
     <div class="reel-stage">
-      <video muted playsinline preload="auto" poster="reels/cake.jpg" data-reel="cake" class="on" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
-      <video muted playsinline preload="none" poster="reels/pottery.jpg" data-reel="pottery" class="" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
-      <video muted playsinline preload="none" poster="reels/flowers.jpg" data-reel="flowers" class="" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
+      <img src="previews/cake.webp?v=1" width="1280" height="800" alt="Кондитерская «Корж» — новый дизайн" class="on" data-reel="cake" fetchpriority="high" decoding="async">
+      <img src="previews/pottery.webp?v=1" width="1280" height="800" alt="Гончарная мастерская «Круг» — новый дизайн" data-reel="pottery" loading="lazy" decoding="async">
+      <img src="previews/flowers.webp?v=1" width="1280" height="800" alt="Цветочная мастерская «Стебель» — новый дизайн" data-reel="flowers" loading="lazy" decoding="async">
       <a class="btn btn-ochre reel-open" id="reel-open" href="demo-cake/" target="_blank" rel="noopener">Открыть «Корж»</a>
     </div>
     </div>
@@ -88,7 +88,7 @@
       <div class="grid" id="work-grid">
         <article class="work w7">
           <a class="media" href="demo-cake/" target="_blank" rel="noopener" aria-label="Открыть сайт: Кондитерская «Корж»">
-            <span class="badge">3D</span><video muted loop playsinline preload="none" poster="reels/cake.jpg" aria-hidden="true"><source src="reels/cake.webm" type="video/webm"><source src="reels/cake.mp4" type="video/mp4"></video>
+            <span class="badge">3D</span><img src="previews/cake.webp?v=1" width="1280" height="800" alt="Кондитерская «Корж» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">3D-конструктор торта</p>
           <h3>Кондитерская «Корж»</h3>
@@ -99,7 +99,7 @@
         </article>
         <article class="work w5">
           <a class="media" href="demo-pottery/" target="_blank" rel="noopener" aria-label="Открыть сайт: Гончарная мастерская «Круг»">
-            <span class="badge">3D</span><video muted loop playsinline preload="none" poster="reels/pottery.jpg" aria-hidden="true"><source src="reels/pottery.webm" type="video/webm"><source src="reels/pottery.mp4" type="video/mp4"></video>
+            <span class="badge">3D</span><img src="previews/pottery.webp?v=1" width="1280" height="800" alt="Гончарная мастерская «Круг» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">3D-лепка на гончарном круге</p>
           <h3>Гончарная мастерская «Круг»</h3>
@@ -110,7 +110,7 @@
         </article>
         <article class="work w5">
           <a class="media" href="demo-flowers/" target="_blank" rel="noopener" aria-label="Открыть сайт: Цветочная мастерская «Стебель»">
-            <video muted loop playsinline preload="none" poster="reels/flowers.jpg" aria-hidden="true"><source src="reels/flowers.webm" type="video/webm"><source src="reels/flowers.mp4" type="video/mp4"></video>
+            <img src="previews/flowers.webp?v=1" width="1280" height="800" alt="Цветочная мастерская «Стебель» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">Конструктор букета из фото</p>
           <h3>Цветочная мастерская «Стебель»</h3>
@@ -121,7 +121,7 @@
         </article>
         <article class="work w7">
           <a class="media" href="demo-coffee/" target="_blank" rel="noopener" aria-label="Открыть сайт: Кофейня «Кафель»">
-            <video muted loop playsinline preload="none" poster="reels/coffee.jpg" aria-hidden="true"><source src="reels/coffee.webm" type="video/webm"><source src="reels/coffee.mp4" type="video/mp4"></video>
+            <img src="previews/coffee.webp?v=1" width="1280" height="800" alt="Кофейня «Кафель» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">Лендинг с онлайн-бронью</p>
           <h3>Кофейня «Кафель»</h3>
@@ -132,7 +132,7 @@
         </article>
         <article class="work w4">
           <a class="media phone-shot" href="demo-barber/" target="_blank" rel="noopener" aria-label="Открыть сайт: Барбершоп «Чуб»">
-            <video muted loop playsinline preload="none" poster="reels/barber.jpg" aria-hidden="true"><source src="reels/barber.webm" type="video/webm"><source src="reels/barber.mp4" type="video/mp4"></video>
+            <img src="previews/barber.webp?v=1" width="390" height="800" alt="Барбершоп «Чуб» — запись в Telegram" loading="lazy" decoding="async">
           </a>
           <p class="kind">Telegram Mini App</p>
           <h3>Барбершоп «Чуб»</h3>
@@ -143,7 +143,7 @@
         </article>
         <article class="work w4">
           <a class="media" href="demo-nails/" target="_blank" rel="noopener" aria-label="Открыть сайт: Студия маникюра «Палитра»">
-            <video muted loop playsinline preload="none" poster="reels/nails.jpg" aria-hidden="true"><source src="reels/nails.webm" type="video/webm"><source src="reels/nails.mp4" type="video/mp4"></video>
+            <img src="previews/nails.webp?v=1" width="1280" height="800" alt="Студия маникюра «Палитра» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">Подбор цвета и запись</p>
           <h3>Студия маникюра «Палитра»</h3>
@@ -154,7 +154,7 @@
         </article>
         <article class="work w4">
           <a class="media" href="demo-fitness/" target="_blank" rel="noopener" aria-label="Открыть сайт: Студия йоги «Поток»">
-            <video muted loop playsinline preload="none" poster="reels/fitness.jpg" aria-hidden="true"><source src="reels/fitness.webm" type="video/webm"><source src="reels/fitness.mp4" type="video/mp4"></video>
+            <img src="previews/fitness.webp?v=1" width="1280" height="800" alt="Студия йоги «Поток» — новый дизайн" loading="lazy" decoding="async">
           </a>
           <p class="kind">Расписание и пробное занятие</p>
           <h3>Студия йоги «Поток»</h3>
@@ -165,7 +165,7 @@
         </article>
         <article class="work w6">
           <a class="media" href="demo-autoservice/" target="_blank" rel="noopener" aria-label="Открыть сайт: Автосервис «Гайка»">
-            <video muted loop playsinline preload="none" poster="reels/autoservice.jpg" aria-hidden="true"><source src="reels/autoservice.webm" type="video/webm"><source src="reels/autoservice.mp4" type="video/mp4"></video>
+            <img src="previews/autoservice.webp?v=1" width="1280" height="800" alt="Автосервис «Гайка» — калькулятор ремонта" loading="lazy" decoding="async">
           </a>
           <p class="kind">Калькулятор стоимости</p>
           <h3>Автосервис «Гайка»</h3>
@@ -231,7 +231,7 @@
         <h3>Почему с ИИ</h3>
         <div>
           <p>Я работаю вместе с ИИ: он быстро пишет код и берёт на себя рутину. Мне остаётся главное: понять вашу задачу, проверить, что всё работает на телефоне и компьютере, и довести результат до того вида, который нужен вашим клиентам.</p>
-          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и все работы выше сделаны так же — даже ролики-превью записаны автоматически.</p>
+          <p>Для вас это значит быструю первую версию и больше времени на доработки. Этот сайт и все работы выше сделаны так же — превью показывают актуальный дизайн каждого проекта.</p>
         </div>
       </div>
     </div>
@@ -263,64 +263,56 @@
 </footer>
 
 <script>
-  // Шоурил: три ролика по очереди; полоска под названием показывает, сколько осталось
+  // Актуальные снимки демо: мягкая смена кадров, пауза вне экрана и в фоне.
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const reelVids = [...document.querySelectorAll('.reel-stage video')];
+  const reelImages = [...document.querySelectorAll('.reel-stage img')];
   const reelTabs = [...document.querySelectorAll('.reel-tab')];
   const reelOpen = document.getElementById('reel-open');
-  let cur = 0, reelOn = false, reelPaused = reduced;
+  const reel = document.querySelector('.reel');
   const pauseButton = document.querySelector('.reel-pause');
+  let cur = 0, elapsed = 0, reelOn = true, reelPaused = reduced;
+  let lastTick = performance.now();
+  const duration = 6000;
   const updatePause = () => {
     pauseButton.setAttribute('aria-pressed', String(reelPaused));
-    pauseButton.textContent = reelPaused ? 'Воспроизвести' : 'Приостановить';
-    document.querySelector('.reel').classList.toggle('is-paused', reelPaused);
+    pauseButton.textContent = reelPaused ? 'Продолжить' : 'Приостановить';
+    reel.classList.toggle('is-paused', reelPaused);
   };
-  updatePause();
-  pauseButton.addEventListener('click', () => {
-    reelPaused = !reelPaused;
-    if (reelPaused) reelVids[cur].pause();
-    else if (reelOn) reelVids[cur].play().catch(() => {});
-    updatePause();
-  });
+  pauseButton.addEventListener('click', () => { reelPaused = !reelPaused; lastTick = performance.now(); updatePause(); });
   const show = (i) => {
-    cur = i;
-    reelVids.forEach((v, k) => {
-      v.classList.toggle('on', k === i);
-      if (k === i) { v.preload = 'auto'; v.currentTime = 0; if (reelOn && !reelPaused) v.play().catch(() => {}); } else v.pause();
+    cur = i; elapsed = 0; lastTick = performance.now();
+    reelImages.forEach((image, k) => image.classList.toggle('on', k === i));
+    reelTabs.forEach((tab, k) => {
+      tab.setAttribute('aria-pressed', String(k === i));
+      tab.querySelector('i').style.transform = `scaleX(${k < i ? 1 : 0})`;
     });
-    reelTabs.forEach((t, k) => { t.setAttribute('aria-pressed', String(k === i)); t.querySelector('i').style.transform = `scaleX(${k < i ? 1 : 0})`; });
     reelOpen.href = `demo-${reelTabs[i].dataset.reel}/`;
     reelOpen.textContent = `Открыть «${reelTabs[i].dataset.name}»`;
-    // следующий ролик подгружаем заранее
-    reelVids[(i + 1) % reelVids.length].preload = 'auto';
   };
-  reelTabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
-  reelTabs.forEach((t, i) => t.addEventListener('keydown', (event) => {
-    let next;
-    if (event.key === 'ArrowRight') next = (i + 1) % reelTabs.length;
-    if (event.key === 'ArrowLeft') next = (i + reelTabs.length - 1) % reelTabs.length;
-    if (event.key === 'Home') next = 0;
-    if (event.key === 'End') next = reelTabs.length - 1;
-    if (next === undefined) return;
-    event.preventDefault(); show(next); reelTabs[next].focus();
-  }));
-  reelVids.forEach((v, i) => {
-    v.addEventListener('timeupdate', () => { if (i === cur && v.duration) reelTabs[i].querySelector('i').style.transform = `scaleX(${v.currentTime / v.duration})`; });
-    v.addEventListener('ended', () => show((i + 1) % reelVids.length));
+  reelTabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => show(i));
+    tab.addEventListener('keydown', (event) => {
+      let next;
+      if (event.key === 'ArrowRight') next = (i + 1) % reelTabs.length;
+      if (event.key === 'ArrowLeft') next = (i + reelTabs.length - 1) % reelTabs.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = reelTabs.length - 1;
+      if (next === undefined) return;
+      event.preventDefault(); show(next); reelTabs[next].focus();
+    });
   });
-
-  // Ролики играют, только пока их видно; при «меньше движения» — стоят на постере
-  const cardVids = [...document.querySelectorAll('.media video')];
   if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-      const v = e.target;
-      if (v.closest('.reel-stage')) { reelOn = e.isIntersecting; const c = reelVids[cur]; if (reelOn && !reelPaused) c.play().catch(() => {}); else c.pause(); return; }
-      if (e.isIntersecting && !reduced) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
-    }), { threshold: .35 });
-    cardVids.forEach((v) => io.observe(v));
-    io.observe(reelVids[0]);
+    new IntersectionObserver((entries) => { reelOn = entries[0].isIntersecting; lastTick = performance.now(); }, { threshold: .35 }).observe(document.querySelector('.reel-stage'));
   }
-  show(0);
+  setInterval(() => {
+    const now = performance.now(), delta = Math.min(now - lastTick, 500);
+    lastTick = now;
+    if (!reelOn || reelPaused || document.hidden) return;
+    elapsed += delta;
+    if (elapsed >= duration) { show((cur + 1) % reelImages.length); return; }
+    reelTabs[cur].querySelector('i').style.transform = `scaleX(${elapsed / duration})`;
+  }, 100);
+  updatePause(); show(0);
 
   const filterBar = document.querySelector('.work-filters');
   const workCards = [...document.querySelectorAll('#work-grid .work')];
@@ -332,7 +324,6 @@
     filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
     workCards.forEach((card, index) => {
       card.hidden = filter !== 'all' && categories[index] !== filter;
-      if (card.hidden) card.querySelectorAll('video').forEach((video) => video.pause());
     });
     document.querySelector('.filter-status').textContent = `Показано проектов: ${workCards.filter((card) => !card.hidden).length} из ${workCards.length}`;
   }));

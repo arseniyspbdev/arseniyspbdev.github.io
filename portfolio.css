@@ -349,7 +349,7 @@ section[id],.hero {
   border-radius:0 0 12px 12px;
   background:#f0e9e0;
 }
-.reel-stage video {
+.reel-stage img {
   position:absolute;
   inset:0;
   width:100%;
@@ -358,7 +358,7 @@ section[id],.hero {
   opacity:0;
   transition:opacity .6s;
 }
-.reel-stage video.on {
+.reel-stage img.on {
   opacity:1;
 }
 .reel-open {
@@ -1285,3 +1285,6 @@ section[id],.hero {
 .reel.is-paused .orbit-note svg {
   animation-play-state:paused;
 }
+
+.media.phone-shot img { inset:6% auto 6% 50%; width:auto; height:88%; aspect-ratio:390 / 800; transform:translateX(-50%); border-radius:22px; box-shadow:0 0 0 6px #252629,0 20px 40px #17191b26; }
+.work:hover .media.phone-shot img { transform:translateX(-50%) scale(1.025); }
